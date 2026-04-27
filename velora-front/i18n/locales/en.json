@@ -1,0 +1,32 @@
+{
+  "auth": {
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "register": "REGISTER",
+    "haveAccount": "Have an account?",
+    "login": "Login",
+    "tagline": "Taste the calm.",
+    "noAccount": "Don't have an account?",
+    "submit": "SUBMIT",
+    "verify": "VERIFY",
+    "verificationCode": "Verification Code",
+    "verificationDesc": "Enter the 6-digit code sent to",
+    "resendTimer": "Resend ({n}s)",
+    "resend": "Resend code",
+    "resending": "Sending...",
+    "backToRegister": "← Back to Register",
+    "invalidCode": "Invalid or expired code.",
+    "sendFailed": "Could not send code.",
+    "emailRequired": "Email is required.",
+    "passwordRequired": "Password is required.",
+    "nameRequired": "Name is required.",
+    "passwordMin": "Password must be at least 8 characters.",
+    "passwordMismatch": "Passwords do not match.",
+    "loginError": "Invalid email or password.",
+    "genericError": "An error occurred. Please try again.",
+    "unverified": "Your account is not verified. A new OTP has been sent.",
+    "goVerify": "Verify →"
+  }
+}

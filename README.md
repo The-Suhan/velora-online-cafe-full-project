@@ -64,15 +64,6 @@ From the first sip to the last, the experience is crafted to feel natural, warm,
 
 ---
 
-## 📦 Installation
-
-```bash
-git clone https://github.com/The-Suhan/velora-cafe.git
-cd velora-cafe
-npm install
-npm run dev
-```
-
 ---
 
 ## 📄 License

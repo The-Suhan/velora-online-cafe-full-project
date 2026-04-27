@@ -1,0 +1,32 @@
+{
+  "auth": {
+    "name": "At",
+    "email": "E-poçta",
+    "password": "Açar söz",
+    "confirmPassword": "Açar sözi tassykla",
+    "register": "HASABA AL",
+    "haveAccount": "Hasabyň barmy?",
+    "login": "Giriş",
+    "tagline": "Asudalygy duý.",
+    "noAccount": "Hasabyň ýokmy?",
+    "submit": "GIRIŞ",
+    "verify": "TASSYKLA",
+    "verificationCode": "Tassyklama kody",
+    "verificationDesc": "Şu adrese iberilen 6 sanly kody giriziň",
+    "resendTimer": "Täzeden iber ({n}s)",
+    "resend": "Kody täzeden iber",
+    "resending": "Iberilýär...",
+    "backToRegister": "← Hasaba dolan",
+    "invalidCode": "Nädogry ýa-da möhleti geçen kod.",
+    "sendFailed": "Kod iberilmedi.",
+    "emailRequired": "E-poçta hökmany.",
+    "passwordRequired": "Açar söz hökmany.",
+    "nameRequired": "At hökmany.",
+    "passwordMin": "Açar söz azyndan 8 simwol bolmaly.",
+    "passwordMismatch": "Açar sözler gabat gelmeýär.",
+    "loginError": "Nädogry e-poçta ýa-da açar söz.",
+    "genericError": "Ýalňyşlyk boldy. Täzeden synanyşyň.",
+    "unverified": "Hasap tassyklanmadyk. Täze OTP iberildi.",
+    "goVerify": "Tassykla →"
+  }
+}
