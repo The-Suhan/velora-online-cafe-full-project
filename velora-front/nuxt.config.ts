@@ -6,6 +6,10 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
   ],
 
+  experimental: {
+    typedPages: true,
+  },
+
   css: ['../assets/css/main.css'],
 
   i18n: {

@@ -4,11 +4,12 @@
     "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm Password",
+    "newPassword": "New Password",
     "register": "REGISTER",
     "haveAccount": "Have an account?",
+    "noAccount": "Don't have an account?",
     "login": "Login",
     "tagline": "Taste the calm.",
-    "noAccount": "Don't have an account?",
     "submit": "SUBMIT",
     "verify": "VERIFY",
     "verificationCode": "Verification Code",
@@ -17,6 +18,15 @@
     "resend": "Resend code",
     "resending": "Sending...",
     "backToRegister": "← Back to Register",
+    "backToLogin": "← Back to Login",
+    "backToForgot": "Back",
+    "forgotPassword": "Forgot Password?",
+    "forgotTitle": "Forgot Password",
+    "forgotDesc": "Enter your email and we'll send you a reset code.",
+    "sendCode": "SEND CODE",
+    "newPasswordTitle": "New Password",
+    "newPasswordDesc": "Enter your new password below.",
+    "resetPassword": "RESET PASSWORD",
     "invalidCode": "Invalid or expired code.",
     "sendFailed": "Could not send code.",
     "emailRequired": "Email is required.",
@@ -27,6 +37,7 @@
     "loginError": "Invalid email or password.",
     "genericError": "An error occurred. Please try again.",
     "unverified": "Your account is not verified. A new OTP has been sent.",
-    "goVerify": "Verify →"
+    "goVerify": "Verify →",
+    "resetSuccess": "Password reset successful. Please log in."
   }
 }

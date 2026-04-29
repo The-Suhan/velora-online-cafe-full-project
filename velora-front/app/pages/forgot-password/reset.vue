@@ -10,30 +10,20 @@
             <span class="cafe-text">CAFÉ</span>
             <span class="line" />
         </div>
-        <p class="tagline">{{ $t('auth.tagline') }}</p>
+
+        <div class="head-wrap">
+            <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.6">
+                    <path d="M20 6L9 17l-5-5" />
+                </svg>
+            </div>
+            <p class="head-title">{{ $t('auth.newPasswordTitle') }}</p>
+            <p class="head-desc">{{ $t('auth.newPasswordDesc') }}</p>
+        </div>
 
         <div v-if="errorMsg" class="error-box">{{ errorMsg }}</div>
 
-        <div v-if="requiresVerify" class="info-box">
-            {{ $t('auth.unverified') }}
-            <NuxtLink :to="`/verify-otp?email=${form.email}&type=login`" class="otp-link">
-                {{ $t('auth.goVerify') }}
-            </NuxtLink>
-        </div>
-
         <div class="form">
-            <div class="input-wrap">
-                <span class="input-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <rect x="2" y="4" width="20" height="16" rx="2" />
-                        <path d="M2 7l10 7 10-7" />
-                    </svg>
-                </span>
-                <input v-model="form.email" type="email" :placeholder="$t('auth.email')" autocomplete="email"
-                    :class="{ 'input-error': errors.email }" @keyup.enter="handleLogin" />
-            </div>
-            <p v-if="errors.email" class="field-error">{{ errors.email }}</p>
-
             <div class="input-wrap">
                 <span class="input-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -41,9 +31,8 @@
                         <path d="M8 11V7a4 4 0 018 0v4" />
                     </svg>
                 </span>
-                <input v-model="form.password" :type="showPw ? 'text' : 'password'" :placeholder="$t('auth.password')"
-                    autocomplete="current-password" :class="{ 'input-error': errors.password }"
-                    @keyup.enter="handleLogin" />
+                <input v-model="form.password" :type="showPw ? 'text' : 'password'"
+                    :placeholder="$t('auth.newPassword')" :class="{ 'input-error': errors.password }" />
                 <button class="eye-btn" type="button" @click="showPw = !showPw">
                     <svg v-if="!showPw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                         <ellipse cx="12" cy="12" rx="10" ry="6" />
@@ -58,13 +47,34 @@
             </div>
             <p v-if="errors.password" class="field-error">{{ errors.password }}</p>
 
-            <button class="btn-submit" :disabled="loading" @click="handleLogin">
+            <div class="input-wrap">
+                <span class="input-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <rect x="5" y="11" width="14" height="10" rx="2" />
+                        <path d="M8 11V7a4 4 0 018 0v4" />
+                    </svg>
+                </span>
+                <input v-model="form.password_confirmation" :type="showPwConfirm ? 'text' : 'password'"
+                    :placeholder="$t('auth.confirmPassword')" :class="{ 'input-error': errors.password_confirmation }"
+                    @keyup.enter="handleReset" />
+                <button class="eye-btn" type="button" @click="showPwConfirm = !showPwConfirm">
+                    <svg v-if="!showPwConfirm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <ellipse cx="12" cy="12" rx="10" ry="6" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
+                        <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                    </svg>
+                </button>
+            </div>
+            <p v-if="errors.password_confirmation" class="field-error">{{ errors.password_confirmation }}</p>
+
+            <button class="btn-submit" :disabled="loading" @click="handleReset">
                 <span v-if="loading" class="spinner" />
-                <span v-else>{{ $t('auth.submit') }}</span>
+                <span v-else>{{ $t('auth.resetPassword') }}</span>
             </button>
-            <p class="forgot-link">
-                <NuxtLink to="/forgot-password">{{ $t('auth.forgotPassword') }}</NuxtLink>
-            </p>
         </div>
 
         <div class="divider">
@@ -76,56 +86,55 @@
             <span class="divider-line" />
         </div>
 
-        <p class="no-account">{{ $t('auth.noAccount') }}</p>
-        <NuxtLink to="/register" class="btn-register-outline">{{ $t('auth.register') }}</NuxtLink>
+        <p class="back-link">
+            <NuxtLink to="/login">{{ $t('auth.backToLogin') }}</NuxtLink>
+        </p>
     </div>
 </template>
 
 <script setup lang="ts">
 definePageMeta({ layout: 'auth', middleware: 'guest' })
 
-const { login } = useAuth()
+const route = useRoute()
 const router = useRouter()
+const config = useRuntimeConfig()
 const { t } = useI18n()
 
-const form = reactive({ email: '', password: '' })
+const resetToken = ref((route.query.token as string) || '')
+
+if (!resetToken.value) {
+    navigateTo('/forgot-password')
+}
+
+const form = reactive({ password: '', password_confirmation: '' })
 const errors = reactive<Record<string, string>>({})
 const errorMsg = ref('')
 const loading = ref(false)
 const showPw = ref(false)
-const requiresVerify = ref(false)
+const showPwConfirm = ref(false)
 
-const clearErrors = () => {
+const handleReset = async () => {
     Object.keys(errors).forEach(k => delete errors[k])
     errorMsg.value = ''
-    requiresVerify.value = false
-}
 
-const handleLogin = async () => {
-    clearErrors()
-    if (!form.email.trim()) { errors.email = t('auth.emailRequired'); return }
-    if (!form.password) { errors.password = t('auth.passwordRequired'); return }
+    if (form.password.length < 8) { errors.password = t('auth.passwordMin'); return }
+    if (form.password !== form.password_confirmation) {
+        errors.password_confirmation = t('auth.passwordMismatch'); return
+    }
 
     loading.value = true
     try {
-        const res: any = await login(form)
-
-        if (res.requires_verify) {
-            requiresVerify.value = true
-            return
-        }
-
-        router.push(res.user?.role === 'admin' ? '/admin' : '/')
-
+        await $fetch(`${config.public.apiBase}/forgot-password/reset`, {
+            method: 'POST',
+            body: {
+                reset_token: resetToken.value,
+                password: form.password,
+                password_confirmation: form.password_confirmation,
+            },
+        })
+        router.push({ path: '/login', query: { reset: 'success' } })
     } catch (err: any) {
-        const data = err?.data
-        if (data?.errors) {
-            Object.entries(data.errors).forEach(([field, msgs]: any) => {
-                errors[field] = msgs[0]
-            })
-        } else {
-            errorMsg.value = data?.message ?? t('auth.loginError')
-        }
+        errorMsg.value = err?.data?.message ?? t('auth.genericError')
     } finally {
         loading.value = false
     }
@@ -133,32 +142,20 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-.lang-row {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 16px;
-}
-
 .card {
     width: 100%;
     max-width: 420px;
     background: #F5F0E8;
     border-radius: 24px;
     padding: 40px 36px 32px;
-    box-shadow: 0 32px 80px rgba(0, 0, 0, .5);
+    box-shadow: 0 32px 80px rgba(0, 0, 0, .45);
     font-family: 'Jost', sans-serif;
 }
 
-.logo-wrap {
+.lang-row {
     display: flex;
-    justify-content: center;
-    margin-bottom: 12px;
-}
-
-.logo-img {
-    width: 90px;
-    height: auto;
-    object-fit: contain;
+    justify-content: flex-start;
+    margin-bottom: 16px;
 }
 
 .brand-name {
@@ -177,7 +174,7 @@ const handleLogin = async () => {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin: 5px 0 2px;
+    margin: 5px 0 20px;
 }
 
 .cafe-text {
@@ -195,13 +192,40 @@ const handleLogin = async () => {
     opacity: .6;
 }
 
-.tagline {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 1rem;
-    color: #8a7060;
+.head-wrap {
     text-align: center;
-    margin: 0 0 24px;
+    margin-bottom: 24px;
+}
+
+.icon-wrap {
+    width: 56px;
+    height: 56px;
+    background: #e8f0e8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+}
+
+.icon-wrap svg {
+    width: 28px;
+    height: 28px;
+}
+
+.head-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2C1810;
+    margin: 0 0 6px;
+}
+
+.head-desc {
+    font-size: .84rem;
+    color: #8a7060;
+    margin: 0;
+    line-height: 1.5;
 }
 
 .error-box {
@@ -213,52 +237,6 @@ const handleLogin = async () => {
     font-size: .83rem;
     margin-bottom: 14px;
     text-align: center;
-}
-
-.forgot-link {
-    text-align: right;
-    margin: 8px 0 0;
-}
-
-.forgot-link a {
-    font-size: 0.78rem;
-    color: #8a7060;
-    text-decoration: none;
-    font-family: 'Jost', sans-serif;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    border-bottom: 0.5px solid rgba(200, 169, 110, 0.4);
-    padding-bottom: 1px;
-    transition: color 0.2s, border-color 0.2s;
-}
-
-.forgot-link a:hover {
-    color: #C8A96E;
-    border-bottom-color: #C8A96E;
-}
-
-.info-box {
-    background: #eef6ee;
-    border: 1px solid #a5c8a5;
-    color: #2d5a2d;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: .83rem;
-    margin-bottom: 14px;
-    text-align: center;
-    line-height: 1.5;
-}
-
-.otp-link {
-    display: block;
-    color: #4A6741;
-    font-weight: 600;
-    margin-top: 4px;
-    text-decoration: none;
-}
-
-.otp-link:hover {
-    text-decoration: underline;
 }
 
 .form {
@@ -344,14 +322,14 @@ const handleLogin = async () => {
 
 .btn-submit {
     width: 100%;
-    background: #C8A96E;
-    color: #2C1810;
+    background: #4A6741;
+    color: #d4b882;
     border: none;
     border-radius: 12px;
     padding: 14px;
     font-family: 'Jost', sans-serif;
     font-size: .78rem;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: .24em;
     cursor: pointer;
     margin-top: 4px;
@@ -363,7 +341,7 @@ const handleLogin = async () => {
 }
 
 .btn-submit:hover:not(:disabled) {
-    background: #d4b882;
+    background: #5a7a50;
 }
 
 .btn-submit:active:not(:disabled) {
@@ -378,8 +356,8 @@ const handleLogin = async () => {
 .spinner {
     width: 18px;
     height: 18px;
-    border: 2px solid rgba(44, 24, 16, .2);
-    border-top-color: #2C1810;
+    border: 2px solid rgba(212, 184, 130, .3);
+    border-top-color: #d4b882;
     border-radius: 50%;
     animation: spin .7s linear infinite;
 }
@@ -394,7 +372,7 @@ const handleLogin = async () => {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 20px 0 16px;
+    margin: 20px 0 14px;
 }
 
 .divider-line {
@@ -411,44 +389,26 @@ const handleLogin = async () => {
     opacity: .7;
 }
 
-.no-account {
+.back-link {
     text-align: center;
-    font-size: .84rem;
-    color: #8a7060;
-    margin: 0 0 12px;
+    margin: 0;
 }
 
-.btn-register-outline {
-    display: block;
-    width: 100%;
-    background: transparent;
-    border: 1.5px solid #C8A96E;
-    border-radius: 12px;
-    padding: 13px;
-    font-family: 'Jost', sans-serif;
-    font-size: .78rem;
-    font-weight: 500;
-    letter-spacing: .24em;
+.back-link a {
+    font-size: .82rem;
     color: #C8A96E;
-    text-align: center;
     text-decoration: none;
-    transition: background .2s, color .2s;
-    box-sizing: border-box;
+    font-weight: 500;
 }
 
-.btn-register-outline:hover {
-    background: #C8A96E;
-    color: #2C1810;
+.back-link a:hover {
+    text-decoration: underline;
 }
 
-@media (max-width:480px) {
+@media (max-width: 480px) {
     .card {
         padding: 32px 20px 28px;
         border-radius: 20px;
-    }
-
-    .logo-img {
-        width: 76px;
     }
 
     .brand-name {
