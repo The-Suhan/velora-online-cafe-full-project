@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Feedback extends Model
 {
     use HasFactory;
 
     public $timestamps = false;
+
+    protected $table = 'feedbacks';
 
     protected $fillable = [
         'user_id',
@@ -21,7 +23,7 @@ class Feedback extends Model
     ];
 
     protected $casts = [
-        'is_done'    => 'boolean',
+        'is_done' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -49,8 +51,8 @@ class Feedback extends Model
     public function markAsDone(User $admin): void
     {
         $this->update([
-            'is_done'    => true,
-            'done_by'    => $admin->id,
+            'is_done' => true,
+            'done_by' => $admin->id,
             'updated_at' => now(),
         ]);
     }

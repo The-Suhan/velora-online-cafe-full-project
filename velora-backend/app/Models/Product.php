@@ -17,14 +17,12 @@ class Product extends Model
         'image_url',
         'is_active',
         'avg_rating',
-        'stock',
     ];
 
     protected $casts = [
         'price'      => 'decimal:2',
         'avg_rating' => 'decimal:2',
         'is_active'  => 'boolean',
-        'stock'      => 'integer',
     ];
 
     // ── Relations ─────────────────────────────────────────────

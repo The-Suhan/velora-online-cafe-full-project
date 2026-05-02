@@ -10,6 +10,7 @@ class OtpCode extends Model
     use HasFactory;
 
     public $timestamps = false;
+    protected $table = 'otp_codes';
 
     protected $fillable = [
         'user_id',

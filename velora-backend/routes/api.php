@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\CategoryController;
 
 // ── Auth ──────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
@@ -22,11 +23,25 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ── Admin only ────────────────────────────────────────────
     Route::middleware('admin')->prefix('admin')->group(function () {
-        Route::get('/dashboard', [AdminController::class, 'dashboard']);
+       // Dashboard
+        Route::get('/dashboard',    [AdminController::class, 'dashboard']);
         Route::get('/orders/chart', [AdminController::class, 'ordersChart']);
-        Route::get('/users', [AdminController::class, 'users']);       
-        Route::get('/users/stats', [AdminController::class, 'userStats']);
-        Route::get('/users/{user}', [AdminController::class, 'showUser']);  
+ 
+        // Users
+        Route::get('/users',           [AdminController::class, 'users']);
+        Route::get('/users/stats',     [AdminController::class, 'userStats']);
+        Route::get('/users/{user}',    [AdminController::class, 'showUser']);
         Route::delete('/users/{user}', [AdminController::class, 'destroyUser']);
+ 
+        // Categories — stats/index order onemli (Laravel route matching icin)
+        Route::get('/categories/stats',        [CategoryController::class, 'stats']);
+        Route::get('/categories',              [CategoryController::class, 'index']);
+        Route::get('/categories/{category}',   [CategoryController::class, 'show']);
+        Route::post('/categories',             [CategoryController::class, 'store']);
+        Route::post('/categories/{category}',  [CategoryController::class, 'update']);
+        Route::delete('/categories/{category}',[CategoryController::class, 'destroy']);
+        Route::patch('/categories/{category}/toggle', [CategoryController::class, 'toggle']);
+
+        
     });
 });

@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class OrderItem extends Model
 {
     use HasFactory;
 
     public $timestamps = false;
+
+    protected $table = 'order_items';
 
     protected $fillable = [
         'order_id',
@@ -20,9 +22,9 @@ class OrderItem extends Model
     ];
 
     protected $casts = [
-        'quantity'   => 'integer',
-        'price'      => 'decimal:2',
-        'subtotal'   => 'decimal:2',
+        'quantity' => 'integer',
+        'price' => 'decimal:2',
+        'subtotal' => 'decimal:2',
         'created_at' => 'datetime',
     ];
 
@@ -46,6 +48,7 @@ class OrderItem extends Model
     public static function createWithSubtotal(array $attributes): static
     {
         $attributes['subtotal'] = $attributes['quantity'] * $attributes['price'];
+
         return static::create($attributes);
     }
 }

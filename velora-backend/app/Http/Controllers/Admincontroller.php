@@ -37,8 +37,8 @@ class AdminController extends Controller
             ->where('avg_rating', '>', 0)
             ->orderByDesc('avg_rating')
             ->take(4)
-            ->get(['id', 'name', 'image_url', 'avg_rating']);
-
+            ->get();
+            
         // Recent delivered orders
         $recentOrders = Order::with(['user', 'items.product'])
             ->where('status', 'delivered')
@@ -59,7 +59,7 @@ class AdminController extends Controller
         $categories = Category::withCount('products')
             ->orderByDesc('products_count')
             ->take(6)
-            ->get(['id', 'name', 'image_url']);
+            ->get();
 
         return response()->json([
             'stats' => [

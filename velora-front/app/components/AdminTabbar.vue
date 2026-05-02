@@ -84,6 +84,7 @@ const items = computed(() => [
 }
 
 .tab-item {
+
     display: flex;
     flex-direction: column;
     align-items: center;

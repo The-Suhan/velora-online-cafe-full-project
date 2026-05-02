@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     typedPages: true,
   },
 
-  css: ['../assets/css/main.css'],
+  css: ['~/assets/css/main.css'],
 
   i18n: {
     locales: [
