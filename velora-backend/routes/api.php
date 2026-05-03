@@ -3,9 +3,10 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
 
 // ── Auth ──────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
@@ -35,7 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/users/{user}', [AdminController::class, 'showUser']);
         Route::delete('/users/{user}', [AdminController::class, 'destroyUser']);
 
-        // Categories — stats/index order onemli (Laravel route matching icin)
+        // Categories — stats/index order
         Route::get('/categories/stats', [CategoryController::class, 'stats']);
         Route::get('/categories', [CategoryController::class, 'index']);
         Route::get('/categories/{category}', [CategoryController::class, 'show']);
@@ -62,6 +63,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/orders/{order}/note', [OrderController::class, 'updateNote']);
         Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel']);
         Route::delete('/orders/{order}', [OrderController::class, 'destroy']);
-        
+
+        // Feedback
+        Route::get('/feedback/stats', [FeedbackController::class, 'stats']);
+        Route::get('/feedback/pending', [FeedbackController::class, 'pending']);
+        Route::get('/feedback/resolved', [FeedbackController::class, 'resolved']);
+        Route::get('/feedback', [FeedbackController::class, 'index']);
+        Route::get('/feedback/{feedback}', [FeedbackController::class, 'show']);
+        Route::patch('/feedback/{feedback}/resolve', [FeedbackController::class, 'resolve']);
+        Route::patch('/feedback/{feedback}/unresolve', [FeedbackController::class, 'unresolve']);
+        Route::delete('/feedback/{feedback}', [FeedbackController::class, 'destroy']);
     });
 });

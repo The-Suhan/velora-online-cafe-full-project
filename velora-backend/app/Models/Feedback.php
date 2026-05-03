@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Feedback extends Model
 {
@@ -33,12 +34,12 @@ class Feedback extends Model
 
     // ── Relations ─────────────────────────────────────────────
 
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function resolver()
+    public function resolver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'done_by');
     }
