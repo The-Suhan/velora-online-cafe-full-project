@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
 
 // ── Auth ──────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
