@@ -27,7 +27,13 @@ export const useAdmin = () => {
             await fetchMe()
         }
     }
-    
+    const fetchCategories = async (params: { per_page?: number; page?: number; search?: string } = {}) => {
+        return await $fetch(`${apiBase}/admin/categories`, {
+            headers: authHeaders.value,
+            query: params,
+        })
+    }
+
     const fetchUsers = async (params: {
         search?: string
         role?: string
@@ -66,6 +72,7 @@ export const useAdmin = () => {
         fetchUsers,
         fetchUserStats,
         fetchUser,
-        deleteUser
+        deleteUser,
+        fetchCategories,
     }
 }
