@@ -3,13 +3,13 @@
         <!-- Page Header -->
         <div class="page-header">
             <div>
-                <h1 class="page-title">User Management</h1>
-                <p class="page-sub">Oversee staff permissions and luxury clientele profiles.</p>
+                <h1 class="page-title">{{ $t('admin.users.title') }}</h1>
+                <p class="page-sub">{{ $t('admin.users.subtitle') }}</p>
             </div>
-            <span class="last-updated">Last updated: {{ lastUpdated }}</span>
+            <span class="last-updated">{{ $t('admin.users.lastUpdated', { time: lastUpdated }) }}</span>
         </div>
 
-        <!-- Stat card (sadece Total Users) -->
+        <!-- Stat card -->
         <div class="stats-row">
             <div class="stat-card">
                 <div class="stat-icon" style="background:#e8f0e4">
@@ -19,10 +19,10 @@
                     </svg>
                 </div>
                 <div class="stat-body">
-                    <p class="stat-label">Total Users</p>
+                    <p class="stat-label">{{ $t('admin.users.totalUsers') }}</p>
                     <p class="stat-value">{{ statsLoading ? '—' : formatNumber(stats.total) }}</p>
                     <p class="stat-growth positive" v-if="!statsLoading">
-                        ↑ {{ stats.growth }}% from last month
+                        ↑ {{ stats.growth }}% {{ $t('admin.users.fromLastMonth') }}
                     </p>
                 </div>
             </div>
@@ -31,7 +31,7 @@
         <!-- Table Card -->
         <div class="table-card">
             <div class="table-toolbar">
-                <span class="card-title">All Users</span>
+                <span class="card-title">{{ $t('admin.users.allUsers') }}</span>
                 <div class="toolbar-right">
                     <div class="search-wrap">
                         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -39,7 +39,7 @@
                             <circle cx="11" cy="11" r="8" />
                             <line x1="21" y1="21" x2="16.65" y2="16.65" />
                         </svg>
-                        <input v-model="search" class="search-input" placeholder="Search by name, email or role…"
+                        <input v-model="search" class="search-input" :placeholder="$t('admin.users.searchPlaceholder')"
                             @input="onSearchInput" />
                         <button v-if="search" class="search-clear" @click="clearSearch">×</button>
                     </div>
@@ -50,9 +50,9 @@
                             <line x1="11" y1="18" x2="13" y2="18" />
                         </svg>
                         <select v-model="roleFilter" class="filter-select" @change="loadUsers(1)">
-                            <option value="">All Roles</option>
-                            <option value="admin">Admin</option>
-                            <option value="customer">Customer</option>
+                            <option value="">{{ $t('admin.users.allRoles') }}</option>
+                            <option value="admin">{{ $t('admin.users.roleAdmin') }}</option>
+                            <option value="customer">{{ $t('admin.users.roleCustomer') }}</option>
                         </select>
                     </div>
                 </div>
@@ -63,10 +63,10 @@
                 <table class="users-table">
                     <thead>
                         <tr>
-                            <th>USER IDENTITY</th>
-                            <th>ROLE</th>
-                            <th>LAST ACTIVITY</th>
-                            <th>ACTIONS</th>
+                            <th>{{ $t('admin.users.userIdentity') }}</th>
+                            <th>{{ $t('admin.users.role') }}</th>
+                            <th>{{ $t('admin.users.lastActivity') }}</th>
+                            <th>{{ $t('admin.common.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -98,7 +98,8 @@
                                 <td class="last-activity-cell">{{ user.last_activity }}</td>
                                 <td>
                                     <div class="actions-cell">
-                                        <button class="icon-btn trash-btn" title="Delete" @click="askDelete(user)">
+                                        <button class="icon-btn trash-btn" :title="$t('admin.common.delete')"
+                                            @click="askDelete(user)">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="1.6">
                                                 <polyline points="3 6 5 6 21 6" />
@@ -123,7 +124,7 @@
                                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                                         <circle cx="12" cy="12" r="3" />
                                                     </svg>
-                                                    Preview
+                                                    {{ $t('admin.common.preview') }}
                                                 </button>
                                                 <button class="dropdown-item" @click="goOrders(user.id)">
                                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -131,7 +132,7 @@
                                                         <path d="M6 2h12l3 7H3L6 2z" />
                                                         <path d="M3 9v11a2 2 0 002 2h14a2 2 0 002-2V9" />
                                                     </svg>
-                                                    Orders
+                                                    {{ $t('admin.users.orders') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -144,7 +145,7 @@
                                         <circle cx="12" cy="8" r="4" />
                                         <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                                     </svg>
-                                    <p>No users found</p>
+                                    <p>{{ $t('admin.users.noUsers') }}</p>
                                 </td>
                             </tr>
                         </template>
@@ -184,14 +185,14 @@
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                         <circle cx="12" cy="12" r="3" />
                                     </svg>
-                                    Preview
+                                    {{ $t('admin.common.preview') }}
                                 </button>
                                 <button class="dropdown-item" @click="goOrders(user.id)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                                         <path d="M6 2h12l3 7H3L6 2z" />
                                         <path d="M3 9v11a2 2 0 002 2h14a2 2 0 002-2V9" />
                                     </svg>
-                                    Orders
+                                    {{ $t('admin.users.orders') }}
                                 </button>
                                 <button class="dropdown-item danger-item" @click="askDelete(user)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -199,31 +200,33 @@
                                         <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
                                         <path d="M10 11v6M14 11v6" />
                                     </svg>
-                                    Delete
+                                    {{ $t('admin.common.delete') }}
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <p v-if="users.length === 0" class="empty-msg">No users found</p>
+                    <p v-if="users.length === 0" class="empty-msg">{{ $t('admin.users.noUsers') }}</p>
                 </template>
             </div>
 
             <!-- Pagination -->
             <div class="pagination-row" v-if="pagination.last_page > 1">
                 <span class="pagination-info">
-                    Showing {{ pagination.from }}–{{ pagination.to }} of {{ pagination.total }} users
+                    {{ $t('admin.users.showingUsers', {
+                        from: pagination.from, to: pagination.to, total:
+                    pagination.total }) }}
                 </span>
                 <div class="pagination-btns">
                     <button class="page-btn" :disabled="pagination.current_page === 1"
-                        @click="loadUsers(pagination.current_page - 1)">Previous</button>
+                        @click="loadUsers(pagination.current_page - 1)">{{ $t('admin.users.previous') }}</button>
                     <button v-for="p in visiblePages" :key="p" class="page-btn"
                         :class="{ active: pagination.current_page === p }" @click="loadUsers(p)">{{ p }}</button>
                     <button class="page-btn" :disabled="pagination.current_page === pagination.last_page"
-                        @click="loadUsers(pagination.current_page + 1)">Next</button>
+                        @click="loadUsers(pagination.current_page + 1)">{{ $t('admin.users.next') }}</button>
                 </div>
             </div>
             <div class="pagination-row simple-info" v-else-if="pagination.total > 0">
-                <span class="pagination-info">{{ pagination.total }} users total</span>
+                <span class="pagination-info">{{ $t('admin.users.usersTotal', { total: pagination.total }) }}</span>
             </div>
         </div>
 
@@ -232,7 +235,7 @@
             <div v-if="previewModal" class="modal-backdrop" @click.self="previewModal = null">
                 <div class="modal">
                     <div class="modal-header">
-                        <span class="modal-title">User Preview</span>
+                        <span class="modal-title">{{ $t('admin.users.previewTitle') }}</span>
                         <button class="modal-close" @click="previewModal = null">×</button>
                     </div>
                     <div class="modal-body" v-if="previewLoading">
@@ -257,27 +260,29 @@
                         </div>
                         <div class="preview-details">
                             <div class="detail-row">
-                                <span class="detail-label">Last Activity</span>
+                                <span class="detail-label">{{ $t('admin.users.lastActivity') }}</span>
                                 <span class="detail-value">{{ previewData.last_activity }}</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Member Since</span>
+                                <span class="detail-label">{{ $t('admin.users.memberSince') }}</span>
                                 <span class="detail-value">{{ previewData.joined }}</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Total Orders</span>
+                                <span class="detail-label">{{ $t('admin.users.totalOrders') }}</span>
                                 <span class="detail-value">{{ previewData.order_count ?? 0 }}</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Verified</span>
-                                <span class="detail-value">{{ previewData.is_verified ? 'Yes' : 'No' }}</span>
+                                <span class="detail-label">{{ $t('admin.users.verified') }}</span>
+                                <span class="detail-value">{{ previewData.is_verified ? $t('admin.users.verifiedYes') :
+                                    $t('admin.users.verifiedNo') }}</span>
                             </div>
                         </div>
                         <div class="modal-actions">
-                            <button class="btn-secondary" @click="previewModal = null">Close</button>
+                            <button class="btn-secondary" @click="previewModal = null">{{ $t('admin.common.close')
+                                }}</button>
                             <NuxtLink :to="`/admin/orders?user=${previewData.id}`" class="btn-primary"
                                 @click="previewModal = null">
-                                View Orders
+                                {{ $t('admin.users.viewOrders') }}
                             </NuxtLink>
                         </div>
                     </div>
@@ -290,7 +295,7 @@
             <div v-if="deleteModal" class="modal-backdrop" @click.self="deleteModal = null">
                 <div class="modal modal-sm">
                     <div class="modal-header">
-                        <span class="modal-title">Delete User</span>
+                        <span class="modal-title">{{ $t('admin.users.deleteTitle') }}</span>
                         <button class="modal-close" @click="deleteModal = null">×</button>
                     </div>
                     <div class="modal-body">
@@ -302,16 +307,15 @@
                             </svg>
                         </div>
                         <p class="delete-msg">
-                            Are you sure you want to delete <strong>{{ deleteModal.name }}</strong>?
-                            This action cannot be undone.
+                            {{ $t('admin.users.deleteMsg', { name: deleteModal.name }) }}
                         </p>
                         <div class="modal-actions">
                             <button class="btn-secondary" :disabled="deleteLoading" @click="deleteModal = null">
-                                Cancel
+                                {{ $t('admin.common.cancel') }}
                             </button>
                             <button class="btn-danger" :disabled="deleteLoading" @click="confirmDelete">
-                                <span v-if="deleteLoading">Deleting…</span>
-                                <span v-else>Yes, Delete</span>
+                                <span v-if="deleteLoading">{{ $t('admin.common.deleting') }}</span>
+                                <span v-else>{{ $t('admin.users.deleteConfirm') }}</span>
                             </button>
                         </div>
                     </div>
@@ -327,9 +331,9 @@ definePageMeta({
     middleware: 'admin',
 })
 
+const { t } = useI18n()
 const { fetchUsers, fetchUserStats, fetchUser, deleteUser } = useAdmin()
 
-// ── Types ──────────────────────────────────────────────────
 interface UserRow {
     id: number
     name: string
@@ -349,7 +353,6 @@ interface Pagination {
     to: number
 }
 
-// ── State ──────────────────────────────────────────────────
 const loading = ref(true)
 const statsLoading = ref(true)
 const users = ref<UserRow[]>([])
@@ -369,7 +372,6 @@ const deleteLoading = ref(false)
 
 const lastUpdated = ref('')
 
-// ── Load ───────────────────────────────────────────────────
 const loadUsers = async (page = 1) => {
     loading.value = true
     try {
@@ -418,7 +420,6 @@ onUnmounted(() => {
     document.removeEventListener('click', closeMenu)
 })
 
-// ── Search (debounce) ──────────────────────────────────────
 let searchTimer: ReturnType<typeof setTimeout>
 const onSearchInput = () => {
     clearTimeout(searchTimer)
@@ -430,7 +431,6 @@ const clearSearch = () => {
     loadUsers(1)
 }
 
-// ── Pagination helper ──────────────────────────────────────
 const visiblePages = computed(() => {
     const total = pagination.value.last_page
     const cur = pagination.value.current_page
@@ -440,13 +440,11 @@ const visiblePages = computed(() => {
     return pages
 })
 
-// ── Menu ───────────────────────────────────────────────────
 const toggleMenu = (id: string | number) => {
     openMenu.value = openMenu.value === id ? null : id
 }
 const closeMenu = () => { openMenu.value = null }
 
-// ── Preview ────────────────────────────────────────────────
 const openPreview = async (id: number) => {
     openMenu.value = null
     previewModal.value = true
@@ -462,7 +460,6 @@ const openPreview = async (id: number) => {
     }
 }
 
-// ── Delete ─────────────────────────────────────────────────
 const askDelete = (user: UserRow) => {
     openMenu.value = null
     deleteModal.value = user
@@ -478,19 +475,17 @@ const confirmDelete = async () => {
         stats.value.total--
         deleteModal.value = null
     } catch (e: any) {
-        alert(e?.data?.message ?? 'Could not delete user.')
+        alert(e?.data?.message ?? t('admin.users.deleteError'))
     } finally {
         deleteLoading.value = false
     }
 }
 
-// ── Orders ─────────────────────────────────────────────────
 const goOrders = (id: number) => {
     openMenu.value = null
     navigateTo(`/admin/orders?user=${id}`)
 }
 
-// ── Helpers ────────────────────────────────────────────────
 const formatNumber = (n: number) => new Intl.NumberFormat().format(n ?? 0)
 const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
 </script>
@@ -621,7 +616,6 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     flex-wrap: wrap;
 }
 
-/* Search */
 .search-wrap {
     position: relative;
     display: flex;
@@ -670,7 +664,6 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     line-height: 1;
 }
 
-/* Filter */
 .filter-wrap {
     display: flex;
     align-items: center;
@@ -777,7 +770,6 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     white-space: nowrap;
 }
 
-/* Badges */
 .role-badge {
     display: inline-block;
     font-size: 0.7rem;
@@ -798,24 +790,6 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     color: #8a7060;
 }
 
-.role-manager {
-    background: #fdf3e4;
-    color: #C8A96E;
-    border: 1px solid #e8d4a0;
-}
-
-.role-editor {
-    background: #e8f0e4;
-    color: #4A6741;
-}
-
-.role-staff {
-    background: #F0EDE6;
-    color: #8a7060;
-}
-
-
-/* Actions */
 .actions-cell {
     display: flex;
     align-items: center;
@@ -850,7 +824,6 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     color: #c0392b;
 }
 
-/* Dropdown */
 .dots-wrap {
     position: relative;
 }
@@ -923,7 +896,6 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     background: #fdecea;
 }
 
-/* Skeleton */
 .skeleton-rows {
     display: flex;
     flex-direction: column;
@@ -949,7 +921,6 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     }
 }
 
-/* Empty */
 .empty-state {
     text-align: center;
     padding: 40px;
@@ -1149,7 +1120,6 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     padding: 20px;
 }
 
-/* Preview */
 .preview-avatar-wrap {
     width: 80px;
     margin: 0 auto 12px;
@@ -1221,11 +1191,6 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     color: #2C1810;
 }
 
-.preview-loading {
-    padding: 8px 0;
-}
-
-/* Delete modal */
 .delete-icon-wrap {
     width: 48px;
     height: 48px;

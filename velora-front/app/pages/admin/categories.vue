@@ -3,8 +3,8 @@
         <!-- Page Header -->
         <div class="page-header">
             <div>
-                <h1 class="page-title">Categories</h1>
-                <p class="page-sub">Manage and view all product categories.</p>
+                <h1 class="page-title">{{ $t('admin.categories.title') }}</h1>
+                <p class="page-sub">{{ $t('admin.categories.subtitle') }}</p>
             </div>
             <div class="header-actions">
                 <div class="search-wrapper">
@@ -12,15 +12,15 @@
                         <circle cx="9" cy="9" r="6" />
                         <path d="M15 15l3 3" stroke-linecap="round" />
                     </svg>
-                    <input v-model="search" type="text" placeholder="Search categories..." class="search-input"
-                        @input="onSearch" />
+                    <input v-model="search" type="text" :placeholder="$t('admin.categories.searchPlaceholder')"
+                        class="search-input" @input="onSearch" />
                 </div>
                 <button class="btn-add" @click="openAddModal">
                     <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
                         <path
                             d="M10 4a1 1 0 011 1v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4V5a1 1 0 011-1z" />
                     </svg>
-                    Add Category
+                    {{ $t('admin.categories.addCategory') }}
                 </button>
             </div>
         </div>
@@ -38,10 +38,11 @@
                     </svg>
                 </div>
                 <div class="stat-info">
-                    <p class="stat-label">Total Categories</p>
+                    <p class="stat-label">{{ $t('admin.categories.totalCategories') }}</p>
                     <p class="stat-value">{{ stats.total }}</p>
                     <p class="stat-growth" :class="stats.growth >= 0 ? 'positive' : 'negative'">
-                        {{ stats.growth >= 0 ? '↑' : '↓' }} {{ Math.abs(stats.growth) }}% this week
+                        {{ stats.growth >= 0 ? '↑' : '↓' }} {{ Math.abs(stats.growth) }}% {{
+                            $t('admin.dashboard.thisWeek') }}
                     </p>
                 </div>
             </div>
@@ -66,10 +67,10 @@
                 <table class="cat-table desktop-only">
                     <thead>
                         <tr>
-                            <th>Category</th>
-                            <th>Description</th>
-                            <th>Created At</th>
-                            <th>Actions</th>
+                            <th>{{ $t('admin.categories.categoryHeader') }}</th>
+                            <th>{{ $t('admin.common.description') }}</th>
+                            <th>{{ $t('admin.common.createdAt') }}</th>
+                            <th>{{ $t('admin.common.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,7 +92,8 @@
                                     </div>
                                     <div>
                                         <p class="cat-name">{{ cat.name }}</p>
-                                        <p class="cat-products-count">{{ cat.products_count }} products</p>
+                                        <p class="cat-products-count">{{ cat.products_count }} {{
+                                            $t('admin.dashboard.products') }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -99,7 +101,8 @@
                             <td class="cat-date">{{ cat.created_at }}</td>
                             <td>
                                 <div class="actions-cell">
-                                    <button class="btn-edit" title="Edit" @click="openEditModal(cat)">
+                                    <button class="btn-edit" :title="$t('admin.common.edit')"
+                                        @click="openEditModal(cat)">
                                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"
                                             width="15" height="15">
                                             <path d="M13.5 3.5l3 3L7 16H4v-3L13.5 3.5z" stroke-linecap="round"
@@ -122,7 +125,7 @@
                                                     <path d="M2 10s3-7 8-7 8 7 8 7-3 7-8 7-8-7-8-7z" />
                                                     <circle cx="10" cy="10" r="2.5" />
                                                 </svg>
-                                                Preview
+                                                {{ $t('admin.common.preview') }}
                                             </button>
                                             <button class="dropdown-item danger" @click="openDeleteModal(cat)">
                                                 <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
@@ -130,7 +133,7 @@
                                                     <path d="M3 5h14M8 5V3h4v2M6 5l1 12h6l1-12" stroke-linecap="round"
                                                         stroke-linejoin="round" />
                                                 </svg>
-                                                Delete
+                                                {{ $t('admin.common.delete') }}
                                             </button>
                                         </div>
                                     </div>
@@ -159,7 +162,8 @@
                             </div>
                             <div>
                                 <p class="cat-name">{{ cat.name }}</p>
-                                <p class="cat-products-count">{{ cat.products_count }} products</p>
+                                <p class="cat-products-count">{{ cat.products_count }} {{ $t('admin.dashboard.products')
+                                    }}</p>
                                 <p class="cat-date mt-1">{{ cat.created_at }}</p>
                             </div>
                         </div>
@@ -187,7 +191,7 @@
                                             <path d="M2 10s3-7 8-7 8 7 8 7-3 7-8 7-8-7-8-7z" />
                                             <circle cx="10" cy="10" r="2.5" />
                                         </svg>
-                                        Preview
+                                        {{ $t('admin.common.preview') }}
                                     </button>
                                     <button class="dropdown-item danger" @click="openDeleteModal(cat)">
                                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -195,7 +199,7 @@
                                             <path d="M3 5h14M8 5V3h4v2M6 5l1 12h6l1-12" stroke-linecap="round"
                                                 stroke-linejoin="round" />
                                         </svg>
-                                        Delete
+                                        {{ $t('admin.common.delete') }}
                                     </button>
                                 </div>
                             </div>
@@ -212,13 +216,14 @@
                         <rect x="6" y="27" width="15" height="15" rx="3" />
                         <rect x="27" y="27" width="15" height="15" rx="3" />
                     </svg>
-                    <p>No categories found</p>
+                    <p>{{ $t('admin.categories.noCategories') }}</p>
                 </div>
 
                 <!-- Pagination -->
                 <div v-if="pagination.last_page > 1" class="pagination">
-                    <p class="pagination-info">Showing {{ pagination.from }} to {{ pagination.to }} of {{
-                        pagination.total }} categories</p>
+                    <p class="pagination-info">{{ $t('admin.common.showing') }} {{ pagination.from }} {{
+                        $t('admin.common.to') }} {{ pagination.to }} {{ $t('admin.common.of') }} {{ pagination.total }}
+                        {{ $t('admin.categories.categoriesTotal') }}</p>
                     <div class="pagination-btns">
                         <button class="pg-btn" :disabled="pagination.current_page === 1"
                             @click="goToPage(pagination.current_page - 1)">
@@ -242,14 +247,14 @@
                     </div>
                 </div>
                 <div v-else-if="categories.length > 0" class="pagination-info-only">
-                    Showing 1 to {{ categories.length }} of {{ pagination.total }} categories
+                    {{ $t('admin.common.showing') }} 1 {{ $t('admin.common.to') }} {{ categories.length }} {{
+                        $t('admin.common.of') }}
+                    {{ pagination.total }} {{ $t('admin.categories.categoriesTotal') }}
                 </div>
             </template>
         </div>
 
         <!-- ── MODALS ── -->
-
-        <!-- Overlay -->
         <Transition name="fade">
             <div v-if="activeModal" class="modal-overlay" @click.self="closeModal" />
         </Transition>
@@ -258,7 +263,7 @@
         <Transition name="modal-slide">
             <div v-if="activeModal === 'add'" class="modal">
                 <div class="modal-header">
-                    <h2 class="modal-title">Add Category</h2>
+                    <h2 class="modal-title">{{ $t('admin.categories.addModalTitle') }}</h2>
                     <button class="modal-close" @click="closeModal">
                         <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
                             <path
@@ -268,17 +273,19 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="form-label">Name <span class="required">*</span></label>
-                        <input v-model="form.name" type="text" class="form-input" placeholder="e.g. Coffee" />
+                        <label class="form-label">{{ $t('admin.categories.nameLabel') }} <span
+                                class="required">*</span></label>
+                        <input v-model="form.name" type="text" class="form-input"
+                            :placeholder="$t('admin.categories.namePlaceholder')" />
                         <p v-if="formErrors.name" class="form-error">{{ formErrors.name }}</p>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Description</label>
+                        <label class="form-label">{{ $t('admin.categories.descriptionLabel') }}</label>
                         <textarea v-model="form.description" class="form-input form-textarea"
-                            placeholder="Short description..." rows="3"></textarea>
+                            :placeholder="$t('admin.categories.descriptionPlaceholder')" rows="3"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Image</label>
+                        <label class="form-label">{{ $t('admin.categories.imageLabel') }}</label>
                         <div class="image-upload-zone" :class="{ 'has-file': imagePreview, 'drag-over': isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="onDrop"
                             @click="triggerFileInput">
@@ -289,17 +296,17 @@
                                     <path d="M4 16l4-4 4 4 4-6 4 6" stroke-linecap="round" stroke-linejoin="round" />
                                     <rect x="3" y="3" width="18" height="18" rx="2" />
                                 </svg>
-                                <p>Drag & drop or <span>browse</span></p>
-                                <p class="upload-hint">JPG, PNG, WEBP · Max 2MB</p>
+                                <p>{{ $t('admin.common.dragDrop') }} <span>{{ $t('admin.common.browse') }}</span></p>
+                                <p class="upload-hint">{{ $t('admin.common.imageHint') }}</p>
                             </div>
                             <input ref="fileInput" type="file" accept="image/jpg,image/jpeg,image/png,image/webp"
                                 class="file-input-hidden" @change="onFileSelect" />
                         </div>
-                        <button v-if="imagePreview" class="remove-image-btn" @click.stop="removeImage">Remove
-                            image</button>
+                        <button v-if="imagePreview" class="remove-image-btn" @click.stop="removeImage">{{
+                            $t('admin.common.removeImage') }}</button>
                     </div>
                     <div class="form-group toggle-group">
-                        <label class="form-label">Active</label>
+                        <label class="form-label">{{ $t('admin.categories.activeLabel') }}</label>
                         <button class="toggle-btn" :class="{ on: form.is_active }"
                             @click="form.is_active = !form.is_active">
                             <span class="toggle-knob"></span>
@@ -307,10 +314,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" @click="closeModal">Cancel</button>
+                    <button class="btn-cancel" @click="closeModal">{{ $t('admin.common.cancel') }}</button>
                     <button class="btn-submit" :disabled="submitting" @click="submitAdd">
                         <span v-if="submitting" class="spinner"></span>
-                        {{ submitting ? 'Saving…' : 'Add Category' }}
+                        {{ submitting ? $t('admin.common.saving') : $t('admin.categories.addBtn') }}
                     </button>
                 </div>
             </div>
@@ -320,7 +327,7 @@
         <Transition name="modal-slide">
             <div v-if="activeModal === 'edit'" class="modal">
                 <div class="modal-header">
-                    <h2 class="modal-title">Edit Category</h2>
+                    <h2 class="modal-title">{{ $t('admin.categories.editModalTitle') }}</h2>
                     <button class="modal-close" @click="closeModal">
                         <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
                             <path
@@ -330,16 +337,17 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="form-label">Name <span class="required">*</span></label>
+                        <label class="form-label">{{ $t('admin.categories.nameLabel') }} <span
+                                class="required">*</span></label>
                         <input v-model="form.name" type="text" class="form-input" />
                         <p v-if="formErrors.name" class="form-error">{{ formErrors.name }}</p>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Description</label>
+                        <label class="form-label">{{ $t('admin.categories.descriptionLabel') }}</label>
                         <textarea v-model="form.description" class="form-input form-textarea" rows="3"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Image</label>
+                        <label class="form-label">{{ $t('admin.categories.imageLabel') }}</label>
                         <div class="image-upload-zone" :class="{ 'has-file': imagePreview, 'drag-over': isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="onDrop"
                             @click="triggerFileInput">
@@ -350,17 +358,17 @@
                                     <path d="M4 16l4-4 4 4 4-6 4 6" stroke-linecap="round" stroke-linejoin="round" />
                                     <rect x="3" y="3" width="18" height="18" rx="2" />
                                 </svg>
-                                <p>Drag & drop or <span>browse</span></p>
-                                <p class="upload-hint">JPG, PNG, WEBP · Max 2MB</p>
+                                <p>{{ $t('admin.common.dragDrop') }} <span>{{ $t('admin.common.browse') }}</span></p>
+                                <p class="upload-hint">{{ $t('admin.common.imageHint') }}</p>
                             </div>
                             <input ref="fileInput" type="file" accept="image/jpg,image/jpeg,image/png,image/webp"
                                 class="file-input-hidden" @change="onFileSelect" />
                         </div>
-                        <button v-if="imagePreview" class="remove-image-btn" @click.stop="removeImage">Remove
-                            image</button>
+                        <button v-if="imagePreview" class="remove-image-btn" @click.stop="removeImage">{{
+                            $t('admin.common.removeImage') }}</button>
                     </div>
                     <div class="form-group toggle-group">
-                        <label class="form-label">Active</label>
+                        <label class="form-label">{{ $t('admin.categories.activeLabel') }}</label>
                         <button class="toggle-btn" :class="{ on: form.is_active }"
                             @click="form.is_active = !form.is_active">
                             <span class="toggle-knob"></span>
@@ -368,10 +376,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" @click="closeModal">Cancel</button>
+                    <button class="btn-cancel" @click="closeModal">{{ $t('admin.common.cancel') }}</button>
                     <button class="btn-submit" :disabled="submitting" @click="submitEdit">
                         <span v-if="submitting" class="spinner"></span>
-                        {{ submitting ? 'Saving…' : 'Save Changes' }}
+                        {{ submitting ? $t('admin.common.saving') : $t('admin.categories.saveBtn') }}
                     </button>
                 </div>
             </div>
@@ -381,7 +389,7 @@
         <Transition name="modal-slide">
             <div v-if="activeModal === 'preview' && selectedCategory" class="modal modal-preview">
                 <div class="modal-header">
-                    <h2 class="modal-title">Category Preview</h2>
+                    <h2 class="modal-title">{{ $t('admin.categories.previewModalTitle') }}</h2>
                     <button class="modal-close" @click="closeModal">
                         <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
                             <path
@@ -401,31 +409,32 @@
                                 <rect x="6" y="27" width="15" height="15" rx="3" />
                                 <rect x="27" y="27" width="15" height="15" rx="3" />
                             </svg>
-                            <p>No image</p>
+                            <p>{{ $t('admin.common.noImage') }}</p>
                         </div>
                     </div>
                     <div class="preview-info">
                         <div class="preview-row">
-                            <span class="preview-key">Name</span>
+                            <span class="preview-key">{{ $t('admin.common.name') }}</span>
                             <span class="preview-val">{{ selectedCategory.name }}</span>
                         </div>
                         <div class="preview-row">
-                            <span class="preview-key">Description</span>
+                            <span class="preview-key">{{ $t('admin.common.description') }}</span>
                             <span class="preview-val">{{ selectedCategory.description || '—' }}</span>
                         </div>
                         <div class="preview-row">
-                            <span class="preview-key">Products</span>
+                            <span class="preview-key">{{ $t('admin.categories.products') }}</span>
                             <span class="preview-val">{{ selectedCategory.products_count }}</span>
                         </div>
                         <div class="preview-row">
-                            <span class="preview-key">Created</span>
+                            <span class="preview-key">{{ $t('admin.categories.created') }}</span>
                             <span class="preview-val">{{ selectedCategory.created_at }}</span>
                         </div>
                         <div class="preview-row">
-                            <span class="preview-key">Status</span>
+                            <span class="preview-key">{{ $t('admin.common.status') }}</span>
                             <span class="preview-val">
                                 <span class="status-badge" :class="selectedCategory.is_active ? 'active' : 'inactive'">
-                                    {{ selectedCategory.is_active ? 'Active' : 'Inactive' }}
+                                    {{ selectedCategory.is_active ? $t('admin.common.active') :
+                                    $t('admin.common.inactive') }}
                                 </span>
                             </span>
                         </div>
@@ -433,7 +442,7 @@
 
                     <!-- Recent Products -->
                     <div v-if="previewProducts.length" class="preview-products">
-                        <p class="preview-products-title">Recent Products</p>
+                        <p class="preview-products-title">{{ $t('admin.categories.recentProducts') }}</p>
                         <div class="preview-product-list">
                             <div v-for="p in previewProducts" :key="p.id" class="preview-product-item">
                                 <img v-if="p.image_url" :src="resolveImageUrl(p.image_url)" :alt="p.name"
@@ -443,15 +452,17 @@
                                     <p class="pp-name">{{ p.name }}</p>
                                     <p class="pp-price">${{ p.price }}</p>
                                 </div>
-                                <span class="pp-status" :class="p.is_active ? 'active' : 'inactive'">{{ p.is_active ?
-                                    'Active' :
-                                    'Inactive' }}</span>
+                                <span class="pp-status" :class="p.is_active ? 'active' : 'inactive'">
+                                    {{ p.is_active ? $t('admin.common.active') : $t('admin.common.inactive') }}
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-submit" @click="openEditModal(selectedCategory);">Edit</button>
+                    <button class="btn-submit" @click="openEditModal(selectedCategory);">{{
+                        $t('admin.categories.editBtn')
+                        }}</button>
                 </div>
             </div>
         </Transition>
@@ -460,7 +471,7 @@
         <Transition name="modal-slide">
             <div v-if="activeModal === 'delete' && selectedCategory" class="modal modal-delete">
                 <div class="modal-header">
-                    <h2 class="modal-title">Delete Category</h2>
+                    <h2 class="modal-title">{{ $t('admin.categories.deleteModalTitle') }}</h2>
                     <button class="modal-close" @click="closeModal">
                         <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
                             <path
@@ -477,22 +488,21 @@
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <p class="delete-title">Are you sure?</p>
+                    <p class="delete-title">{{ $t('admin.common.areYouSure') }}</p>
                     <p class="delete-desc">
-                        You're about to delete <strong>{{ selectedCategory.name }}</strong>. This action cannot be
-                        undone.
+                        {{ $t('admin.categories.deleteDesc') }} <strong>{{ selectedCategory.name }}</strong>. {{
+                            $t('admin.common.actionUndone') }}
                         <span v-if="selectedCategory.products_count > 0" class="delete-warning">
-                            This category has {{ selectedCategory.products_count }} product(s). Remove or reassign them
-                            first.
+                            {{ $t('admin.categories.deleteWarning', { n: selectedCategory.products_count }) }}
                         </span>
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" @click="closeModal">Cancel</button>
+                    <button class="btn-cancel" @click="closeModal">{{ $t('admin.common.cancel') }}</button>
                     <button class="btn-danger" :disabled="submitting || selectedCategory.products_count > 0"
                         @click="submitDelete">
                         <span v-if="submitting" class="spinner"></span>
-                        {{ submitting ? 'Deleting…' : 'Delete' }}
+                        {{ submitting ? $t('admin.common.deleting') : $t('admin.common.delete') }}
                     </button>
                 </div>
             </div>
@@ -522,11 +532,9 @@ import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 
 definePageMeta({ layout: 'admin' })
 
+const { t } = useI18n()
 const config = useRuntimeConfig()
 const API = config.public.apiBase
-
-// Derive Laravel storage base from API base
-// e.g. "http://localhost:8000/api" → "http://localhost:8000"
 const BACKEND_BASE = API.replace(/\/api\/?$/, '')
 
 function resolveImageUrl(url: string | null | undefined): string | null {
@@ -535,8 +543,7 @@ function resolveImageUrl(url: string | null | undefined): string | null {
     return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
 }
 
-// ── Auth headers ──────────────────────────────────────────────
-const { token } = useAuth() // assumes useAuth composable provides token
+const { token } = useAuth()
 const authHeaders = computed(() => ({ Authorization: `Bearer ${token.value}` }))
 
 // ── State ─────────────────────────────────────────────────────
@@ -598,7 +605,7 @@ async function fetchCategories(page = 1) {
             to: data.to,
         }
     } catch (e) {
-        showToast('Failed to load categories', 'error')
+        showToast(t('admin.categories.loadFailed'), 'error')
     } finally {
         loading.value = false
     }
@@ -698,7 +705,6 @@ function toggleDropdown(id: number, event: MouseEvent) {
         right: window.innerWidth - rect.right,
     }
     openDropdown.value = id
-    // Close on next outside click
     nextTick(() => {
         const handler = (e: MouseEvent) => {
             openDropdown.value = null
@@ -707,14 +713,9 @@ function toggleDropdown(id: number, event: MouseEvent) {
         document.addEventListener('click', handler)
     })
 }
-function closeDropdown() {
-    openDropdown.value = null
-}
 
 // ── Image upload ──────────────────────────────────────────────
-function triggerFileInput() {
-    fileInput.value?.click()
-}
+function triggerFileInput() { fileInput.value?.click() }
 
 function onFileSelect(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0]
@@ -729,7 +730,7 @@ function onDrop(e: DragEvent) {
 
 function handleFile(file: File) {
     if (file.size > 2 * 1024 * 1024) {
-        showToast('Image must be under 2MB', 'error')
+        showToast(t('admin.common.imageTooLarge'), 'error')
         return
     }
     imageFile.value = file
@@ -747,7 +748,7 @@ function removeImage() {
 // ── Submit ADD ────────────────────────────────────────────────
 async function submitAdd() {
     formErrors.name = ''
-    if (!form.name.trim()) { formErrors.name = 'Name is required'; return }
+    if (!form.name.trim()) { formErrors.name = t('admin.common.nameRequired'); return }
 
     submitting.value = true
     try {
@@ -762,12 +763,12 @@ async function submitAdd() {
             headers: authHeaders.value,
             body,
         })
-        showToast('Category created successfully', 'success')
+        showToast(t('admin.categories.createdSuccess'), 'success')
         closeModal()
         fetchStats()
         fetchCategories(currentPage.value)
     } catch (err: any) {
-        const msg = err?.data?.errors?.name?.[0] || err?.data?.message || 'Failed to create'
+        const msg = err?.data?.errors?.name?.[0] || err?.data?.message || t('admin.categories.createFailed')
         if (err?.data?.errors?.name) formErrors.name = msg
         else showToast(msg, 'error')
     } finally {
@@ -778,7 +779,7 @@ async function submitAdd() {
 // ── Submit EDIT ───────────────────────────────────────────────
 async function submitEdit() {
     formErrors.name = ''
-    if (!form.name.trim()) { formErrors.name = 'Name is required'; return }
+    if (!form.name.trim()) { formErrors.name = t('admin.common.nameRequired'); return }
 
     submitting.value = true
     try {
@@ -794,11 +795,11 @@ async function submitEdit() {
             headers: authHeaders.value,
             body,
         })
-        showToast('Category updated successfully', 'success')
+        showToast(t('admin.categories.updatedSuccess'), 'success')
         closeModal()
         fetchCategories(currentPage.value)
     } catch (err: any) {
-        const msg = err?.data?.errors?.name?.[0] || err?.data?.message || 'Failed to update'
+        const msg = err?.data?.errors?.name?.[0] || err?.data?.message || t('admin.categories.updateFailed')
         if (err?.data?.errors?.name) formErrors.name = msg
         else showToast(msg, 'error')
     } finally {
@@ -814,13 +815,13 @@ async function submitDelete() {
             method: 'DELETE',
             headers: authHeaders.value,
         })
-        showToast('Category deleted successfully', 'success')
+        showToast(t('admin.categories.deletedSuccess'), 'success')
         closeModal()
         fetchStats()
         if (categories.value.length === 1 && currentPage.value > 1) currentPage.value--
         fetchCategories(currentPage.value)
     } catch (err: any) {
-        showToast(err?.data?.message || 'Failed to delete', 'error')
+        showToast(err?.data?.message || t('admin.categories.deleteFailed'), 'error')
     } finally {
         submitting.value = false
     }
@@ -833,8 +834,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     toast.visible = true
     setTimeout(() => { toast.visible = false }, 3500)
 }
-
-
 </script>
 
 <style scoped>
@@ -990,7 +989,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     overflow: hidden;
 }
 
-/* Desktop table */
 .cat-table {
     width: 100%;
     border-collapse: collapse;
@@ -1074,7 +1072,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     white-space: nowrap;
 }
 
-/* Actions */
 .actions-cell {
     display: flex;
     align-items: center;
@@ -1486,7 +1483,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     margin-top: 4px;
 }
 
-/* Image upload zone */
 .image-upload-zone {
     border: 2px dashed #d1d5db;
     border-radius: 12px;
@@ -1553,7 +1549,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     text-decoration: underline;
 }
 
-/* Toggle */
 .toggle-group {
     display: flex;
     align-items: center;
@@ -1591,7 +1586,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     transform: translateX(20px);
 }
 
-/* Buttons */
 .btn-cancel {
     padding: 9px 18px;
     border: 1.5px solid #e5e7eb;
@@ -1656,7 +1650,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     cursor: not-allowed;
 }
 
-/* Spinner */
 .spinner {
     width: 14px;
     height: 14px;

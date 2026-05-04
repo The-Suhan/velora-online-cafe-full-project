@@ -1,5 +1,3 @@
-// composables/useFeedback.ts
-
 export interface FeedbackUser {
     id: number
     name: string

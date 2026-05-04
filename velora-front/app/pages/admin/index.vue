@@ -3,8 +3,8 @@
         <!-- Page header -->
         <div class="page-header">
             <div>
-                <h1 class="page-title">Dashboard</h1>
-                <p class="page-sub">Here's what's happening with your store today.</p>
+                <h1 class="page-title">{{ $t('admin.dashboard.title') }}</h1>
+                <p class="page-sub">{{ $t('admin.dashboard.subtitle') }}</p>
             </div>
         </div>
 
@@ -18,7 +18,7 @@
                     <p class="stat-label">{{ card.label }}</p>
                     <p class="stat-value">{{ formatNumber(card.value) }}</p>
                     <p class="stat-growth" :class="card.growth >= 0 ? 'positive' : 'negative'">
-                        {{ card.growth >= 0 ? '↑' : '↓' }} {{ Math.abs(card.growth) }}% this week
+                        {{ card.growth >= 0 ? '↑' : '↓' }} {{ Math.abs(card.growth) }}% {{ $t('admin.dashboard.thisWeek') }}
                     </p>
                 </div>
             </div>
@@ -29,7 +29,7 @@
             <!-- Orders Overview chart -->
             <div class="chart-card">
                 <div class="card-header">
-                    <span class="card-title">Orders Overview</span>
+                    <span class="card-title">{{ $t('admin.dashboard.ordersOverview') }}</span>
                     <div class="period-tabs">
                         <button v-for="p in periods" :key="p.value" class="period-btn"
                             :class="{ active: period === p.value }" @click="changePeriod(p.value)">
@@ -45,8 +45,8 @@
             <!-- Recent Orders -->
             <div class="recent-card">
                 <div class="card-header">
-                    <span class="card-title">Recent Orders</span>
-                    <NuxtLink to="/admin/orders" class="view-all">View All</NuxtLink>
+                    <span class="card-title">{{ $t('admin.dashboard.recentOrders') }}</span>
+                    <NuxtLink to="/admin/orders" class="view-all">{{ $t('admin.common.viewAll') }}</NuxtLink>
                 </div>
                 <div class="orders-list">
                     <div v-if="loading" class="loading-placeholder">
@@ -71,7 +71,7 @@
                             <p class="order-time">{{ timeAgo(order.created_at) }}</p>
                         </div>
                     </div>
-                    <p v-if="!loading && recentOrders.length === 0" class="empty-msg">No recent orders</p>
+                    <p v-if="!loading && recentOrders.length === 0" class="empty-msg">{{ $t('admin.dashboard.noRecentOrders') }}</p>
                 </div>
             </div>
         </div>
@@ -81,8 +81,8 @@
             <!-- Top Rated Products -->
             <div class="bottom-card">
                 <div class="card-header">
-                    <span class="card-title">Top Rated Products</span>
-                    <NuxtLink to="/admin/products" class="view-all">View All</NuxtLink>
+                    <span class="card-title">{{ $t('admin.dashboard.topRatedProducts') }}</span>
+                    <NuxtLink to="/admin/products" class="view-all">{{ $t('admin.common.viewAll') }}</NuxtLink>
                 </div>
                 <div class="products-list">
                     <div v-for="(product, idx) in topProducts" :key="product.id" class="product-row">
@@ -99,15 +99,15 @@
                         </div>
                         <span class="product-rating">{{ Number(product.avg_rating).toFixed(1) }}</span>
                     </div>
-                    <p v-if="!loading && topProducts.length === 0" class="empty-msg">No rated products yet</p>
+                    <p v-if="!loading && topProducts.length === 0" class="empty-msg">{{ $t('admin.dashboard.noRatedProducts') }}</p>
                 </div>
             </div>
 
             <!-- Categories Overview -->
             <div class="bottom-card">
                 <div class="card-header">
-                    <span class="card-title">Categories Overview</span>
-                    <NuxtLink to="/admin/categories" class="view-all">View All</NuxtLink>
+                    <span class="card-title">{{ $t('admin.dashboard.categoriesOverview') }}</span>
+                    <NuxtLink to="/admin/categories" class="view-all">{{ $t('admin.common.viewAll') }}</NuxtLink>
                 </div>
                 <div class="cat-list">
                     <div v-for="cat in categories" :key="cat.id" class="cat-row">
@@ -120,7 +120,7 @@
                         <span class="cat-name">{{ cat.name }}</span>
                         <span class="cat-count">{{ cat.products_count }}</span>
                     </div>
-                    <p v-if="!loading && categories.length === 0" class="empty-msg">No categories yet</p>
+                    <p v-if="!loading && categories.length === 0" class="empty-msg">{{ $t('admin.dashboard.noCategories') }}</p>
                 </div>
             </div>
         </div>
@@ -143,9 +143,10 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
 
 definePageMeta({
     layout: 'admin' as any,
-    middleware: 'admin',  
+    middleware: 'admin',
 })
 
+const { t } = useI18n()
 const { fetchDashboard, fetchOrdersChart } = useAdmin()
 const pendingOrders = useState('admin:pendingOrders')
 const unreadFeedbacks = useState('admin:unreadFeedbacks')
@@ -163,16 +164,16 @@ let chartInstance: Chart | null = null
 
 
 const periods: { value: Period; label: string }[] = [
-    { value: 'daily', label: 'Day' },
-    { value: 'weekly', label: 'Week' },
-    { value: 'monthly', label: 'Month' },
-    { value: 'yearly', label: 'Year' },
+    { value: 'daily', label: t('admin.dashboard.periodDay') },
+    { value: 'weekly', label: t('admin.dashboard.periodWeek') },
+    { value: 'monthly', label: t('admin.dashboard.periodMonth') },
+    { value: 'yearly', label: t('admin.dashboard.periodYear') },
 ]
 
 // ── Stat cards ─────────────────────────────────────────────
 const statCards = computed(() => [
     {
-        label: 'Total Users',
+        label: t('admin.dashboard.totalUsers'),
         value: stats.value.total_users ?? 0,
         growth: stats.value.users_growth ?? 0,
         bg: '#e8f0e4',
@@ -182,7 +183,7 @@ const statCards = computed(() => [
     </svg>`,
     },
     {
-        label: 'Total Orders',
+        label: t('admin.dashboard.totalOrders'),
         value: stats.value.total_orders ?? 0,
         growth: stats.value.orders_growth ?? 0,
         bg: '#fdf3e4',
@@ -192,7 +193,7 @@ const statCards = computed(() => [
     </svg>`,
     },
     {
-        label: 'Total Products',
+        label: t('admin.dashboard.totalProducts'),
         value: stats.value.total_products ?? 0,
         growth: 0,
         bg: '#2C1810',
@@ -203,7 +204,7 @@ const statCards = computed(() => [
     </svg>`,
     },
     {
-        label: 'Total Categories',
+        label: t('admin.dashboard.totalCategories'),
         value: stats.value.total_categories ?? 0,
         growth: 0,
         bg: '#e8f0e4',
@@ -230,7 +231,6 @@ onMounted(async () => {
         topProducts.value = d.top_products
         categories.value = d.categories
 
-        // Update layout-level badges
         pendingOrders.value = d.stats.pending_orders
         unreadFeedbacks.value = d.stats.unread_feedbacks
 

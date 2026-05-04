@@ -1,4 +1,5 @@
 <template>
+    <!-- pending.vue -->
     <OrdersStatusPage status="pending" :meta="meta">
         <template #icon>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24">
