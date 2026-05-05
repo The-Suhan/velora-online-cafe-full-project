@@ -43,13 +43,63 @@ export interface Pagination {
     to: number
 }
 
-export const STATUS_META: Record<OrderStatus | 'all', { label: string; color: string; bg: string; dot: string; badge: string; badgeBg: string }> = {
-    all: { label: 'All Orders', color: '#C8A96E', bg: '#fdf3e4', dot: '#C8A96E', badge: 'All', badgeBg: '#fdf3e4' },
-    pending: { label: 'Pending', color: '#d97706', bg: '#fef9e7', dot: '#d97706', badge: 'Awaiting', badgeBg: '#fef3c7' },
-    preparing: { label: 'Preparing', color: '#3b82f6', bg: '#eff6ff', dot: '#3b82f6', badge: 'In kitchen', badgeBg: '#dbeafe' },
-    ready: { label: 'Ready', color: '#16a34a', bg: '#f0fdf4', dot: '#16a34a', badge: 'To pick up', badgeBg: '#dcfce7' },
-    delivered: { label: 'Delivered', color: '#4A6741', bg: '#e8f0e4', dot: '#4A6741', badge: 'Completed', badgeBg: '#e8f0e4' },
-    cancelled: { label: 'Cancelled', color: '#dc2626', bg: '#fef2f2', dot: '#dc2626', badge: 'Refunded', badgeBg: '#fee2e2' },
+export const STATUS_META: Record<
+    OrderStatus | 'all',
+    { label: string; color: string; bg: string; dot: string; badge: string; badgeBg: string }
+> = {
+    all: {
+        label: 'admin.orders.allOrders',
+        color: '#C8A96E',
+        bg: '#fdf3e4',
+        dot: '#C8A96E',
+        badge: 'admin.orders.allOrders',
+        badgeBg: '#fdf3e4'
+    },
+
+    pending: {
+        label: 'admin.statuses.pending',
+        color: '#d97706',
+        bg: '#fef9e7',
+        dot: '#d97706',
+        badge: 'admin.statuses.pending',
+        badgeBg: '#fef3c7'
+    },
+
+    preparing: {
+        label: 'admin.statuses.preparing',
+        color: '#3b82f6',
+        bg: '#eff6ff',
+        dot: '#3b82f6',
+        badge: 'admin.statuses.preparing',
+        badgeBg: '#dbeafe'
+    },
+
+    ready: {
+        label: 'admin.statuses.ready',
+        color: '#16a34a',
+        bg: '#f0fdf4',
+        dot: '#16a34a',
+        badge: 'admin.statuses.ready',
+        badgeBg: '#dcfce7'
+    },
+
+    delivered: {
+        label: 'admin.statuses.delivered',
+        color: '#4A6741',
+        bg: '#e8f0e4',
+        dot: '#4A6741',
+        badge: 'admin.statuses.delivered',
+        badgeBg: '#e8f0e4'
+    },
+
+    cancelled: {
+        label: 'admin.statuses.cancelled',
+        color: '#dc2626',
+        bg: '#fef2f2',
+        dot: '#dc2626',
+        badge: 'admin.statuses.cancelled',
+        badgeBg: '#fee2e2'
+    },
 }
 
 export const STATUS_ORDER: OrderStatus[] = ['pending', 'preparing', 'ready', 'delivered']

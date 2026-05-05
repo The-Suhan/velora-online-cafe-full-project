@@ -10,7 +10,6 @@
             <NuxtLink v-for="item in navItems" :key="item.to" :to="item.to" class="nav-item" active-class="nav-active">
                 <span class="nav-icon" v-html="item.icon" />
                 <span class="nav-label">{{ item.label }}</span>
-                <!-- Badge -->
                 <span v-if="item.badge && item.badge > 0" class="nav-badge">
                     {{ item.badge > 99 ? '99+' : item.badge }}
                 </span>
@@ -25,7 +24,7 @@
                     <path d="M12 8v4M12 16h.01" />
                 </svg>
             </span>
-            <span>Logout</span>
+            <span>{{ $t('admin.sidebar.logout') }}</span>
         </button>
     </aside>
 </template>
@@ -42,7 +41,7 @@ const { t } = useI18n()
 const navItems = computed(() => [
     {
         to: '/admin',
-        label: 'Dashboard',
+        label: t('admin.sidebar.nav.dashboard'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <rect x="3" y="3" width="7" height="7" rx="1"/>
       <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -53,7 +52,7 @@ const navItems = computed(() => [
     },
     {
         to: '/admin/users',
-        label: 'Users',
+        label: t('admin.sidebar.nav.users'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <circle cx="12" cy="8" r="4"/>
       <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -62,7 +61,7 @@ const navItems = computed(() => [
     },
     {
         to: '/admin/products',
-        label: 'Products',
+        label: t('admin.sidebar.nav.products'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
       <line x1="3" y1="6" x2="21" y2="6"/>
@@ -72,7 +71,7 @@ const navItems = computed(() => [
     },
     {
         to: '/admin/categories',
-        label: 'Categories',
+        label: t('admin.sidebar.nav.categories'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <rect x="3" y="3" width="7" height="4" rx="1"/>
       <rect x="14" y="3" width="7" height="4" rx="1"/>
@@ -83,7 +82,7 @@ const navItems = computed(() => [
     },
     {
         to: '/admin/orders',
-        label: 'Orders',
+        label: t('admin.sidebar.nav.orders'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <path d="M6 2h12l3 7H3L6 2z"/>
       <path d="M3 9v11a2 2 0 002 2h14a2 2 0 002-2V9"/>
@@ -94,7 +93,7 @@ const navItems = computed(() => [
     },
     {
         to: '/admin/feedback',
-        label: 'Feedback',
+        label: t('admin.sidebar.nav.feedback'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>`,

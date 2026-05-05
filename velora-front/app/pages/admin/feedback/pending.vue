@@ -3,15 +3,15 @@
         <!-- Page Header -->
         <div class="page-header">
             <div>
-                <h1 class="page-title">Pending Feedback</h1>
-                <p class="page-sub">Unresolved feedback that requires your attention.</p>
+                <h1 class="page-title">{{ $t('admin.feedback.pending.title') }}</h1>
+                <p class="page-sub">{{ $t('admin.feedback.pending.subtitle') }}</p>
             </div>
             <NuxtLink to="/admin/feedback" class="btn-back">
                 <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
                     <path
                         d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" />
                 </svg>
-                All Feedback
+                {{ $t('admin.feedback.pending.backToAll') }}
             </NuxtLink>
         </div>
 
@@ -22,14 +22,15 @@
                     d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
                     clip-rule="evenodd" />
             </svg>
-            <span><strong>{{ pagination.total }}</strong> pending {{ pagination.total === 1 ? 'feedback' : 'feedbacks'
-                }} require attention.</span>
+            <span>
+                <strong>{{ pagination.total }}</strong> {{ $t('admin.feedback.pending.alertBanner') }}
+            </span>
         </div>
 
         <!-- Table Card -->
         <div class="table-card">
             <div class="table-toolbar">
-                <span class="table-title">Pending Responses</span>
+                <span class="table-title">{{ $t('admin.feedback.pending.tableTitle') }}</span>
                 <div class="toolbar-controls">
                     <div class="search-wrap">
                         <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor"
@@ -37,14 +38,14 @@
                             <circle cx="9" cy="9" r="6" />
                             <path d="M15 15l3 3" stroke-linecap="round" />
                         </svg>
-                        <input v-model="search" type="text" placeholder="Filter by user or email..."
+                        <input v-model="search" type="text" :placeholder="$t('admin.feedback.searchPlaceholder')"
                             class="search-input" @input="onSearch" />
                     </div>
 
                     <div class="type-tabs">
                         <button v-for="tab in typeTabs" :key="tab.value" class="type-tab"
                             :class="{ active: typeFilter === tab.value }" @click="setType(tab.value)">
-                            {{ tab.label }}
+                            {{ $t(tab.labelKey) }}
                         </button>
                     </div>
                 </div>
@@ -59,12 +60,12 @@
                 <table class="fb-table desktop-only">
                     <thead>
                         <tr>
-                            <th>User</th>
-                            <th>Type</th>
-                            <th>Subject</th>
-                            <th>Message Preview</th>
-                            <th>Submitted</th>
-                            <th>Actions</th>
+                            <th>{{ $t('admin.feedback.table.user') }}</th>
+                            <th>{{ $t('admin.feedback.table.type') }}</th>
+                            <th>{{ $t('admin.feedback.table.subject') }}</th>
+                            <th>{{ $t('admin.feedback.table.messagePreview') }}</th>
+                            <th>{{ $t('admin.feedback.table.createdAt') }}</th>
+                            <th>{{ $t('admin.feedback.table.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,21 +91,23 @@
                             <td class="date-cell">{{ fb.created_at }}</td>
                             <td>
                                 <div class="actions-cell">
-                                    <button class="btn-action btn-view" title="View" @click="openDetail(fb)">
+                                    <button class="btn-action btn-view" :title="$t('admin.feedback.actions.viewDetail')"
+                                        @click="openDetail(fb)">
                                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"
                                             width="14" height="14">
                                             <path d="M2 10s3-7 8-7 8 7 8 7-3 7-8 7-8-7-8-7z" />
                                             <circle cx="10" cy="10" r="2.5" />
                                         </svg>
                                     </button>
-                                    <button class="btn-action btn-resolve" title="Mark Resolved"
-                                        @click="handleResolve(fb)">
+                                    <button class="btn-action btn-resolve"
+                                        :title="$t('admin.feedback.actions.markResolved')" @click="handleResolve(fb)">
                                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"
                                             width="14" height="14">
                                             <path d="M5 10l4 4 6-6" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </button>
-                                    <button class="btn-action btn-delete" title="Delete" @click="openDelete(fb)">
+                                    <button class="btn-action btn-delete" :title="$t('admin.common.delete')"
+                                        @click="openDelete(fb)">
                                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"
                                             width="14" height="14">
                                             <path d="M3 5h14M8 5V3h4v2M6 5l1 12h6l1-12" stroke-linecap="round"
@@ -172,13 +175,18 @@
                         <circle cx="36" cy="36" r="8" />
                         <path d="M33 36l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                    <p>No pending feedback — all caught up!</p>
+                    <p>{{ $t('admin.feedback.pending.emptyState') }}</p>
                 </div>
 
                 <!-- Pagination -->
                 <div v-if="pagination.last_page > 1" class="pagination">
-                    <p class="pagination-info">Showing {{ pagination.from }}–{{ pagination.to }} of {{ pagination.total
-                        }} entries</p>
+                    <p class="pagination-info">
+                        {{ $t('admin.feedback.showingOf', {
+                            from: pagination.from,
+                            to: pagination.to,
+                            total: pagination.total
+                        }) }}
+                    </p>
                     <div class="pagination-btns">
                         <button class="pg-btn" :disabled="pagination.current_page === 1"
                             @click="load(pagination.current_page - 1)">
@@ -202,7 +210,7 @@
                     </div>
                 </div>
                 <div v-else-if="feedbacks.length > 0" class="pagination-info-only">
-                    Showing {{ feedbacks.length }} of {{ pagination.total }} pending entries
+                    {{ $t('admin.feedback.showingAll', { n: feedbacks.length, total: pagination.total }) }}
                 </div>
             </template>
         </div>
@@ -216,7 +224,7 @@
         <Transition name="modal-slide">
             <div v-if="activeModal === 'detail' && selectedFb" class="modal">
                 <div class="modal-header">
-                    <h2 class="modal-title">Feedback Detail</h2>
+                    <h2 class="modal-title">{{ $t('admin.feedback.modals.detail.title') }}</h2>
                     <button class="modal-close" @click="closeModal">
                         <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
                             <path
@@ -236,26 +244,26 @@
                         </div>
                         <span class="type-badge ml-auto" :class="typeColor(selectedFb.type)">{{
                             typeLabel(selectedFb.type)
-                            }}</span>
+                        }}</span>
                     </div>
                     <div class="detail-section">
-                        <p class="detail-label">Subject</p>
+                        <p class="detail-label">{{ $t('admin.feedback.modals.detail.subject') }}</p>
                         <p class="detail-value">{{ selectedFb.subject }}</p>
                     </div>
                     <div class="detail-section">
-                        <p class="detail-label">Message</p>
+                        <p class="detail-label">{{ $t('admin.feedback.modals.detail.message') }}</p>
                         <p class="detail-message">{{ detailFb?.message ?? selectedFb.message }}</p>
                     </div>
                     <div class="detail-section">
-                        <p class="detail-label">Submitted</p>
+                        <p class="detail-label">{{ $t('admin.feedback.modals.detail.submitted') }}</p>
                         <p class="detail-value">{{ selectedFb.created_at }}</p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" @click="closeModal">Close</button>
+                    <button class="btn-cancel" @click="closeModal">{{ $t('admin.common.close') }}</button>
                     <button class="btn-submit" :disabled="actionLoading" @click="handleResolveFromModal">
                         <span v-if="actionLoading" class="spinner" />
-                        Mark as Resolved
+                        {{ $t('admin.feedback.modals.detail.markResolved') }}
                     </button>
                 </div>
             </div>
@@ -265,7 +273,7 @@
         <Transition name="modal-slide">
             <div v-if="activeModal === 'delete' && selectedFb" class="modal modal-delete">
                 <div class="modal-header">
-                    <h2 class="modal-title">Delete Feedback</h2>
+                    <h2 class="modal-title">{{ $t('admin.feedback.modals.delete.title') }}</h2>
                     <button class="modal-close" @click="closeModal">
                         <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
                             <path
@@ -282,15 +290,18 @@
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <p class="delete-title">Are you sure?</p>
-                    <p class="delete-desc">You're about to permanently delete this feedback from <strong>{{
-                        selectedFb.user?.name ?? 'this user' }}</strong>.</p>
+                    <p class="delete-title">{{ $t('admin.common.areYouSure') }}</p>
+                    <p class="delete-desc">
+                        {{ $t('admin.feedback.modals.delete.desc', {
+                            name: selectedFb.user?.name ?? $t('admin.feedback.modals.delete.thisUser')
+                        }) }}
+                    </p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" @click="closeModal">Cancel</button>
+                    <button class="btn-cancel" @click="closeModal">{{ $t('admin.common.cancel') }}</button>
                     <button class="btn-danger" :disabled="actionLoading" @click="handleDelete">
                         <span v-if="actionLoading" class="spinner" />
-                        {{ actionLoading ? 'Deleting…' : 'Delete' }}
+                        {{ actionLoading ? $t('admin.common.deleting') : $t('admin.common.delete') }}
                     </button>
                 </div>
             </div>
@@ -320,6 +331,7 @@ import type { FeedbackItem, PaginationMeta } from '~/composables/useFeedback'
 
 definePageMeta({ layout: 'admin', middleware: 'admin' })
 
+const { t } = useI18n()
 const { fetchPending, fetchOne, resolve, destroy, typeLabel, typeColor } = useFeedback()
 
 // ── State ──────────────────────────────────────────────────────
@@ -336,10 +348,10 @@ const toast = reactive({ visible: false, message: '', type: 'success' })
 let searchTimeout: ReturnType<typeof setTimeout>
 
 const typeTabs = [
-    { value: '', label: 'All' },
-    { value: 'complaint', label: 'Complaints' },
-    { value: 'request', label: 'Requests' },
-    { value: 'question', label: 'Questions' },
+    { value: '', labelKey: 'admin.feedback.tabs.all' },
+    { value: 'complaint', labelKey: 'admin.feedback.tabs.complaints' },
+    { value: 'request', labelKey: 'admin.feedback.tabs.requests' },
+    { value: 'question', labelKey: 'admin.feedback.tabs.questions' },
 ]
 
 const visiblePages = computed(() => {
@@ -372,7 +384,7 @@ const load = async (page = 1) => {
             to: res.to,
         }
     } catch {
-        showToast('Failed to load feedback', 'error')
+        showToast(t('admin.feedback.toast.loadFailed'), 'error')
     } finally {
         loading.value = false
     }
@@ -413,8 +425,10 @@ const handleResolve = async (fb: FeedbackItem) => {
         await resolve(fb.id)
         feedbacks.value = feedbacks.value.filter(f => f.id !== fb.id)
         pagination.value.total = Math.max(0, pagination.value.total - 1)
-        showToast('Feedback resolved', 'success')
-    } catch { showToast('Failed to resolve', 'error') }
+        showToast(t('admin.feedback.toast.resolved'), 'success')
+    } catch {
+        showToast(t('admin.feedback.toast.resolveFailed'), 'error')
+    }
 }
 
 const handleResolveFromModal = async () => {
@@ -424,9 +438,13 @@ const handleResolveFromModal = async () => {
         await resolve(selectedFb.value.id)
         feedbacks.value = feedbacks.value.filter(f => f.id !== selectedFb.value!.id)
         pagination.value.total = Math.max(0, pagination.value.total - 1)
-        showToast('Feedback resolved', 'success')
+        showToast(t('admin.feedback.toast.resolved'), 'success')
         closeModal()
-    } catch { showToast('Failed to resolve', 'error') } finally { actionLoading.value = false }
+    } catch {
+        showToast(t('admin.feedback.toast.resolveFailed'), 'error')
+    } finally {
+        actionLoading.value = false
+    }
 }
 
 const handleDelete = async () => {
@@ -436,9 +454,13 @@ const handleDelete = async () => {
         await destroy(selectedFb.value.id)
         feedbacks.value = feedbacks.value.filter(f => f.id !== selectedFb.value!.id)
         pagination.value.total = Math.max(0, pagination.value.total - 1)
-        showToast('Feedback deleted', 'success')
+        showToast(t('admin.feedback.toast.deleted'), 'success')
         closeModal()
-    } catch { showToast('Failed to delete', 'error') } finally { actionLoading.value = false }
+    } catch {
+        showToast(t('admin.feedback.toast.deleteFailed'), 'error')
+    } finally {
+        actionLoading.value = false
+    }
 }
 
 const initials = (name?: string) => {

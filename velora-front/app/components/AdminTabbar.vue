@@ -18,10 +18,12 @@ const props = defineProps<{
     unreadFeedbacks: number
 }>()
 
+const { t } = useI18n()
+
 const items = computed(() => [
     {
         to: '/admin',
-        label: 'Dashboard',
+        label: t('admin.sidebar.nav.dashboard'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <rect x="3" y="3" width="7" height="7" rx="1"/>
       <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -32,7 +34,7 @@ const items = computed(() => [
     },
     {
         to: '/admin/users',
-        label: 'Users',
+        label: t('admin.sidebar.nav.users'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <circle cx="12" cy="8" r="4"/>
       <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -41,7 +43,7 @@ const items = computed(() => [
     },
     {
         to: '/admin/products',
-        label: 'Products',
+        label: t('admin.sidebar.nav.products'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
       <line x1="3" y1="6" x2="21" y2="6"/>
@@ -50,7 +52,7 @@ const items = computed(() => [
     },
     {
         to: '/admin/orders',
-        label: 'Orders',
+        label: t('admin.sidebar.nav.orders'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <path d="M6 2h12l3 7H3L6 2z"/>
       <path d="M3 9v11a2 2 0 002 2h14a2 2 0 002-2V9"/>
@@ -59,7 +61,7 @@ const items = computed(() => [
     },
     {
         to: '/admin/feedback',
-        label: 'Feedback',
+        label: t('admin.sidebar.nav.feedback'),
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>`,
@@ -84,7 +86,6 @@ const items = computed(() => [
 }
 
 .tab-item {
-
     display: flex;
     flex-direction: column;
     align-items: center;

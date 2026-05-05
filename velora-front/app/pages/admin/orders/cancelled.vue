@@ -17,11 +17,11 @@
 
 <script setup lang="ts">
 definePageMeta({ layout: 'admin' as any, middleware: 'admin' })
-
-const meta = {
-    label: 'Cancelled',
-    desc: 'Orders that were cancelled and refunded.',
-    badge: 'Refunded',
-    emptyMsg: 'No cancelled orders. That\'s great news!',
-}
+const { t } = useI18n()
+const meta = computed(() => ({
+    label: t('admin.orders.cancelled.label'),
+    desc: t('admin.orders.cancelled.desc'),
+    badge: t('admin.orders.cancelled.badge'),
+    emptyMsg: t('admin.orders.cancelled.emptyMsg'),
+}))
 </script>

@@ -1,6 +1,5 @@
 <template>
     <div class="orders-page">
-            <!-- admin ordersStatusPage vue -->
         <!-- ── Page Header ──────────────────────────────────────── -->
         <div class="page-header">
             <div class="header-left">
@@ -24,7 +23,8 @@
                         <circle cx="9" cy="9" r="6" />
                         <path d="M15 15l3 3" stroke-linecap="round" />
                     </svg>
-                    <input v-model="search" type="text" :placeholder="`Search ${meta.label.toLowerCase()}…`"
+                    <input v-model="search" type="text"
+                        :placeholder="$t('admin.orders.statusPage.searchPlaceholder', { status: meta.label.toLowerCase() })"
                         class="search-input" @input="onSearch" />
                 </div>
                 <!-- Date filter -->
@@ -34,17 +34,18 @@
                             height="14">
                             <polygon points="20 2 2 2 9 10.46 9 17 11 19 11 10.46 20 2" />
                         </svg>
-                        Filter
+                        {{ $t('admin.orders.statusPage.filter') }}
                     </button>
                     <Transition name="dropdown">
                         <div v-if="showFilter" class="filter-dropdown">
-                            <p class="filter-label">Date Range</p>
+                            <p class="filter-label">{{ $t('admin.orders.statusPage.dateRange') }}</p>
                             <div class="date-inputs">
                                 <input v-model="filterFrom" type="date" class="filter-date" @change="applyFilter" />
                                 <span class="date-sep">→</span>
                                 <input v-model="filterTo" type="date" class="filter-date" @change="applyFilter" />
                             </div>
-                            <button class="filter-reset" @click="resetFilter">Reset</button>
+                            <button class="filter-reset" @click="resetFilter">{{
+                                $t('admin.orders.statusPage.resetFilter') }}</button>
                         </div>
                     </Transition>
                 </div>
@@ -58,7 +59,7 @@
                     <path d="M5 2h10l2 5H3L5 2z" />
                     <path d="M3 7v9a1 1 0 001 1h12a1 1 0 001-1V7" />
                 </svg>
-                All ({{ stats.total }})
+                {{ $t('admin.orders.statusPage.allOrders', { n: stats.total }) }}
             </NuxtLink>
             <NuxtLink v-for="s in otherStatuses" :key="s" :to="`/admin/orders/${s}`" class="status-nav-chip"
                 :class="`chip-${s}`">
@@ -74,7 +75,7 @@
             </div>
             <div class="summary-info">
                 <p class="summary-label">{{ meta.label }}</p>
-                <p class="summary-count">{{ pagination.total }} orders</p>
+                <p class="summary-count">{{ $t('admin.orders.statusPage.ordersCount', { n: pagination.total }) }}</p>
             </div>
             <div class="summary-badge" :class="`sbadge-${status}`">{{ meta.badge }}</div>
         </div>
@@ -102,12 +103,12 @@
                     <table class="orders-table">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Total</th>
-                                <th>Items</th>
-                                <th>Created At</th>
-                                <th>Actions</th>
+                                <th>{{ $t('admin.orders.statusPage.orderIdHeader') }}</th>
+                                <th>{{ $t('admin.orders.statusPage.customerHeader') }}</th>
+                                <th>{{ $t('admin.orders.statusPage.totalHeader') }}</th>
+                                <th>{{ $t('admin.orders.statusPage.itemsHeader') }}</th>
+                                <th>{{ $t('admin.orders.statusPage.createdAtHeader') }}</th>
+                                <th>{{ $t('admin.orders.statusPage.actionsHeader') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -136,7 +137,7 @@
                                                 <path d="M2 10s3-7 8-7 8 7 8 7-3 7-8 7-8-7-8-7z" />
                                                 <circle cx="10" cy="10" r="2.5" />
                                             </svg>
-                                            View
+                                            {{ $t('admin.orders.statusPage.viewBtn') }}
                                         </button>
                                         <div class="dropdown-wrap">
                                             <button class="btn-dots" @click.stop="toggleDropdown(order.id, $event)">
@@ -155,7 +156,7 @@
                                                             <path d="M13.5 3.5l3 3L7 16H4v-3L13.5 3.5z"
                                                                 stroke-linecap="round" stroke-linejoin="round" />
                                                         </svg>
-                                                        Edit Status
+                                                        {{ $t('admin.orders.statusPage.editStatusBtn') }}
                                                     </button>
                                                     <button class="dropdown-item" @click="openReceiptModal(order)">
                                                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
@@ -164,7 +165,7 @@
                                                                 stroke-linejoin="round" />
                                                             <path d="M7 7h6M7 10h4" stroke-linecap="round" />
                                                         </svg>
-                                                        Export Receipt
+                                                        {{ $t('admin.orders.statusPage.exportReceiptBtn') }}
                                                     </button>
                                                     <button v-if="canCancel(order.status)" class="dropdown-item warning"
                                                         @click="openCancelModal(order)">
@@ -173,7 +174,7 @@
                                                             <circle cx="10" cy="10" r="8" />
                                                             <path d="M13 7l-6 6M7 7l6 6" stroke-linecap="round" />
                                                         </svg>
-                                                        Cancel Order
+                                                        {{ $t('admin.orders.statusPage.cancelOrderBtn') }}
                                                     </button>
                                                     <button v-if="canDelete(order.status)" class="dropdown-item danger"
                                                         @click="openDeleteModal(order)">
@@ -182,7 +183,7 @@
                                                             <path d="M3 5h14M8 5V3h4v2M6 5l1 12h6l1-12"
                                                                 stroke-linecap="round" stroke-linejoin="round" />
                                                         </svg>
-                                                        Delete
+                                                        {{ $t('admin.orders.statusPage.deleteBtn') }}
                                                     </button>
                                                 </div>
                                             </Teleport>
@@ -208,9 +209,16 @@
                             <span class="price-badge">${{ order.total_price.toFixed(2) }}</span>
                         </div>
                         <div class="mobile-bottom">
-                            <span class="mobile-meta">{{ order.items_count }} items · {{ order.created_at }}</span>
+                            <span class="mobile-meta">{{
+                                $t('admin.orders.statusPage.mobileItemsMeta', {
+                                    items: order.items_count,
+                                    date: order.created_at
+                                })
+                            }}</span>
                             <div class="mobile-actions">
-                                <button class="btn-view-sm" @click="openPreviewModal(order)">View</button>
+                                <button class="btn-view-sm" @click="openPreviewModal(order)">
+                                    {{ $t('admin.orders.statusPage.viewBtn') }}
+                                </button>
                                 <div class="dropdown-wrap">
                                     <button class="btn-dots" @click.stop="toggleDropdown(order.id, $event)">
                                         <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15">
@@ -222,14 +230,20 @@
                                     <Teleport to="body">
                                         <div v-if="openDrop === order.id" class="dropdown-menu"
                                             :style="{ top: dropPos.top + 'px', right: dropPos.right + 'px' }">
-                                            <button class="dropdown-item" @click="openEditModal(order)">Edit
-                                                Status</button>
-                                            <button class="dropdown-item" @click="openReceiptModal(order)">Export
-                                                Receipt</button>
+                                            <button class="dropdown-item" @click="openEditModal(order)">
+                                                {{ $t('admin.orders.statusPage.editStatusBtn') }}
+                                            </button>
+                                            <button class="dropdown-item" @click="openReceiptModal(order)">
+                                                {{ $t('admin.orders.statusPage.exportReceiptBtn') }}
+                                            </button>
                                             <button v-if="canCancel(order.status)" class="dropdown-item warning"
-                                                @click="openCancelModal(order)">Cancel Order</button>
+                                                @click="openCancelModal(order)">
+                                                {{ $t('admin.orders.statusPage.cancelOrderBtn') }}
+                                            </button>
                                             <button v-if="canDelete(order.status)" class="dropdown-item danger"
-                                                @click="openDeleteModal(order)">Delete</button>
+                                                @click="openDeleteModal(order)">
+                                                {{ $t('admin.orders.statusPage.deleteBtn') }}
+                                            </button>
                                         </div>
                                     </Teleport>
                                 </div>
@@ -250,14 +264,22 @@
                             </svg>
                         </slot>
                     </div>
-                    <p class="empty-title">No {{ meta.label.toLowerCase() }} orders</p>
+                    <p class="empty-title">{{ $t('admin.orders.statusPage.emptyTitle', {
+                        status:
+                            meta.label.toLowerCase()
+                    }) }}</p>
                     <p class="empty-sub">{{ meta.emptyMsg }}</p>
                 </div>
 
                 <!-- Pagination -->
                 <div v-if="pagination.last_page > 1" class="pagination">
-                    <p class="pagination-info">Showing {{ pagination.from }}–{{ pagination.to }} of {{ pagination.total
-                        }}</p>
+                    <p class="pagination-info">{{
+                        $t('admin.orders.statusPage.showingOf', {
+                            from: pagination.from,
+                            to: pagination.to,
+                            total: pagination.total
+                        })
+                    }}</p>
                     <div class="pagination-btns">
                         <button class="pg-btn" :disabled="pagination.current_page === 1"
                             @click="goToPage(pagination.current_page - 1)">
@@ -280,8 +302,12 @@
                         </button>
                     </div>
                 </div>
-                <div v-else-if="orders.length > 0" class="pg-simple">Showing {{ orders.length }} of {{ pagination.total
-                    }} orders</div>
+                <div v-else-if="orders.length > 0" class="pg-simple">{{
+                    $t('admin.orders.statusPage.showingAll', {
+                        n: orders.length,
+                        total: pagination.total
+                    })
+                }}</div>
             </template>
         </div>
 

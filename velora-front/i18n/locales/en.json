@@ -252,7 +252,235 @@
       "ordersTotal": "orders",
       "thisWeek": "this week",
       "activeFilter": "{status} filter active",
-      "clearFilter": "Clear filter"
+      "clearFilter": "Clear filter",
+      "statusPage": {
+        "searchPlaceholder": "Search {status}…",
+        "filter": "Filter",
+        "dateRange": "Date Range",
+        "resetFilter": "Reset",
+        "allOrders": "All ({n})",
+        "ordersCount": "{n} orders",
+        "orderIdHeader": "Order ID",
+        "customerHeader": "Customer",
+        "totalHeader": "Total",
+        "itemsHeader": "Items",
+        "createdAtHeader": "Created At",
+        "actionsHeader": "Actions",
+        "viewBtn": "View",
+        "editStatusBtn": "Edit Status",
+        "exportReceiptBtn": "Export Receipt",
+        "cancelOrderBtn": "Cancel Order",
+        "deleteBtn": "Delete",
+        "emptyTitle": "No {status} orders",
+        "showingOf": "Showing {from}–{to} of {total}",
+        "showingAll": "Showing {n} of {total} orders",
+        "mobileItemsMeta": "{items} items · {date}"
+      },
+      "modals": {
+        "preview": {
+          "title": "Order Details",
+          "customer": "Customer",
+          "items": "Items",
+          "unknownProduct": "Unknown product",
+          "eachPrice": "${price} each",
+          "total": "Total",
+          "note": "Note",
+          "created": "Created",
+          "updated": "Updated"
+        },
+        "edit": {
+          "title": "Edit Status",
+          "currentStatus": "Current Status",
+          "changeTo": "Change To",
+          "terminalMsg": "This order is in a terminal state and cannot be changed.",
+          "noteLabel": "Note (optional)",
+          "notePlaceholder": "Add a note…"
+        },
+        "cancel": {
+          "title": "Cancel Order",
+          "confirmTitle": "Cancel this order?",
+          "confirmDesc": "Order {order} from {customer} will be cancelled. This cannot be undone.",
+          "goBack": "Go Back",
+          "cancelling": "Cancelling…"
+        },
+        "delete": {
+          "title": "Delete Order",
+          "confirmDesc": "Permanently delete {order}. This action cannot be undone.",
+          "deleteWarning": "Only delivered or cancelled orders can be deleted."
+        },
+        "receipt": {
+          "title": "Order Receipt",
+          "tagline": "Every sip tells a story.",
+          "order": "Order",
+          "date": "Date",
+          "customer": "Customer",
+          "status": "Status",
+          "loadingItems": "Loading items…",
+          "itemCol": "Item",
+          "qtyCol": "Qty",
+          "priceCol": "Price",
+          "defaultItem": "Item",
+          "totalLabel": "TOTAL",
+          "quote": "\"Good coffee is a pleasure. Good friends are a treasure.\"",
+          "thanks": "Thank you for choosing Velora Café!",
+          "generating": "Generating…",
+          "downloadPdf": "Download PDF"
+        }
+      },
+      "pending": {
+        "label": "Pending",
+        "desc": "Orders waiting to be accepted and prepared.",
+        "badge": "Awaiting",
+        "emptyMsg": "No pending orders right now. New orders will appear here."
+      },
+      "preparing": {
+        "label": "Preparing",
+        "desc": "Orders currently being prepared in the kitchen.",
+        "badge": "In Progress",
+        "emptyMsg": "No orders are being prepared right now."
+      },
+      "ready": {
+        "label": "Ready",
+        "desc": "Orders ready for pickup or delivery.",
+        "badge": "Ready",
+        "emptyMsg": "No orders are ready for pickup right now."
+      },
+      "delivered": {
+        "label": "Delivered",
+        "desc": "Orders that have been successfully delivered.",
+        "badge": "Completed",
+        "emptyMsg": "No delivered orders yet."
+      },
+      "cancelled": {
+        "label": "Cancelled",
+        "desc": "Orders that were cancelled by the customer or admin.",
+        "badge": "Cancelled",
+        "emptyMsg": "No cancelled orders. That's a good sign!"
+      }
+    },
+    "feedback": {
+      "title": "Feedback Management",
+      "subtitle": "Review and manage guest experiences across all locations.",
+      "recentFeedback": "Recent Guest Feedback",
+      "searchPlaceholder": "Filter by user or email...",
+      "allStatus": "All Status",
+      "statusPending": "Pending",
+      "statusResolved": "Resolved",
+      "statusDone": "Done",
+      "noFeedback": "No feedback found",
+      "showingOf": "Showing {from}–{to} of {total} feedback entries",
+      "showingAll": "Showing {n} of {total} feedback entries",
+      "stats": {
+        "totalFeedback": "Total Feedback",
+        "fromLastMonth": "% from last month",
+        "requiresAttention": "Requires attention",
+        "pendingResponse": "Pending Response",
+        "viewPending": "View Pending",
+        "resolvedCases": "Resolved Cases",
+        "resolutionRate": "{rate}% resolution rate",
+        "viewResolved": "View Resolved"
+      },
+      "tabs": {
+        "all": "All",
+        "complaints": "Complaints",
+        "requests": "Requests",
+        "questions": "Questions"
+      },
+      "table": {
+        "user": "User",
+        "type": "Type",
+        "subject": "Subject",
+        "messagePreview": "Message Preview",
+        "status": "Status",
+        "createdAt": "Created At",
+        "actions": "Actions"
+      },
+      "actions": {
+        "viewDetail": "View Detail",
+        "markResolved": "Mark Resolved",
+        "reopen": "Reopen"
+      },
+      "modals": {
+        "detail": {
+          "title": "Feedback Detail",
+          "subject": "Subject",
+          "message": "Message",
+          "status": "Status",
+          "submitted": "Submitted",
+          "resolvedBy": "Resolved By",
+          "markResolved": "Mark as Resolved",
+          "reopen": "Reopen"
+        },
+        "delete": {
+          "title": "Delete Feedback",
+          "desc": "You're about to permanently delete the feedback from {name}. This action cannot be undone.",
+          "thisUser": "this user"
+        }
+      },
+      "toast": {
+        "loadFailed": "Failed to load feedback",
+        "resolved": "Feedback marked as resolved",
+        "resolveFailed": "Failed to resolve",
+        "reopened": "Feedback reopened",
+        "reopenFailed": "Failed to reopen",
+        "deleted": "Feedback deleted",
+        "deleteFailed": "Failed to delete"
+      },
+      "pending": {
+        "title": "Pending Feedback",
+        "subtitle": "Unresolved feedback that requires your attention.",
+        "backToAll": "All Feedback",
+        "alertBanner": "pending feedback entries require attention.",
+        "tableTitle": "Pending Responses",
+        "emptyState": "No pending feedback — all caught up!"
+      },
+      "resolved": {
+        "title": "Resolved Feedback",
+        "subtitle": "All feedback that has been successfully handled.",
+        "tableTitle": "Resolved Cases",
+        "resolvedAt": "Resolved At",
+        "resolvedBy": "Resolved by {name} · {date}",
+        "done": "Done",
+        "emptyState": "No resolved feedback found",
+        "deleteDesc": "You're about to permanently delete the resolved feedback from {name}."
+      }
+    },
+    "header": {
+      "greetings": {
+        "g1": "Welcome back",
+        "g2": "Good to see you again",
+        "g3": "Back at it again",
+        "g4": "Ready when you are",
+        "g5": "All set on our side",
+        "g6": "Hey, welcome"
+      },
+      "suffixes": {
+        "s1": "— your dashboard is ready.",
+        "s2": "— everything’s running smoothly.",
+        "s3": "— let’s keep things moving.",
+        "s4": "— the team’s all set.",
+        "s5": "— hope you have a productive session.",
+        "s6": "— you’re in control."
+      }
+    },
+    "sidebar": {
+      "logout": "Logout",
+      "nav": {
+        "dashboard": "Dashboard",
+        "users": "Users",
+        "products": "Products",
+        "categories": "Categories",
+        "orders": "Orders",
+        "feedback": "Feedback"
+      }
+    },
+    "statuses": {
+      "awaiting": "Pending",
+      "pending": "Pending",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
     }
   }
 }

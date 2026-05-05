@@ -13,8 +13,8 @@
                         <circle cx="9" cy="9" r="6" />
                         <path d="M15 15l3 3" stroke-linecap="round" />
                     </svg>
-                    <input v-model="search" type="text" :placeholder="$t('admin.orders.searchPlaceholder')" class="search-input"
-                        @input="onSearch" />
+                    <input v-model="search" type="text" :placeholder="$t('admin.orders.searchPlaceholder')"
+                        class="search-input" @input="onSearch" />
                 </div>
                 <!-- Filter -->
                 <div class="filter-wrap" @click.stop>
@@ -30,7 +30,9 @@
                             <p class="filter-label">{{ $t('admin.orders.filterStatus') }}</p>
                             <select v-model="filterStatus" class="filter-select" @change="applyFilter">
                                 <option value="">{{ $t('admin.orders.allStatuses') }}</option>
-                                <option v-for="s in statuses" :key="s" :value="s">{{ capitalize(s) }}</option>
+                                <option v-for="s in statuses" :key="s" :value="s">
+                                    {{ $t(`admin.statuses.${s}`) }}
+                                </option>
                             </select>
                             <p class="filter-label mt">{{ $t('admin.orders.filterDateRange') }}</p>
                             <div class="date-inputs">
@@ -60,7 +62,8 @@
                     <p class="stat-label">{{ $t('admin.orders.allOrders') }}</p>
                     <p class="stat-value">{{ stats.total ?? 0 }}</p>
                     <p class="stat-growth" :class="(stats.growth ?? 0) >= 0 ? 'positive' : 'negative'">
-                        {{ (stats.growth ?? 0) >= 0 ? '↑' : '↓' }} {{ Math.abs(stats.growth ?? 0) }}% {{ $t('admin.orders.thisWeek') }}
+                        {{ (stats.growth ?? 0) >= 0 ? '↑' : '↓' }} {{ Math.abs(stats.growth ?? 0) }}% {{
+                            $t('admin.orders.thisWeek') }}
                     </p>
                 </div>
             </NuxtLink>
@@ -102,9 +105,9 @@
                     </svg>
                 </div>
                 <div class="stat-info">
-                    <p class="stat-label">{{ capitalize(s) }}</p>
+                    <p class="stat-label">{{ $t(`admin.statuses.${s}`) }}</p>
                     <p class="stat-value">{{ stats[s] ?? 0 }}</p>
-                    <span class="stat-badge" :class="`badge--${s}`">{{ STATUS_META[s].badge }}</span>
+                    <span class="stat-badge" :class="`badge--${s}`">{{ $t(STATUS_META[s].badge) }}</span>
                 </div>
             </NuxtLink>
         </div>
@@ -115,7 +118,7 @@
             <div v-if="filterStatus" class="active-filter-bar">
                 <span class="filter-pill">
                     <span class="status-dot" :class="`dot-${filterStatus}`" />
-                    {{ capitalize(filterStatus) }}
+                    {{ $t(`admin.statuses.${filterStatus}`) }}
                     <button class="pill-remove" @click="setStatusFilter('')">×</button>
                 </span>
                 <span class="filter-count">{{ pagination.total }} {{ $t('admin.orders.ordersTotal') }}</span>
@@ -166,7 +169,7 @@
                                 <td>
                                     <span class="status-badge" :class="`status-${order.status}`">
                                         <span class="status-dot" :class="`dot-${order.status}`" />
-                                        {{ capitalize(order.status) }}
+                                        {{ $t(`admin.statuses.${order.status}`) }}
                                     </span>
                                 </td>
                                 <td class="items-td">{{ order.items_count }}</td>
@@ -254,14 +257,16 @@
                             </div>
                             <span class="status-badge" :class="`status-${order.status}`">
                                 <span class="status-dot" :class="`dot-${order.status}`" />
-                                {{ capitalize(order.status) }}
+                                {{ $t(`admin.statuses.${order.status}`) }}
                             </span>
                         </div>
                         <div class="mobile-bottom">
                             <span class="mobile-price">${{ order.total_price.toFixed(2) }}</span>
-                            <span class="mobile-meta">{{ order.items_count }} {{ $t('admin.orders.items') }} · {{ order.created_at }}</span>
+                            <span class="mobile-meta">{{ order.items_count }} {{ $t('admin.orders.items') }} · {{
+                                order.created_at }}</span>
                             <div class="mobile-actions">
-                                <button class="btn-view-sm" @click="openPreviewModal(order)">{{ $t('admin.orders.view') }}</button>
+                                <button class="btn-view-sm" @click="openPreviewModal(order)">{{ $t('admin.orders.view')
+                                }}</button>
                                 <div class="dropdown-wrap">
                                     <button class="btn-dots" @click.stop="toggleDropdown(order.id, $event)">
                                         <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15">
@@ -273,10 +278,13 @@
                                     <Teleport to="body">
                                         <div v-if="openDrop === order.id" class="dropdown-menu"
                                             :style="{ top: dropPos.top + 'px', right: dropPos.right + 'px' }">
-                                            <button class="dropdown-item" @click="openEditModal(order)">{{ $t('admin.orders.editStatus') }}</button>
-                                            <button class="dropdown-item" @click="openReceiptModal(order)">{{ $t('admin.orders.exportReceipt') }}</button>
+                                            <button class="dropdown-item" @click="openEditModal(order)">{{
+                                                $t('admin.orders.editStatus') }}</button>
+                                            <button class="dropdown-item" @click="openReceiptModal(order)">{{
+                                                $t('admin.orders.exportReceipt') }}</button>
                                             <button v-if="canCancel(order.status)" class="dropdown-item warning"
-                                                @click="openCancelModal(order)">{{ $t('admin.orders.cancelOrder') }}</button>
+                                                @click="openCancelModal(order)">{{ $t('admin.orders.cancelOrder')
+                                                }}</button>
                                             <button v-if="canDelete(order.status)" class="dropdown-item danger"
                                                 @click="openDeleteModal(order)">{{ $t('admin.common.delete') }}</button>
                                         </div>
@@ -300,7 +308,10 @@
 
                 <!-- Pagination -->
                 <div v-if="pagination.last_page > 1" class="pagination">
-                    <p class="pagination-info">{{ $t('admin.orders.showingOf', { from: pagination.from, to: pagination.to, total: pagination.total }) }}</p>
+                    <p class="pagination-info">{{ $t('admin.orders.showingOf', {
+                        from: pagination.from, to:
+                            pagination.to, total: pagination.total
+                    }) }}</p>
                     <div class="pagination-btns">
                         <button class="pg-btn" :disabled="pagination.current_page === 1"
                             @click="goToPage(pagination.current_page - 1)">
@@ -323,7 +334,11 @@
                         </button>
                     </div>
                 </div>
-                <div v-else-if="orders.length > 0" class="pg-simple">{{ $t('admin.orders.showingOf', { from: 1, to: orders.length, total: pagination.total }) }}</div>
+                <div v-else-if="orders.length > 0" class="pg-simple">{{ $t('admin.orders.showingOf', {
+                    from: 1, to:
+                        orders.length,
+                    total: pagination.total
+                }) }}</div>
             </template>
         </div>
 

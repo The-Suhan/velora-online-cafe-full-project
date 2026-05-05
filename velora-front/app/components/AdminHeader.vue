@@ -1,9 +1,13 @@
 <template>
     <header class="admin-header">
         <div class="header-left">
-            <p class="greeting">{{ greeting }}: <span class="user-name">{{ userName }}</span></p>
+            <p class="greeting">
+                {{ greeting }}, <span class="user-name">{{ userName }}</span>
+                <span class="greeting-suffix">{{ suffix }}</span>
+            </p>
         </div>
         <div class="header-right">
+            <LanguageSwitcher />
             <div class="header-avatar">
                 {{ initials }}
             </div>
@@ -13,29 +17,32 @@
 
 <script setup lang="ts">
 const props = defineProps<{ userName: string }>()
+const { locale, t } = useI18n()
 
-const greetings = [
-    'Welcome back',
-    'Good to see you',
-    'Hello again',
-    'Great to have you',
-    'Ready to manage',
+const greetingKeys = [
+  { prefix: 'admin.header.greetings.g1', suffix: 'admin.header.suffixes.s1' },
+  { prefix: 'admin.header.greetings.g2', suffix: 'admin.header.suffixes.s2' },
+  { prefix: 'admin.header.greetings.g3', suffix: 'admin.header.suffixes.s3' },
+  { prefix: 'admin.header.greetings.g4', suffix: 'admin.header.suffixes.s4' },
+  { prefix: 'admin.header.greetings.g5', suffix: 'admin.header.suffixes.s5' },
+  { prefix: 'admin.header.greetings.g6', suffix: 'admin.header.suffixes.s6' },
 ]
 
-const greeting = ref<string>('')
+const pick = ref(
+  greetingKeys[Math.floor(Math.random() * greetingKeys.length)]!
+)
 
-onMounted(() => {
-    greeting.value = greetings[Math.floor(Math.random() * greetings.length)] ?? 'Welcome back'
-})
+const greeting = computed(() => t(pick.value.prefix))
+const suffix = computed(() => t(pick.value.suffix))
 
-const initials = computed(() => {
-    return props.userName
+const initials = computed(() =>
+    props.userName
         .split(' ')
         .map(w => w[0])
         .slice(0, 2)
         .join('')
         .toUpperCase()
-})
+)
 </script>
 
 <style scoped>
@@ -57,11 +64,28 @@ const initials = computed(() => {
     font-weight: 500;
     color: #2C1810;
     margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    flex-wrap: wrap;
 }
 
 .user-name {
     color: #4A6741;
     font-weight: 600;
+}
+
+.greeting-suffix {
+    color: #b0967a;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .header-avatar {
@@ -86,6 +110,10 @@ const initials = computed(() => {
 
     .greeting {
         font-size: 1rem;
+    }
+
+    .greeting-suffix {
+        display: none;
     }
 }
 </style>

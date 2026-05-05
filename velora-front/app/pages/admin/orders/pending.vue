@@ -1,5 +1,4 @@
 <template>
-    <!-- pending.vue -->
     <OrdersStatusPage status="pending" :meta="meta">
         <template #icon>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24">
@@ -19,10 +18,12 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin' as any, middleware: 'admin' })
 
-const meta = {
-    label: 'Pending',
-    desc: 'Orders waiting to be accepted and prepared.',
-    badge: 'Awaiting',
-    emptyMsg: 'No pending orders right now. New orders will appear here.',
-}
+const { t } = useI18n()
+
+const meta = computed(() => ({
+    label: t('admin.orders.pending.label'),
+    desc: t('admin.orders.pending.desc'),
+    badge: t('admin.orders.pending.badge'),
+    emptyMsg: t('admin.orders.pending.emptyMsg'),
+}))
 </script>

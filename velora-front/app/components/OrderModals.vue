@@ -1,5 +1,4 @@
 <template>
-       <!-- admin ordermodal vue -->
     <!-- Overlay -->
     <Transition name="fade">
         <div v-if="activeModal" class="modal-overlay" @click.self="closeModal" />
@@ -10,7 +9,7 @@
         <div v-if="activeModal === 'preview' && selectedOrder" class="modal modal-preview">
             <div class="modal-header">
                 <div>
-                    <h2 class="modal-title">Order Details</h2>
+                    <h2 class="modal-title">{{ $t('admin.orders.modals.preview.title') }}</h2>
                     <p class="modal-sub">{{ selectedOrder.order_number }}</p>
                 </div>
                 <button class="modal-close" @click="closeModal">
@@ -36,7 +35,7 @@
 
                 <!-- Customer -->
                 <div class="preview-section">
-                    <p class="section-title">Customer</p>
+                    <p class="section-title">{{ $t('admin.orders.modals.preview.customer') }}</p>
                     <div class="customer-preview">
                         <div class="avatar avatar-lg">{{ initials(selectedOrder.customer?.name) }}</div>
                         <div>
@@ -48,7 +47,7 @@
 
                 <!-- Items -->
                 <div class="preview-section">
-                    <p class="section-title">Items</p>
+                    <p class="section-title">{{ $t('admin.orders.modals.preview.items') }}</p>
                     <div v-if="detailLoading" class="items-loading">
                         <div v-for="i in 3" :key="i" class="skeleton-item" />
                     </div>
@@ -65,8 +64,11 @@
                                 </div>
                             </div>
                             <div class="item-info">
-                                <p class="item-name">{{ item.product?.name ?? 'Unknown product' }}</p>
-                                <p class="item-unit">${{ item.price.toFixed(2) }} each</p>
+                                <p class="item-name">{{ item.product?.name ??
+                                    $t('admin.orders.modals.preview.unknownProduct') }}</p>
+                                <p class="item-unit">{{ $t('admin.orders.modals.preview.eachPrice', {
+                                    price:
+                                    item.price.toFixed(2) }) }}</p>
                             </div>
                             <div class="item-right">
                                 <span class="item-qty">×{{ item.quantity }}</span>
@@ -75,23 +77,27 @@
                         </div>
                     </div>
                     <div class="order-total-row">
-                        <span>Total</span>
+                        <span>{{ $t('admin.orders.modals.preview.total') }}</span>
                         <span class="order-total-price">${{ selectedOrder.total_price.toFixed(2) }}</span>
                     </div>
                 </div>
 
                 <!-- Note -->
                 <div v-if="selectedOrder.note" class="preview-section">
-                    <p class="section-title">Note</p>
+                    <p class="section-title">{{ $t('admin.orders.modals.preview.note') }}</p>
                     <p class="note-text">{{ selectedOrder.note }}</p>
                 </div>
 
                 <!-- Meta -->
                 <div class="preview-section">
-                    <div class="meta-row"><span class="meta-key">Created</span><span class="meta-val">{{
-                        selectedOrder.created_at }} {{ selectedOrder.created_at_time }}</span></div>
-                    <div class="meta-row"><span class="meta-key">Updated</span><span class="meta-val">{{
-                        selectedOrder.updated_at }}</span></div>
+                    <div class="meta-row">
+                        <span class="meta-key">{{ $t('admin.orders.modals.preview.created') }}</span>
+                        <span class="meta-val">{{ selectedOrder.created_at }} {{ selectedOrder.created_at_time }}</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-key">{{ $t('admin.orders.modals.preview.updated') }}</span>
+                        <span class="meta-val">{{ selectedOrder.updated_at }}</span>
+                    </div>
                 </div>
             </div>
 
@@ -101,9 +107,11 @@
                         height="13">
                         <path d="M4 2h12v16l-2-1-2 1-2-1-2 1-2-1-2 1V2z" stroke-linejoin="round" />
                     </svg>
-                    Export Receipt
+                    {{ $t('admin.orders.statusPage.exportReceiptBtn') }}
                 </button>
-                <button class="btn-submit" @click="$emit('openEdit', selectedOrder)">Edit Status</button>
+                <button class="btn-submit" @click="$emit('openEdit', selectedOrder)">
+                    {{ $t('admin.orders.statusPage.editStatusBtn') }}
+                </button>
             </div>
         </div>
     </Transition>
@@ -113,7 +121,7 @@
         <div v-if="activeModal === 'edit' && selectedOrder" class="modal modal-edit">
             <div class="modal-header">
                 <div>
-                    <h2 class="modal-title">Edit Status</h2>
+                    <h2 class="modal-title">{{ $t('admin.orders.modals.edit.title') }}</h2>
                     <p class="modal-sub">{{ selectedOrder.order_number }}</p>
                 </div>
                 <button class="modal-close" @click="closeModal">
@@ -125,16 +133,18 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">Current Status</label>
+                    <label class="form-label">{{ $t('admin.orders.modals.edit.currentStatus') }}</label>
                     <span class="status-badge" :class="`status-${selectedOrder.status}`" style="display:inline-flex">
                         <span class="status-dot" :class="`dot-${selectedOrder.status}`" />
                         {{ capitalize(selectedOrder.status) }}
                     </span>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Change To <span class="required">*</span></label>
+                    <label class="form-label">
+                        {{ $t('admin.orders.modals.edit.changeTo') }} <span class="required">*</span>
+                    </label>
                     <div v-if="selectedOrder.allowed_next.length === 0" class="terminal-msg">
-                        This order is in a terminal state and cannot be changed.
+                        {{ $t('admin.orders.modals.edit.terminalMsg') }}
                     </div>
                     <div v-else class="status-options">
                         <button v-for="s in selectedOrder.allowed_next" :key="s" class="status-option"
@@ -147,17 +157,17 @@
                     <p v-if="editErrors.status" class="form-error">{{ editErrors.status }}</p>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Note (optional)</label>
+                    <label class="form-label">{{ $t('admin.orders.modals.edit.noteLabel') }}</label>
                     <textarea v-model="editForm.note" class="form-input form-textarea" rows="3"
-                        placeholder="Add a note…" />
+                        :placeholder="$t('admin.orders.modals.edit.notePlaceholder')" />
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" @click="closeModal">Cancel</button>
+                <button class="btn-cancel" @click="closeModal">{{ $t('admin.common.cancel') }}</button>
                 <button class="btn-submit" :disabled="submitting || selectedOrder.allowed_next.length === 0"
                     @click="$emit('submitEdit')">
                     <span v-if="submitting" class="spinner" />
-                    {{ submitting ? 'Saving…' : 'Save Changes' }}
+                    {{ submitting ? $t('admin.common.saving') : $t('admin.common.save') }}
                 </button>
             </div>
         </div>
@@ -167,7 +177,7 @@
     <Transition name="modal-slide">
         <div v-if="activeModal === 'cancel' && selectedOrder" class="modal modal-sm">
             <div class="modal-header">
-                <h2 class="modal-title">Cancel Order</h2>
+                <h2 class="modal-title">{{ $t('admin.orders.modals.cancel.title') }}</h2>
                 <button class="modal-close" @click="closeModal">
                     <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
                         <path
@@ -184,15 +194,20 @@
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </div>
-                <p class="confirm-title">Cancel this order?</p>
-                <p class="confirm-desc">Order <strong>{{ selectedOrder.order_number }}</strong> from <strong>{{
-                    selectedOrder.customer?.name }}</strong> will be cancelled. This cannot be undone.</p>
+                <p class="confirm-title">{{ $t('admin.orders.modals.cancel.confirmTitle') }}</p>
+                <p class="confirm-desc">
+                    {{ $t('admin.orders.modals.cancel.confirmDesc', {
+                        order: selectedOrder.order_number,
+                        customer: selectedOrder.customer?.name
+                    }) }}
+                </p>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" @click="closeModal">Go Back</button>
+                <button class="btn-cancel" @click="closeModal">{{ $t('admin.orders.modals.cancel.goBack') }}</button>
                 <button class="btn-warning" :disabled="submitting" @click="$emit('submitCancel')">
                     <span v-if="submitting" class="spinner" />
-                    {{ submitting ? 'Cancelling…' : 'Cancel Order' }}
+                    {{ submitting ? $t('admin.orders.modals.cancel.cancelling') :
+                        $t('admin.orders.statusPage.cancelOrderBtn') }}
                 </button>
             </div>
         </div>
@@ -202,7 +217,7 @@
     <Transition name="modal-slide">
         <div v-if="activeModal === 'delete' && selectedOrder" class="modal modal-sm">
             <div class="modal-header">
-                <h2 class="modal-title">Delete Order</h2>
+                <h2 class="modal-title">{{ $t('admin.orders.modals.delete.title') }}</h2>
                 <button class="modal-close" @click="closeModal">
                     <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
                         <path
@@ -217,16 +232,17 @@
                         <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </div>
-                <p class="confirm-title">Are you sure?</p>
-                <p class="confirm-desc">Permanently delete <strong>{{ selectedOrder.order_number }}</strong>. This
-                    action cannot be undone.<span class="delete-warning"> Only delivered or cancelled orders can be
-                        deleted.</span></p>
+                <p class="confirm-title">{{ $t('admin.common.areYouSure') }}</p>
+                <p class="confirm-desc">
+                    {{ $t('admin.orders.modals.delete.confirmDesc', { order: selectedOrder.order_number }) }}
+                    <span class="delete-warning">{{ $t('admin.orders.modals.delete.deleteWarning') }}</span>
+                </p>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" @click="closeModal">Cancel</button>
+                <button class="btn-cancel" @click="closeModal">{{ $t('admin.common.cancel') }}</button>
                 <button class="btn-danger" :disabled="submitting" @click="$emit('submitDelete')">
                     <span v-if="submitting" class="spinner" />
-                    {{ submitting ? 'Deleting…' : 'Delete' }}
+                    {{ submitting ? $t('admin.common.deleting') : $t('admin.common.delete') }}
                 </button>
             </div>
         </div>
@@ -237,7 +253,7 @@
         <div v-if="activeModal === 'receipt' && selectedOrder" class="modal modal-receipt">
             <div class="modal-header">
                 <div>
-                    <h2 class="modal-title">Order Receipt</h2>
+                    <h2 class="modal-title">{{ $t('admin.orders.modals.receipt.title') }}</h2>
                     <p class="modal-sub">{{ selectedOrder.order_number }}</p>
                 </div>
                 <button class="modal-close" @click="closeModal">
@@ -253,52 +269,67 @@
                     <div class="receipt-header">
                         <div class="receipt-logo">☕</div>
                         <h2 class="receipt-brand">VELORA CAFÉ</h2>
-                        <p class="receipt-tagline">Every sip tells a story.</p>
+                        <p class="receipt-tagline">{{ $t('admin.orders.modals.receipt.tagline') }}</p>
                     </div>
                     <div class="receipt-divider"><span>· · · · · · · · · · · · · · · · · · ·</span></div>
                     <!-- Order Info -->
                     <div class="receipt-info">
-                        <div class="receipt-info-row"><span>Order</span><span>{{ selectedOrder.order_number }}</span>
+                        <div class="receipt-info-row">
+                            <span>{{ $t('admin.orders.modals.receipt.order') }}</span>
+                            <span>{{ selectedOrder.order_number }}</span>
                         </div>
-                        <div class="receipt-info-row"><span>Date</span><span>{{ selectedOrder.created_at }} {{
-                            selectedOrder.created_at_time }}</span></div>
-                        <div class="receipt-info-row"><span>Customer</span><span>{{ selectedOrder.customer?.name ?? '—'
-                                }}</span></div>
-                        <div class="receipt-info-row"><span>Status</span><span class="receipt-status">{{
-                            capitalize(selectedOrder.status) }}</span></div>
+                        <div class="receipt-info-row">
+                            <span>{{ $t('admin.orders.modals.receipt.date') }}</span>
+                            <span>{{ selectedOrder.created_at }} {{ selectedOrder.created_at_time }}</span>
+                        </div>
+                        <div class="receipt-info-row">
+                            <span>{{ $t('admin.orders.modals.receipt.customer') }}</span>
+                            <span>{{ selectedOrder.customer?.name ?? '—' }}</span>
+                        </div>
+                        <div class="receipt-info-row">
+                            <span>{{ $t('admin.orders.modals.receipt.status') }}</span>
+                            <span class="receipt-status">{{ capitalize(selectedOrder.status) }}</span>
+                        </div>
                     </div>
                     <div class="receipt-divider"><span>· · · · · · · · · · · · · · · · · · ·</span></div>
                     <!-- Items -->
                     <div class="receipt-items">
-                        <div v-if="detailLoading" class="receipt-loading">Loading items…</div>
+                        <div v-if="detailLoading" class="receipt-loading">
+                            {{ $t('admin.orders.modals.receipt.loadingItems') }}
+                        </div>
                         <template v-else>
                             <div class="receipt-items-header">
-                                <span>Item</span><span>Qty</span><span>Price</span>
+                                <span>{{ $t('admin.orders.modals.receipt.itemCol') }}</span>
+                                <span>{{ $t('admin.orders.modals.receipt.qtyCol') }}</span>
+                                <span>{{ $t('admin.orders.modals.receipt.priceCol') }}</span>
                             </div>
                             <div v-for="item in selectedOrder.items" :key="item.id" class="receipt-item-row">
-                                <span class="receipt-item-name">{{ item.product?.name ?? 'Item' }}</span>
+                                <span class="receipt-item-name">{{ item.product?.name ??
+                                    $t('admin.orders.modals.receipt.defaultItem') }}</span>
                                 <span class="receipt-item-qty">×{{ item.quantity }}</span>
                                 <span class="receipt-item-price">${{ item.subtotal.toFixed(2) }}</span>
                             </div>
                         </template>
                     </div>
                     <div class="receipt-divider"><span>· · · · · · · · · · · · · · · · · · ·</span></div>
-                    <div class="receipt-total"><span>TOTAL</span><span>${{ selectedOrder.total_price.toFixed(2)
-                            }}</span></div>
+                    <div class="receipt-total">
+                        <span>{{ $t('admin.orders.modals.receipt.totalLabel') }}</span>
+                        <span>${{ selectedOrder.total_price.toFixed(2) }}</span>
+                    </div>
                     <div v-if="selectedOrder.note" class="receipt-note">
-                        <p class="receipt-note-label">Note</p>
+                        <p class="receipt-note-label">{{ $t('admin.orders.modals.preview.note') }}</p>
                         <p class="receipt-note-text">{{ selectedOrder.note }}</p>
                     </div>
                     <div class="receipt-divider"><span>· · · · · · · · · · · · · · · · · · ·</span></div>
                     <div class="receipt-footer">
-                        <p class="receipt-quote">"Good coffee is a pleasure. Good friends are a treasure."</p>
-                        <p class="receipt-thanks">Thank you for choosing Velora Café!</p>
+                        <p class="receipt-quote">{{ $t('admin.orders.modals.receipt.quote') }}</p>
+                        <p class="receipt-thanks">{{ $t('admin.orders.modals.receipt.thanks') }}</p>
                         <p class="receipt-website">velora.cafe</p>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" @click="closeModal">Close</button>
+                <button class="btn-cancel" @click="closeModal">{{ $t('admin.common.close') }}</button>
                 <button class="btn-submit" :disabled="pdfLoading" @click="$emit('downloadPdf')">
                     <span v-if="pdfLoading" class="spinner" />
                     <svg v-else viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="13"
@@ -306,7 +337,8 @@
                         <path d="M10 3v10M6 9l4 4 4-4" stroke-linecap="round" stroke-linejoin="round" />
                         <path d="M3 17h14" stroke-linecap="round" />
                     </svg>
-                    {{ pdfLoading ? 'Generating…' : 'Download PDF' }}
+                    {{ pdfLoading ? $t('admin.orders.modals.receipt.generating') :
+                        $t('admin.orders.modals.receipt.downloadPdf') }}
                 </button>
             </div>
         </div>
