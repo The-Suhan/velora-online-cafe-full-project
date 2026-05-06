@@ -75,6 +75,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:100|unique:categories,name',
+            'parent_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -88,6 +89,7 @@ class CategoryController extends Controller
 
         $category = Category::create([
             'name' => $request->name,
+            'parent_id' => $request->input('parent_id'),
             'description' => $request->description,
             'is_active' => $request->boolean('is_active', true),
             'image_url' => $imageUrl,
@@ -105,6 +107,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'sometimes|string|max:100|unique:categories,name,'.$category->id,
+            'parent_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -121,6 +124,10 @@ class CategoryController extends Controller
                 $this->deleteImage($category->image_url);
             }
             $data['image_url'] = $this->uploadImage($request->file('image'));
+        }
+
+        if ($request->has('parent_id')) {
+            $data['parent_id'] = $request->input('parent_id');
         }
 
         $category->update($data);
@@ -184,6 +191,8 @@ class CategoryController extends Controller
         $base = [
             'id' => $c->id,
             'name' => $c->name,
+            'parent_id' => $c->parent_id,
+            'parent_name' => $c->parent?->name,
             'description' => $c->description,
             'image_url' => $c->image_url,
             'is_active' => $c->is_active,
@@ -199,5 +208,16 @@ class CategoryController extends Controller
         }
 
         return $base;
+    }
+
+    public function parentCategories(): JsonResponse
+    {
+        $categories = Category::whereNull('parent_id')
+            ->where('is_active', true)
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json($categories);
     }
 }

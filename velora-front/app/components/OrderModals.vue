@@ -45,6 +45,50 @@
                     </div>
                 </div>
 
+                <!-- Delivery Info -->
+                <div class="preview-section">
+                    <p class="section-title">{{ $t('admin.orders.modals.preview.delivery') }}</p>
+                    <div class="delivery-info">
+                        <span class="delivery-badge"
+                            :class="selectedOrder.delivery_type === 'delivery' ? 'badge-delivery' : 'badge-pickup'">
+                            <svg v-if="selectedOrder.delivery_type === 'delivery'" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" width="13" height="13">
+                                <rect x="1" y="3" width="15" height="13" rx="1" />
+                                <path d="M16 8h4l3 5v4h-7V8z" stroke-linecap="round" stroke-linejoin="round" />
+                                <circle cx="5.5" cy="18.5" r="2.5" />
+                                <circle cx="18.5" cy="18.5" r="2.5" />
+                            </svg>
+                            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                width="13" height="13">
+                                <path d="M6 2h12l3 7H3L6 2z" />
+                                <path d="M3 9v11a2 2 0 002 2h14a2 2 0 002-2V9" />
+                            </svg>
+                            {{ selectedOrder.delivery_type === 'delivery' ? $t('admin.orders.deliveryType.delivery') :
+                                $t('admin.orders.deliveryType.pickup') }}
+                        </span>
+                        <div v-if="selectedOrder.delivery_type === 'delivery'" class="delivery-details">
+                            <div v-if="selectedOrder.address" class="delivery-row">
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" width="13"
+                                    height="13" style="flex-shrink:0;color:#8a7060">
+                                    <path d="M10 2a6 6 0 00-6 6c0 4 6 10 6 10s6-6 6-10a6 6 0 00-6-6z"
+                                        stroke-linecap="round" />
+                                    <circle cx="10" cy="8" r="2" />
+                                </svg>
+                                <span>{{ selectedOrder.address }}</span>
+                            </div>
+                            <div v-if="selectedOrder.phone" class="delivery-row">
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" width="13"
+                                    height="13" style="flex-shrink:0;color:#8a7060">
+                                    <path
+                                        d="M3 4a1 1 0 011-1h2.5l1 3-1.5 1.5a11 11 0 005.5 5.5L13 11.5l3 1V15a1 1 0 01-1 1A13 13 0 013 4z"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <span>{{ selectedOrder.phone }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Items -->
                 <div class="preview-section">
                     <p class="section-title">{{ $t('admin.orders.modals.preview.items') }}</p>
@@ -290,6 +334,23 @@
                             <span>{{ $t('admin.orders.modals.receipt.status') }}</span>
                             <span class="receipt-status">{{ capitalize(selectedOrder.status) }}</span>
                         </div>
+                        <!-- Delivery type -->
+                        <div class="receipt-info-row">
+                            <span>{{ $t('admin.orders.modals.receipt.deliveryType') }}</span>
+                            <span class="receipt-status">{{ selectedOrder.delivery_type === 'delivery' ?
+                                $t('admin.orders.deliveryType.delivery') : $t('admin.orders.deliveryType.pickup')
+                                }}</span>
+                        </div>
+                        <div v-if="selectedOrder.delivery_type === 'delivery' && selectedOrder.address"
+                            class="receipt-info-row">
+                            <span>{{ $t('admin.orders.modals.receipt.address') }}</span>
+                            <span>{{ selectedOrder.address }}</span>
+                        </div>
+                        <div v-if="selectedOrder.delivery_type === 'delivery' && selectedOrder.phone"
+                            class="receipt-info-row">
+                            <span>{{ $t('admin.orders.modals.receipt.phone') }}</span>
+                            <span>{{ selectedOrder.phone }}</span>
+                        </div>
                     </div>
                     <div class="receipt-divider"><span>· · · · · · · · · · · · · · · · · · ·</span></div>
                     <!-- Items -->
@@ -385,7 +446,6 @@ const isStepDone = (stepKey: OrderStatus, currentStatus: OrderStatus) => {
     return STATUS_ORDER.indexOf(stepKey) <= STATUS_ORDER.indexOf(currentStatus)
 }
 
-// expose closeModal as method
 const emit = defineEmits([
     'closeModal',
     'openReceipt',
@@ -398,7 +458,7 @@ const emit = defineEmits([
 
 function closeModal() {
     emit('closeModal')
-} { /* parent handles */ }
+}
 </script>
 
 <style scoped>
@@ -639,6 +699,56 @@ function closeModal() {
     margin: 0;
 }
 
+/* ── Delivery Info ───────────────────────────────────────── */
+.delivery-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.delivery-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    align-self: flex-start;
+}
+
+.badge-delivery {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1.5px solid #bfdbfe;
+}
+
+.badge-pickup {
+    background: #fdf3e4;
+    color: #8B6914;
+    border: 1.5px solid #f0d9a0;
+}
+
+.delivery-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    background: #fafaf8;
+    border-radius: 8px;
+    border-left: 3px solid #4A6741;
+}
+
+.delivery-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 0.82rem;
+    color: #374151;
+    line-height: 1.4;
+}
+
+/* ── Items ───────────────────────────────────────────────── */
 .items-loading {
     display: flex;
     flex-direction: column;

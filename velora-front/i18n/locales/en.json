@@ -145,7 +145,17 @@
       "created": "Created",
       "categoryHeader": "Category",
       "showingOf": "Showing {from} to {to} of {total} categories",
-      "categoriesTotal": "categories"
+      "categoriesTotal": "categories",
+      "categoryType": "Category Type",
+      "mainCategory": "Main Category",
+      "mainCategoryDesc": "A top-level category with no parent.",
+      "subCategory": "Sub Category",
+      "subCategoryDesc": "Belongs under an existing main category.",
+      "parentCategory": "Parent Category",
+      "parentCategoryLabel": "Parent Category",
+      "selectParent": "Select a parent category",
+      "noParentsAvailable": "No main categories available yet.",
+      "parentRequired": "Please select a parent category."
     },
     "users": {
       "title": "User Management",
@@ -283,6 +293,10 @@
         "showingAll": "Showing {n} of {total} orders",
         "mobileItemsMeta": "{items} items · {date}"
       },
+      "deliveryType": {
+        "pickup": "Pickup",
+        "delivery": "Delivery"
+      },
       "modals": {
         "preview": {
           "title": "Order Details",
@@ -293,7 +307,8 @@
           "total": "Total",
           "note": "Note",
           "created": "Created",
-          "updated": "Updated"
+          "updated": "Updated",
+          "delivery": "Delivery Info"
         },
         "edit": {
           "title": "Edit Status",
@@ -331,7 +346,10 @@
           "quote": "\"Good coffee is a pleasure. Good friends are a treasure.\"",
           "thanks": "Thank you for choosing Velora Café!",
           "generating": "Generating…",
-          "downloadPdf": "Download PDF"
+          "downloadPdf": "Download PDF",
+          "deliveryType": "Type",
+          "address": "Address",
+          "phone": "Phone"
         }
       },
       "pending": {

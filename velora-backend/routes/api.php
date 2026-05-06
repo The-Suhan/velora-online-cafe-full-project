@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/users/{user}', [AdminController::class, 'destroyUser']);
 
         // Categories — stats/index order
+        Route::get('/categories/parents', [CategoryController::class, 'parentCategories']);
         Route::get('/categories/stats', [CategoryController::class, 'stats']);
         Route::get('/categories', [CategoryController::class, 'index']);
         Route::get('/categories/{category}', [CategoryController::class, 'show']);

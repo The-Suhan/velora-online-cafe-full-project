@@ -20,6 +20,9 @@ export interface Order {
     items_count: number
     items?: OrderItem[]
     customer: { id: number; name: string; email: string } | null
+    delivery_type: 'pickup' | 'delivery'
+    address: string | null
+    phone: string | null
     created_at: string
     created_at_time: string
     updated_at: string
@@ -389,18 +392,21 @@ export function useOrders(fixedStatus?: OrderStatus) {
               <div class="tagline">Every sip tells a story.</div>
             </div>
             <div class="divider">· · · · · · · · · · · · · · · · · · · ·</div>
-            <table class="info-table">
-              <tr><td>Order</td><td>${order.order_number}</td></tr>
-              <tr><td>Date</td><td>${order.created_at} ${order.created_at_time}</td></tr>
-              <tr><td>Customer</td><td>${order.customer?.name ?? '—'}</td></tr>
-              <tr><td>Status</td><td><span class="status-text">${order.status}</span></td></tr>
-            </table>
+         <table class="info-table">
+            <tr><td>Order</td><td>${order.order_number}</td></tr>
+            <tr><td>Date</td><td>${order.created_at} ${order.created_at_time}</td></tr>
+            <tr><td>Customer</td><td>${order.customer?.name ?? '—'}</td></tr>
+            <tr><td>Status</td><td><span class="status-text">${order.status}</span></td></tr>
+            <tr><td>Type</td><td>${order.delivery_type === 'delivery' ? 'Delivery' : 'Pickup'}</td></tr>
+            ${order.delivery_type === 'delivery' && order.address ? `<tr><td>Address</td><td style="text-align:right;">${order.address}</td></tr>` : ''}
+            ${order.delivery_type === 'delivery' && order.phone ? `<tr><td>Phone</td><td>${order.phone}</td></tr>` : ''}
+        </table>
             <div class="divider">· · · · · · · · · · · · · · · · · · · ·</div>
             <table class="items-table">
               <tr class="items-header">
                 <td>Item</td>
                 <td style="text-align:center;">Qty</td>
-                <td style="text-align:right;">Price</td>
+                <td style="text-align:right;">Price</td>    
               </tr>
               ${itemsHtml}
             </table>

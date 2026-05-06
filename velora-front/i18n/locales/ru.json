@@ -145,7 +145,17 @@
       "created": "Создано",
       "categoryHeader": "Категория",
       "showingOf": "Показано {from}–{to} из {total} категорий",
-      "categoriesTotal": "категорий"
+      "categoriesTotal": "категорий",
+      "categoryType": "Тип категории",
+      "mainCategory": "Основная категория",
+      "mainCategoryDesc": "Категория верхнего уровня без родителя.",
+      "subCategory": "Подкатегория",
+      "subCategoryDesc": "Относится к существующей основной категории.",
+      "parentCategory": "Родительская категория",
+      "parentCategoryLabel": "Родительская категория",
+      "selectParent": "Выберите родительскую категорию",
+      "noParentsAvailable": "Основные категории пока отсутствуют.",
+      "parentRequired": "Пожалуйста, выберите родительскую категорию."
     },
     "users": {
       "title": "Управление пользователями",
@@ -283,6 +293,10 @@
         "showingAll": "Показано {n} из {total} заказов",
         "mobileItemsMeta": "{items} поз. · {date}"
       },
+      "deliveryType": {
+        "pickup": "Самовывоз",
+        "delivery": "Доставка"
+      },
       "modals": {
         "preview": {
           "title": "Детали заказа",
@@ -293,7 +307,8 @@
           "total": "Итого",
           "note": "Примечание",
           "created": "Создан",
-          "updated": "Обновлён"
+          "updated": "Обновлён",
+          "delivery": "Информация о доставке"
         },
         "edit": {
           "title": "Изменить статус",
@@ -331,7 +346,10 @@
           "quote": "«Хороший кофе — удовольствие. Хорошие друзья — сокровище.»",
           "thanks": "Спасибо, что выбрали Velora Café!",
           "generating": "Формируется…",
-          "downloadPdf": "Скачать PDF"
+          "downloadPdf": "Скачать PDF",
+          "deliveryType": "Тип доставки",
+          "address": "Адрес",
+          "phone": "Телефон"
         }
       },
       "pending": {

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
@@ -12,6 +12,9 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'status',
+        'delivery_type',
+        'address',
+        'phone',
         'note',
         'total_price',
     ];
@@ -22,6 +25,8 @@ class Order extends Model
 
     // Geçerli sipariş durumları
     const STATUSES = ['pending', 'preparing', 'ready', 'delivered', 'cancelled'];
+
+    const DELIVERY_TYPES = ['pickup', 'delivery'];
 
     // ── Relations ─────────────────────────────────────────────
 
@@ -34,7 +39,6 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-    
 
     // ── Scopes ────────────────────────────────────────────────
 

@@ -69,6 +69,7 @@
                         <tr>
                             <th>{{ $t('admin.categories.categoryHeader') }}</th>
                             <th>{{ $t('admin.common.description') }}</th>
+                            <th>{{ $t('admin.categories.parentCategory') }}</th>
                             <th>{{ $t('admin.common.createdAt') }}</th>
                             <th>{{ $t('admin.common.actions') }}</th>
                         </tr>
@@ -98,6 +99,19 @@
                                 </div>
                             </td>
                             <td class="cat-desc">{{ cat.description || '—' }}</td>
+                            <td>
+                                <span v-if="cat.parent_name" class="parent-badge">
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        width="11" height="11">
+                                        <path d="M3 3h4v4H3zM9 9h4v4H9zM5 5l6 6" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                    {{ cat.parent_name }}
+                                </span>
+                                <span v-else class="main-badge">
+                                    {{ $t('admin.categories.mainCategory') }}
+                                </span>
+                            </td>
                             <td class="cat-date">{{ cat.created_at }}</td>
                             <td>
                                 <div class="actions-cell">
@@ -163,7 +177,15 @@
                             <div>
                                 <p class="cat-name">{{ cat.name }}</p>
                                 <p class="cat-products-count">{{ cat.products_count }} {{ $t('admin.dashboard.products')
-                                    }}</p>
+                                }}</p>
+                                <div class="mt-1">
+                                    <span v-if="cat.parent_name" class="parent-badge small">
+                                        {{ cat.parent_name }}
+                                    </span>
+                                    <span v-else class="main-badge small">
+                                        {{ $t('admin.categories.mainCategory') }}
+                                    </span>
+                                </div>
                                 <p class="cat-date mt-1">{{ cat.created_at }}</p>
                             </div>
                         </div>
@@ -272,6 +294,62 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <!-- Category Type Selector -->
+                    <div class="form-group">
+                        <label class="form-label">{{ $t('admin.categories.categoryType') }}</label>
+                        <div class="type-selector">
+                            <button class="type-btn" :class="{ active: form.type === 'main' }"
+                                @click="onTypeChange('main')">
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="18"
+                                    height="18">
+                                    <rect x="2" y="2" width="7" height="7" rx="1.5" />
+                                    <rect x="11" y="2" width="7" height="7" rx="1.5" />
+                                    <rect x="2" y="11" width="7" height="7" rx="1.5" />
+                                    <rect x="11" y="11" width="7" height="7" rx="1.5" />
+                                </svg>
+                                <span>{{ $t('admin.categories.mainCategory') }}</span>
+                                <p class="type-desc">{{ $t('admin.categories.mainCategoryDesc') }}</p>
+                            </button>
+                            <button class="type-btn" :class="{ active: form.type === 'sub' }"
+                                @click="onTypeChange('sub')">
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="18"
+                                    height="18">
+                                    <rect x="2" y="2" width="7" height="7" rx="1.5" />
+                                    <path d="M5.5 9v5.5H11" stroke-linecap="round" stroke-linejoin="round" />
+                                    <rect x="11" y="11" width="7" height="7" rx="1.5" />
+                                </svg>
+                                <span>{{ $t('admin.categories.subCategory') }}</span>
+                                <p class="type-desc">{{ $t('admin.categories.subCategoryDesc') }}</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Parent Category Dropdown — ADD modal uses full parentCategories (no self to exclude) -->
+                    <Transition name="slide-down">
+                        <div v-if="form.type === 'sub'" class="form-group">
+                            <label class="form-label">{{ $t('admin.categories.parentCategoryLabel') }} <span
+                                    class="required">*</span></label>
+                            <div class="select-wrapper">
+                                <select v-model="form.parent_id" class="form-select"
+                                    :class="{ 'has-error': formErrors.parent_id }">
+                                    <option value="" disabled>{{ $t('admin.categories.selectParent') }}</option>
+                                    <option v-for="p in parentCategories" :key="p.id" :value="p.id">{{ p.name }}
+                                    </option>
+                                </select>
+                                <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" width="14"
+                                    height="14">
+                                    <path fill-rule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <p v-if="formErrors.parent_id" class="form-error">{{ formErrors.parent_id }}</p>
+                            <p v-if="parentCategories.length === 0" class="form-hint">
+                                {{ $t('admin.categories.noParentsAvailable') }}
+                            </p>
+                        </div>
+                    </Transition>
+
                     <div class="form-group">
                         <label class="form-label">{{ $t('admin.categories.nameLabel') }} <span
                                 class="required">*</span></label>
@@ -336,6 +414,63 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <!-- Category Type Selector -->
+                    <div class="form-group">
+                        <label class="form-label">{{ $t('admin.categories.categoryType') }}</label>
+                        <div class="type-selector">
+                            <button class="type-btn" :class="{ active: form.type === 'main' }"
+                                @click="onTypeChange('main')">
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="18"
+                                    height="18">
+                                    <rect x="2" y="2" width="7" height="7" rx="1.5" />
+                                    <rect x="11" y="2" width="7" height="7" rx="1.5" />
+                                    <rect x="2" y="11" width="7" height="7" rx="1.5" />
+                                    <rect x="11" y="11" width="7" height="7" rx="1.5" />
+                                </svg>
+                                <span>{{ $t('admin.categories.mainCategory') }}</span>
+                                <p class="type-desc">{{ $t('admin.categories.mainCategoryDesc') }}</p>
+                            </button>
+                            <button class="type-btn" :class="{ active: form.type === 'sub' }"
+                                @click="onTypeChange('sub')">
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="18"
+                                    height="18">
+                                    <rect x="2" y="2" width="7" height="7" rx="1.5" />
+                                    <path d="M5.5 9v5.5H11" stroke-linecap="round" stroke-linejoin="round" />
+                                    <rect x="11" y="11" width="7" height="7" rx="1.5" />
+                                </svg>
+                                <span>{{ $t('admin.categories.subCategory') }}</span>
+                                <p class="type-desc">{{ $t('admin.categories.subCategoryDesc') }}</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Parent Category Dropdown — EDIT modal uses availableParents (self excluded) -->
+                    <Transition name="slide-down">
+                        <div v-if="form.type === 'sub'" class="form-group">
+                            <label class="form-label">{{ $t('admin.categories.parentCategoryLabel') }} <span
+                                    class="required">*</span></label>
+                            <div class="select-wrapper">
+                                <select v-model="form.parent_id" class="form-select"
+                                    :class="{ 'has-error': formErrors.parent_id }">
+                                    <option value="" disabled>{{ $t('admin.categories.selectParent') }}</option>
+                                    <!-- FIX: availableParents filters out the category being edited -->
+                                    <option v-for="p in availableParents" :key="p.id" :value="p.id">{{ p.name }}
+                                    </option>
+                                </select>
+                                <svg class="select-arrow" viewBox="0 0 20 20" fill="currentColor" width="14"
+                                    height="14">
+                                    <path fill-rule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <p v-if="formErrors.parent_id" class="form-error">{{ formErrors.parent_id }}</p>
+                            <p v-if="availableParents.length === 0" class="form-hint">
+                                {{ $t('admin.categories.noParentsAvailable') }}
+                            </p>
+                        </div>
+                    </Transition>
+
                     <div class="form-group">
                         <label class="form-label">{{ $t('admin.categories.nameLabel') }} <span
                                 class="required">*</span></label>
@@ -422,6 +557,15 @@
                             <span class="preview-val">{{ selectedCategory.description || '—' }}</span>
                         </div>
                         <div class="preview-row">
+                            <span class="preview-key">{{ $t('admin.categories.parentCategory') }}</span>
+                            <span class="preview-val">
+                                <span v-if="selectedCategory.parent_name" class="parent-badge">
+                                    {{ selectedCategory.parent_name }}
+                                </span>
+                                <span v-else class="main-badge">{{ $t('admin.categories.mainCategory') }}</span>
+                            </span>
+                        </div>
+                        <div class="preview-row">
                             <span class="preview-key">{{ $t('admin.categories.products') }}</span>
                             <span class="preview-val">{{ selectedCategory.products_count }}</span>
                         </div>
@@ -434,7 +578,7 @@
                             <span class="preview-val">
                                 <span class="status-badge" :class="selectedCategory.is_active ? 'active' : 'inactive'">
                                     {{ selectedCategory.is_active ? $t('admin.common.active') :
-                                    $t('admin.common.inactive') }}
+                                        $t('admin.common.inactive') }}
                                 </span>
                             </span>
                         </div>
@@ -462,7 +606,7 @@
                 <div class="modal-footer">
                     <button class="btn-submit" @click="openEditModal(selectedCategory);">{{
                         $t('admin.categories.editBtn')
-                        }}</button>
+                    }}</button>
                 </div>
             </div>
         </Transition>
@@ -548,6 +692,7 @@ const authHeaders = computed(() => ({ Authorization: `Bearer ${token.value}` }))
 
 // ── State ─────────────────────────────────────────────────────
 const categories = ref<any[]>([])
+const parentCategories = ref<{ id: number; name: string }[]>([])
 const stats = ref({ total: 0, growth: 0 })
 const loading = ref(true)
 const search = ref('')
@@ -571,8 +716,10 @@ const form = reactive({
     name: '',
     description: '',
     is_active: true,
+    type: 'main' as 'main' | 'sub',
+    parent_id: '' as number | '',
 })
-const formErrors = reactive({ name: '' })
+const formErrors = reactive({ name: '', parent_id: '' })
 
 const toast = reactive({ visible: false, message: '', type: 'success' })
 
@@ -588,6 +735,12 @@ const visiblePages = computed(() => {
     pages.push(last)
     return pages
 })
+
+// ── FIX: availableParents excludes the category currently being edited ────────
+// Used only in the Edit modal so a category cannot be its own parent.
+const availableParents = computed(() =>
+    parentCategories.value.filter(p => p.id !== selectedCategory.value?.id)
+)
 
 // ── API calls ─────────────────────────────────────────────────
 async function fetchCategories(page = 1) {
@@ -618,6 +771,13 @@ async function fetchStats() {
     } catch { }
 }
 
+async function fetchParentCategories() {
+    try {
+        const data = await $fetch<any>(`${API}/admin/categories/parents`, { headers: authHeaders.value })
+        parentCategories.value = data
+    } catch { }
+}
+
 async function fetchCategoryDetail(id: number) {
     try {
         const data = await $fetch<any>(`${API}/admin/categories/${id}`, { headers: authHeaders.value })
@@ -629,6 +789,7 @@ async function fetchCategoryDetail(id: number) {
 onMounted(() => {
     fetchStats()
     fetchCategories()
+    fetchParentCategories()
 })
 
 // ── Search ────────────────────────────────────────────────────
@@ -645,6 +806,15 @@ function goToPage(page: number) {
     fetchCategories(page)
 }
 
+// ── Type change ───────────────────────────────────────────────
+function onTypeChange(type: 'main' | 'sub') {
+    form.type = type
+    if (type === 'main') {
+        form.parent_id = ''
+        formErrors.parent_id = ''
+    }
+}
+
 // ── Modals ────────────────────────────────────────────────────
 function openAddModal() {
     resetForm()
@@ -657,6 +827,8 @@ function openEditModal(cat: any) {
     form.name = cat.name
     form.description = cat.description || ''
     form.is_active = cat.is_active
+    form.type = cat.parent_id ? 'sub' : 'main'
+    form.parent_id = cat.parent_id || ''
     imagePreview.value = resolveImageUrl(cat.image_url)
     activeModal.value = 'edit'
     openDropdown.value = null
@@ -687,7 +859,10 @@ function resetForm() {
     form.name = ''
     form.description = ''
     form.is_active = true
+    form.type = 'main'
+    form.parent_id = ''
     formErrors.name = ''
+    formErrors.parent_id = ''
     imagePreview.value = null
     imageFile.value = null
 }
@@ -748,7 +923,9 @@ function removeImage() {
 // ── Submit ADD ────────────────────────────────────────────────
 async function submitAdd() {
     formErrors.name = ''
+    formErrors.parent_id = ''
     if (!form.name.trim()) { formErrors.name = t('admin.common.nameRequired'); return }
+    if (form.type === 'sub' && !form.parent_id) { formErrors.parent_id = t('admin.categories.parentRequired'); return }
 
     submitting.value = true
     try {
@@ -756,6 +933,7 @@ async function submitAdd() {
         body.append('name', form.name)
         if (form.description) body.append('description', form.description)
         body.append('is_active', form.is_active ? '1' : '0')
+        if (form.type === 'sub' && form.parent_id) body.append('parent_id', String(form.parent_id))
         if (imageFile.value) body.append('image', imageFile.value)
 
         await $fetch(`${API}/admin/categories`, {
@@ -766,6 +944,7 @@ async function submitAdd() {
         showToast(t('admin.categories.createdSuccess'), 'success')
         closeModal()
         fetchStats()
+        fetchParentCategories()
         fetchCategories(currentPage.value)
     } catch (err: any) {
         const msg = err?.data?.errors?.name?.[0] || err?.data?.message || t('admin.categories.createFailed')
@@ -779,7 +958,9 @@ async function submitAdd() {
 // ── Submit EDIT ───────────────────────────────────────────────
 async function submitEdit() {
     formErrors.name = ''
+    formErrors.parent_id = ''
     if (!form.name.trim()) { formErrors.name = t('admin.common.nameRequired'); return }
+    if (form.type === 'sub' && !form.parent_id) { formErrors.parent_id = t('admin.categories.parentRequired'); return }
 
     submitting.value = true
     try {
@@ -788,6 +969,7 @@ async function submitEdit() {
         body.append('name', form.name)
         if (form.description) body.append('description', form.description)
         body.append('is_active', form.is_active ? '1' : '0')
+        body.append('parent_id', form.type === 'sub' && form.parent_id ? String(form.parent_id) : '')
         if (imageFile.value) body.append('image', imageFile.value)
 
         await $fetch(`${API}/admin/categories/${selectedCategory.value.id}`, {
@@ -797,6 +979,7 @@ async function submitEdit() {
         })
         showToast(t('admin.categories.updatedSuccess'), 'success')
         closeModal()
+        fetchParentCategories()
         fetchCategories(currentPage.value)
     } catch (err: any) {
         const msg = err?.data?.errors?.name?.[0] || err?.data?.message || t('admin.categories.updateFailed')
@@ -818,6 +1001,7 @@ async function submitDelete() {
         showToast(t('admin.categories.deletedSuccess'), 'success')
         closeModal()
         fetchStats()
+        fetchParentCategories()
         if (categories.value.length === 1 && currentPage.value > 1) currentPage.value--
         fetchCategories(currentPage.value)
     } catch (err: any) {
@@ -1063,13 +1247,49 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 .cat-desc {
     font-size: 0.85rem;
     color: #6b7280;
-    max-width: 280px;
+    max-width: 220px;
 }
 
 .cat-date {
     font-size: 0.82rem;
     color: #9ca3af;
     white-space: nowrap;
+}
+
+/* ── Parent / Main badges ────────────────────────────────────── */
+.parent-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #eff6ff;
+    color: #2563eb;
+    white-space: nowrap;
+}
+
+.parent-badge.small {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+}
+
+.main-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #f0f4ec;
+    color: #3d5a2e;
+    white-space: nowrap;
+}
+
+.main-badge.small {
+    font-size: 0.7rem;
+    padding: 2px 8px;
 }
 
 .actions-cell {
@@ -1193,6 +1413,125 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 
 .mt-1 {
     margin-top: 4px;
+}
+
+/* ── Type Selector ──────────────────────────────────────────── */
+.type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.type-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 10px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+    color: #6b7280;
+}
+
+.type-btn:hover {
+    border-color: #3d5a2e;
+    background: #f8faf6;
+    color: #3d5a2e;
+}
+
+.type-btn.active {
+    border-color: #3d5a2e;
+    background: #f0f4ec;
+    color: #3d5a2e;
+}
+
+.type-btn span {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: inherit;
+}
+
+.type-desc {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.type-btn.active .type-desc {
+    color: #6b8f52;
+}
+
+/* ── Select ─────────────────────────────────────────────────── */
+.select-wrapper {
+    position: relative;
+}
+
+.form-select {
+    width: 100%;
+    padding: 9px 36px 9px 12px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    color: #1a1a1a;
+    background: #fff;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: border-color .2s;
+    box-sizing: border-box;
+}
+
+.form-select:focus {
+    border-color: #3d5a2e;
+}
+
+.form-select.has-error {
+    border-color: #dc2626;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #9ca3af;
+}
+
+.form-hint {
+    font-size: 0.78rem;
+    color: #f59e0b;
+    margin-top: 4px;
+}
+
+/* ── Slide-down transition ──────────────────────────────────── */
+.slide-down-enter-active {
+    transition: all .22s ease;
+    overflow: hidden;
+}
+
+.slide-down-leave-active {
+    transition: all .18s ease;
+    overflow: hidden;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0;
+}
+
+.slide-down-enter-to,
+.slide-down-leave-from {
+    opacity: 1;
+    max-height: 120px;
 }
 
 /* ── Pagination ─────────────────────────────────────────────── */
@@ -1992,6 +2331,10 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
         bottom: 80px;
         left: 12px;
         right: 12px;
+    }
+
+    .type-selector {
+        grid-template-columns: 1fr 1fr;
     }
 }
 </style>

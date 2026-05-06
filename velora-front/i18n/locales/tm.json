@@ -145,7 +145,17 @@
       "created": "Döredilen",
       "categoryHeader": "Kategoriýa",
       "showingOf": "{from}–{to} görkezilýär, jemi {total} kategoriýa",
-      "categoriesTotal": "kategoriýa"
+      "categoriesTotal": "kategoriýa",
+      "categoryType": "Kategoriýa görnüşi",
+      "mainCategory": "Esasy kategoriýa",
+      "mainCategoryDesc": "Ýokary derejeli, ene kategoriýasy bolmadyk kategoriýa.",
+      "subCategory": "Aşaky kategoriýa",
+      "subCategoryDesc": "Bar bolan esasy kategoriýanyň aşagyna degişli.",
+      "parentCategory": "Ene kategoriýa",
+      "parentCategoryLabel": "Ene kategoriýa",
+      "selectParent": "Ene kategoriýany saýla",
+      "noParentsAvailable": "Häzirki wagtda esasy kategoriýalar ýok.",
+      "parentRequired": "Ene kategoriýany saýlamaly."
     },
     "users": {
       "title": "Ulanyjy dolandyryşy",
@@ -283,6 +293,10 @@
         "showingAll": "{total} sargytdan {n} görkezilýär",
         "mobileItemsMeta": "{items} haryt · {date}"
       },
+      "deliveryType": {
+        "pickup": "Özüň alyp gitmek",
+        "delivery": "Eltip bermek"
+      },
       "modals": {
         "preview": {
           "title": "Sargyt jikme-jiklikleri",
@@ -293,7 +307,8 @@
           "total": "Jemi",
           "note": "Bellik",
           "created": "Döredilen",
-          "updated": "Täzelenen"
+          "updated": "Täzelenen",
+          "delivery": "Eltip bermek maglumatlary"
         },
         "edit": {
           "title": "Ýagdaýy üýtget",
@@ -331,7 +346,10 @@
           "quote": "\"Gowy kofe lezzet, gowy dost hazynadyr.\"",
           "thanks": "Velora Kafe saýlandygyňyz üçin sag boluň!",
           "generating": "Taýýarlanylýar…",
-          "downloadPdf": "PDF göçür"
+          "downloadPdf": "PDF göçür",
+          "deliveryType": "Eltip bermek görnüşi",
+          "address": "Salgysy",
+          "phone": "Telefon belgisi"
         }
       },
       "pending": {

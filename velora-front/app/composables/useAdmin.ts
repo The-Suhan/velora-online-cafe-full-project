@@ -43,6 +43,12 @@ export const useAdmin = () => {
         })
     }
 
+    const fetchParentCategories = async () => {
+        return await $fetch(`${apiBase}/admin/categories/parents`, {
+            headers: authHeaders.value,
+        })
+    }
+
     const fetchUsers = async (params: {
         search?: string
         role?: string
@@ -83,5 +89,6 @@ export const useAdmin = () => {
         fetchUser,
         deleteUser,
         fetchCategories,
+        fetchParentCategories
     }
 }
