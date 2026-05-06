@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.3.0",
+    "@popperjs/core": "^2.11.8",
     "chart.js": "^4.5.1",
     "nuxt": "^4.4.2",
+    "v-calendar": "^3.1.2",
     "vue": "^3.5.33",
     "vue-router": "^5.0.6"
   },

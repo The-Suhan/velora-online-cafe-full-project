@@ -9,16 +9,24 @@ export const useAdmin = () => {
     }))
 
     const fetchDashboard = async () => {
-        console.log('Token:', token.value)
         return await $fetch(`${apiBase}/admin/dashboard`, {
             headers: authHeaders.value,
         })
     }
 
-    const fetchOrdersChart = async (period: 'daily' | 'weekly' | 'monthly' | 'yearly') => {
+    // ── Updated: supports custom period with date range ──────────
+    const fetchOrdersChart = async (
+        period: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom',
+        options?: { startDate?: string; endDate?: string }
+    ) => {
+        const query: Record<string, string> = { period }
+        if (period === 'custom' && options?.startDate && options?.endDate) {
+            query.start_date = options.startDate
+            query.end_date = options.endDate
+        }
         return await $fetch(`${apiBase}/admin/orders/chart`, {
             headers: authHeaders.value,
-            query: { period },
+            query,
         })
     }
 
@@ -27,6 +35,7 @@ export const useAdmin = () => {
             await fetchMe()
         }
     }
+
     const fetchCategories = async (params: { per_page?: number; page?: number; search?: string } = {}) => {
         return await $fetch(`${apiBase}/admin/categories`, {
             headers: authHeaders.value,

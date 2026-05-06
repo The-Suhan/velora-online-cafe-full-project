@@ -18,7 +18,8 @@
                     <p class="stat-label">{{ card.label }}</p>
                     <p class="stat-value">{{ formatNumber(card.value) }}</p>
                     <p class="stat-growth" :class="card.growth >= 0 ? 'positive' : 'negative'">
-                        {{ card.growth >= 0 ? '↑' : '↓' }} {{ Math.abs(card.growth) }}% {{ $t('admin.dashboard.thisWeek') }}
+                        {{ card.growth >= 0 ? '↑' : '↓' }} {{ Math.abs(card.growth) }}%
+                        {{ $t('admin.dashboard.thisWeek') }}
                     </p>
                 </div>
             </div>
@@ -26,19 +27,58 @@
 
         <!-- Middle row: chart + recent orders -->
         <div class="mid-row">
-            <!-- Orders Overview chart -->
-            <div class="chart-card">
-                <div class="card-header">
-                    <span class="card-title">{{ $t('admin.dashboard.ordersOverview') }}</span>
-                    <div class="period-tabs">
-                        <button v-for="p in periods" :key="p.value" class="period-btn"
-                            :class="{ active: period === p.value }" @click="changePeriod(p.value)">
-                            {{ p.label }}
-                        </button>
+            <!-- Orders Overview chart — now a standalone component -->
+            <div class="oc-card">
+                <div class="oc-head">
+                    <span class="oc-title">{{ $t('admin.dashboard.ordersOverview') }}</span>
+
+                    <div class="oc-controls">
+                        <div class="oc-tabs">
+                            <button v-for="p in periods" :key="p.value" class="oc-tab"
+                                :class="{ active: period === p.value }" @click="changePeriod(p.value)">
+                                {{ p.label }}
+                            </button>
+                        </div>
+
+                        <div class="oc-cal-wrap" ref="calendarRef">
+                            <button class="oc-cal-btn" :class="{ active: period === 'custom' }"
+                                @click.stop="isOpen = !isOpen">
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                                    class="oc-cal-icon">
+                                    <rect x="3" y="4" width="14" height="13" rx="2" />
+                                    <path d="M3 8h14M7 2v4M13 2v4" />
+                                </svg>
+                                <span class="oc-cal-label">{{ rangeLabel ?? $t('admin.dashboard.pickDate') }}</span>
+                            </button>
+
+                            <Transition name="oc-pop">
+                                <div v-if="isOpen" class="oc-cal-popup" @click.stop>
+                                    <DatePicker color="green" :model-value="(range as any)"
+                                        @update:model-value="(val: any) => range = val" mode="date" is-range
+                                        :popover="false" :locale="calendarLocale">
+                                        <template #footer>
+                                            <div class="oc-cal-footer">
+                                                <button class="oc-cal-clear" @click="clearRange">
+                                                    {{ $t('admin.dashboard.clearDate') }}
+                                                </button>
+                                                <button class="oc-cal-apply" @click="applyRange">
+                                                    {{ $t('admin.dashboard.applyDate') }}
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </DatePicker>
+                                </div>
+                            </Transition>
+                        </div>
                     </div>
                 </div>
-                <div class="chart-wrap">
-                    <canvas ref="chartCanvas" />
+
+                <!-- loading=true → skeleton | loading=false → canvas -->
+                <div class="oc-chart-wrap">
+                    <div v-if="loading" class="oc-loading">
+                        <div class="oc-skeleton" />
+                    </div>
+                    <canvas v-else ref="chartCanvas" />
                 </div>
             </div>
 
@@ -52,26 +92,30 @@
                     <div v-if="loading" class="loading-placeholder">
                         <div v-for="i in 4" :key="i" class="skeleton-row" />
                     </div>
-                    <div v-for="order in recentOrders" :key="order.id" class="order-row">
-                        <div class="order-img-wrap">
-                            <img v-if="order.product_img" :src="order.product_img" :alt="order.product_name"
-                                class="order-img" />
-                            <div v-else class="order-img-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                                </svg>
+                    <template v-else>
+                        <div v-for="order in recentOrders" :key="order.id" class="order-row">
+                            <div class="order-img-wrap">
+                                <img v-if="order.product_img" :src="order.product_img" :alt="order.product_name"
+                                    class="order-img" />
+                                <div v-else class="order-img-placeholder">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="order-info">
+                                <p class="order-no">{{ order.order_no }}</p>
+                                <p class="order-product">{{ order.product_name }}</p>
+                            </div>
+                            <div class="order-right">
+                                <p class="order-price">${{ Number(order.total_price).toFixed(2) }}</p>
+                                <p class="order-time">{{ timeAgo(order.created_at) }}</p>
                             </div>
                         </div>
-                        <div class="order-info">
-                            <p class="order-no">{{ order.order_no }}</p>
-                            <p class="order-product">{{ order.product_name }}</p>
-                        </div>
-                        <div class="order-right">
-                            <p class="order-price">${{ Number(order.total_price).toFixed(2) }}</p>
-                            <p class="order-time">{{ timeAgo(order.created_at) }}</p>
-                        </div>
-                    </div>
-                    <p v-if="!loading && recentOrders.length === 0" class="empty-msg">{{ $t('admin.dashboard.noRecentOrders') }}</p>
+                        <p v-if="recentOrders.length === 0" class="empty-msg">
+                            {{ $t('admin.dashboard.noRecentOrders') }}
+                        </p>
+                    </template>
                 </div>
             </div>
         </div>
@@ -99,7 +143,9 @@
                         </div>
                         <span class="product-rating">{{ Number(product.avg_rating).toFixed(1) }}</span>
                     </div>
-                    <p v-if="!loading && topProducts.length === 0" class="empty-msg">{{ $t('admin.dashboard.noRatedProducts') }}</p>
+                    <p v-if="!loading && topProducts.length === 0" class="empty-msg">
+                        {{ $t('admin.dashboard.noRatedProducts') }}
+                    </p>
                 </div>
             </div>
 
@@ -120,7 +166,9 @@
                         <span class="cat-name">{{ cat.name }}</span>
                         <span class="cat-count">{{ cat.products_count }}</span>
                     </div>
-                    <p v-if="!loading && categories.length === 0" class="empty-msg">{{ $t('admin.dashboard.noCategories') }}</p>
+                    <p v-if="!loading && categories.length === 0" class="empty-msg">
+                        {{ $t('admin.dashboard.noCategories') }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -128,47 +176,22 @@
 </template>
 
 <script setup lang="ts">
-import {
-    Chart,
-    LineController,
-    LineElement,
-    PointElement,
-    LinearScale,
-    CategoryScale,
-    Filler,
-    Tooltip,
-} from 'chart.js'
-
-Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip)
-
 definePageMeta({
     layout: 'admin' as any,
     middleware: 'admin',
 })
 
-const { t } = useI18n()
-const { fetchDashboard, fetchOrdersChart } = useAdmin()
+const { t, locale } = useI18n()
+const { fetchDashboard } = useAdmin()
 const pendingOrders = useState('admin:pendingOrders')
 const unreadFeedbacks = useState('admin:unreadFeedbacks')
 
 // ── State ──────────────────────────────────────────────────
-type Period = 'daily' | 'weekly' | 'monthly' | 'yearly'
 const loading = ref(true)
 const stats = ref<any>({})
 const recentOrders = ref<any[]>([])
 const topProducts = ref<any[]>([])
 const categories = ref<any[]>([])
-const period = ref<Period>('weekly')
-const chartCanvas = ref<HTMLCanvasElement | null>(null)
-let chartInstance: Chart | null = null
-
-
-const periods: { value: Period; label: string }[] = [
-    { value: 'daily', label: t('admin.dashboard.periodDay') },
-    { value: 'weekly', label: t('admin.dashboard.periodWeek') },
-    { value: 'monthly', label: t('admin.dashboard.periodMonth') },
-    { value: 'yearly', label: t('admin.dashboard.periodYear') },
-]
 
 // ── Stat cards ─────────────────────────────────────────────
 const statCards = computed(() => [
@@ -218,53 +241,90 @@ const statCards = computed(() => [
 ])
 
 // ── Load data ──────────────────────────────────────────────
-onMounted(async () => {
-    try {
-        const [dash, chart] = await Promise.all([
-            fetchDashboard(),
-            fetchOrdersChart('weekly'),
-        ])
+const calendarLocale = computed(() => {
+    return locale.value === 'tm' ? 'en' : locale.value
+})
 
-        const d = dash as any
-        stats.value = d.stats
-        recentOrders.value = d.recent_orders
-        topProducts.value = d.top_products
-        categories.value = d.categories
+import {
+    Chart,
+    LineController,
+    LineElement,
+    PointElement,
+    LinearScale,
+    CategoryScale,
+    Filler,
+    Tooltip,
+} from 'chart.js'
+import { DatePicker } from 'v-calendar'
+import 'v-calendar/style.css'
+import { nextTick } from 'vue'
 
-        pendingOrders.value = d.stats.pending_orders
-        unreadFeedbacks.value = d.stats.unread_feedbacks
+Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip)
 
-        renderChart(chart as any)
-    } catch (e) {
-        console.error('Dashboard load error:', e)
-    } finally {
-        loading.value = false
+const { fetchOrdersChart } = useAdmin()
+
+type Period = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
+
+const chartCanvas = ref<HTMLCanvasElement | null>(null)
+const calendarRef = ref<HTMLElement | null>(null)
+let chartInstance: Chart | null = null
+
+const period = ref<Period>('weekly')
+const isOpen = ref(false)
+const range = ref<{ start: Date; end: Date } | null>(null)
+const pendingData = ref<{ labels: string[]; data: number[] } | null>(null)
+
+const periods = computed(() => [
+    { value: 'daily' as const, label: t('admin.dashboard.periodDay') },
+    { value: 'weekly' as const, label: t('admin.dashboard.periodWeek') },
+    { value: 'monthly' as const, label: t('admin.dashboard.periodMonth') },
+    { value: 'yearly' as const, label: t('admin.dashboard.periodYear') },
+])
+
+const rangeLabel = computed(() => {
+    if (!range.value?.start || !range.value?.end) return null
+    const fmt = (d: Date) =>
+        d.toLocaleDateString(locale.value === 'tm' ? 'ru-RU' : locale.value, {
+            day: '2-digit', month: 'short', year: 'numeric',
+        })
+    return `${fmt(range.value.start)} — ${fmt(range.value.end)}`
+})
+
+const toISODate = (d: Date) => d.toISOString().split('T')[0]
+
+watch(chartCanvas, (canvas) => {
+    if (canvas && pendingData.value) {
+        renderChart(pendingData.value)
+        pendingData.value = null
     }
 })
 
-const changePeriod = async (p: Period) => {
-    period.value = p
-    const chart = await fetchOrdersChart(p)
-    renderChart(chart as any)
-}
-
-// ── Chart ──────────────────────────────────────────────────
+// ── Chart render ──────────────────────────────────────────
 const renderChart = (data: { labels: string[]; data: number[] }) => {
-    if (!chartCanvas.value) return
-    if (chartInstance) chartInstance.destroy()
+    if (!chartCanvas.value) {
+        pendingData.value = data
+        return
+    }
+
+    if (chartInstance) {
+        chartInstance.destroy()
+        chartInstance = null
+    }
 
     chartInstance = new Chart(chartCanvas.value, {
         type: 'line',
         data: {
-            labels: data.labels,
+            labels: data.labels ?? [],
             datasets: [{
-                data: data.data,
+                data: data.data ?? [],
                 borderColor: '#4A6741',
-                backgroundColor: 'rgba(74, 103, 65, 0.1)',
-                borderWidth: 2,
+                backgroundColor: 'rgba(74,103,65,0.08)',
+                borderWidth: 2.5,
                 pointBackgroundColor: '#4A6741',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
                 pointRadius: 4,
-                pointHoverRadius: 6,
+                pointHoverRadius: 7,
                 fill: true,
                 tension: 0.4,
             }],
@@ -272,37 +332,126 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false }, tooltip: { mode: 'index' } },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#2C1810',
+                    titleColor: '#C8A96E',
+                    bodyColor: '#F0EDE6',
+                    padding: 10,
+                    cornerRadius: 8,
+                },
+            },
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,0.05)' },
-                    ticks: { font: { family: 'Jost', size: 11 }, color: '#8a7060' },
+                    min: 0,
+                    suggestedMax: 1,
+                    grid: { color: 'rgba(0,0,0,0.04)' },
+                    ticks: {
+                        font: { family: 'Jost', size: 11 },
+                        color: '#8a7060',
+                        stepSize: 1,
+                        precision: 0,
+                    },
                 },
                 x: {
                     grid: { display: false },
-                    ticks: { font: { family: 'Jost', size: 11 }, color: '#8a7060' },
+                    ticks: {
+                        font: { family: 'Jost', size: 11 },
+                        color: '#8a7060',
+                        maxRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 12,
+                    },
                 },
             },
         },
     })
 }
 
+// ── Data load ─────────────────────────────────────────────
+const loadPeriod = async (p: Exclude<Period, 'custom'>) => {
+    loading.value = true
+    try {
+        const data = await fetchOrdersChart(p)
+        loading.value = false
+        await nextTick()
+        renderChart(data as any)
+    } catch (e) {
+        console.error('Chart load error:', e)
+        loading.value = false
+    }
+}
+
+const loadCustomRange = async () => {
+    if (!range.value?.start || !range.value?.end) return
+    loading.value = true
+    try {
+        const data = await fetchOrdersChart('custom', {
+            startDate: toISODate(range.value.start),
+            endDate: toISODate(range.value.end),
+        })
+        loading.value = false
+        await nextTick()
+        renderChart(data as any)
+    } catch (e) {
+        console.error('Custom chart error:', e)
+        loading.value = false
+    }
+}
+
+const applyRange = () => {
+    isOpen.value = false
+    period.value = 'custom'
+    loadCustomRange()
+}
+
+const clearRange = () => {
+    range.value = null
+    period.value = 'weekly'
+    isOpen.value = false
+    loadPeriod('weekly')
+}
+
+const changePeriod = (p: Exclude<Period, 'custom'>) => {
+    period.value = p
+    range.value = null
+    isOpen.value = false
+    loadPeriod(p)
+}
+
+const onClickOutside = (e: MouseEvent) => {
+    const target = e.target as HTMLElement
+    if (calendarRef.value && !calendarRef.value.contains(target)) {
+        isOpen.value = false
+    }
+}
+
+onMounted(() => {
+    loadPeriod('weekly')
+    document.addEventListener('click', onClickOutside)
+})
+
+onUnmounted(() => {
+    chartInstance?.destroy()
+    document.removeEventListener('click', onClickOutside)
+})
+
 // ── Helpers ────────────────────────────────────────────────
-const formatNumber = (n: number) =>
-    new Intl.NumberFormat().format(n ?? 0)
+const formatNumber = (n: number) => new Intl.NumberFormat().format(n ?? 0)
 
 const timeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime()
     const mins = Math.floor(diff / 60000)
-    if (mins < 1) return 'just now'
-    if (mins < 60) return `${mins} min ago`
+    if (mins < 1) return t('admin.dashboard.justNow')
+    if (mins < 60) return t('admin.dashboard.minAgo', { n: mins })
     const hrs = Math.floor(mins / 60)
-    if (hrs < 24) return `${hrs}h ago`
-    return `${Math.floor(hrs / 24)}d ago`
+    if (hrs < 24) return t('admin.dashboard.hrsAgo', { n: hrs })
+    return t('admin.dashboard.daysAgo', { n: Math.floor(hrs / 24) })
 }
-
-onUnmounted(() => { chartInstance?.destroy() })
 </script>
 
 <style scoped>
@@ -331,7 +480,7 @@ onUnmounted(() => { chartInstance?.destroy() })
     margin: 0;
 }
 
-/* ── Stat cards ────────────────────────────────────────── */
+/* ── Stat cards ─────────────────────────────────────────── */
 .stat-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -392,7 +541,7 @@ onUnmounted(() => { chartInstance?.destroy() })
     color: #c0392b;
 }
 
-/* ── Mid row ───────────────────────────────────────────── */
+/* ── Mid row ────────────────────────────────────────────── */
 .mid-row {
     display: grid;
     grid-template-columns: 1fr 380px;
@@ -400,8 +549,7 @@ onUnmounted(() => { chartInstance?.destroy() })
     margin-bottom: 16px;
 }
 
-/* ── Cards ─────────────────────────────────────────────── */
-.chart-card,
+/* ── Cards ──────────────────────────────────────────────── */
 .recent-card,
 .bottom-card {
     background: #fff;
@@ -433,40 +581,6 @@ onUnmounted(() => { chartInstance?.destroy() })
 
 .view-all:hover {
     text-decoration: underline;
-}
-
-/* Period tabs */
-.period-tabs {
-    display: flex;
-    gap: 4px;
-    background: #F0EDE6;
-    border-radius: 8px;
-    padding: 3px;
-}
-
-.period-btn {
-    background: none;
-    border: none;
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-family: 'Jost', sans-serif;
-    font-size: 0.75rem;
-    color: #8a7060;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-}
-
-.period-btn.active {
-    background: #fff;
-    color: #2C1810;
-    font-weight: 500;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-/* Chart */
-.chart-wrap {
-    height: 240px;
-    position: relative;
 }
 
 /* Recent orders */
@@ -501,7 +615,7 @@ onUnmounted(() => { chartInstance?.destroy() })
     justify-content: center;
 }
 
-.order-img-placeholder :deep(svg) {
+.order-img-placeholder svg {
     width: 20px;
     height: 20px;
     color: #C8A96E;
@@ -547,11 +661,18 @@ onUnmounted(() => { chartInstance?.destroy() })
 }
 
 /* Skeleton */
+.loading-placeholder {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .skeleton-row {
     height: 44px;
     background: linear-gradient(90deg, #F0EDE6 25%, #e8e2d9 50%, #F0EDE6 75%);
+    background-size: 400px 100%;
     border-radius: 10px;
-    animation: shimmer 1.2s infinite;
+    animation: shimmer 1.2s infinite linear;
 }
 
 @keyframes shimmer {
@@ -564,7 +685,7 @@ onUnmounted(() => { chartInstance?.destroy() })
     }
 }
 
-/* ── Bottom row ────────────────────────────────────────── */
+/* ── Bottom row ─────────────────────────────────────────── */
 .bottom-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -659,7 +780,7 @@ onUnmounted(() => { chartInstance?.destroy() })
     flex-shrink: 0;
 }
 
-.cat-icon-wrap :deep(svg) {
+.cat-icon-wrap svg {
     width: 18px;
     height: 18px;
 }
@@ -686,7 +807,7 @@ onUnmounted(() => { chartInstance?.destroy() })
     padding: 12px 0;
 }
 
-/* ── Responsive ────────────────────────────────────────── */
+/* ── Responsive ─────────────────────────────────────────── */
 @media (max-width: 1024px) {
     .stat-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -714,5 +835,233 @@ onUnmounted(() => { chartInstance?.destroy() })
     .stat-value {
         font-size: 1.3rem;
     }
+}
+
+.oc-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 1px 4px rgba(44, 24, 16, 0.06);
+}
+
+.oc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.oc-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #2C1810;
+}
+
+.oc-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.oc-tabs {
+    display: flex;
+    gap: 3px;
+    background: #F0EDE6;
+    border-radius: 8px;
+    padding: 3px;
+}
+
+.oc-tab {
+    background: none;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 11px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    color: #8a7060;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.oc-tab.active {
+    background: #fff;
+    color: #2C1810;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.oc-cal-wrap {
+    position: relative;
+}
+
+.oc-cal-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #F0EDE6;
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 5px 11px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    color: #8a7060;
+}
+
+.oc-cal-btn.active,
+.oc-cal-btn:hover {
+    border-color: #4A6741;
+    color: #2C1810;
+    background: #edf2eb;
+}
+
+.oc-cal-icon {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    color: #4A6741;
+}
+
+.oc-cal-label {
+    white-space: nowrap;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.oc-cal-popup {
+    position: absolute;
+    z-index: 200;
+    right: 0;
+    top: calc(100% + 8px);
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(44, 24, 16, 0.14);
+    overflow: hidden;
+}
+
+.oc-pop-enter-active,
+.oc-pop-leave-active {
+    transition: opacity 0.18s, transform 0.18s;
+}
+
+.oc-pop-enter-from,
+.oc-pop-leave-to {
+    opacity: 0;
+    transform: translateY(-6px);
+}
+
+.oc-cal-footer {
+    display: flex;
+    gap: 6px;
+    padding: 8px 10px;
+    border-top: 1px solid #F0EDE6;
+}
+
+.oc-cal-clear,
+.oc-cal-apply {
+    flex: 1;
+    padding: 7px 0;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    transition: background 0.15s;
+}
+
+.oc-cal-clear {
+    background: #F0EDE6;
+    color: #8a7060;
+}
+
+.oc-cal-clear:hover {
+    background: #e4ddd3;
+}
+
+.oc-cal-apply {
+    background: #4A6741;
+    color: #fff;
+}
+
+.oc-cal-apply:hover {
+    background: #3a5232;
+}
+
+.oc-chart-wrap {
+    position: relative;
+    height: 240px;
+}
+
+.oc-chart-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.oc-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oc-skeleton {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #F0EDE6 25%, #e8e2d9 50%, #F0EDE6 75%);
+    background-size: 400px 100%;
+    animation: shimmer 1.2s infinite linear;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -400px 0;
+    }
+
+    100% {
+        background-position: 400px 0;
+    }
+}
+
+:deep(.vc-container) {
+    border: none !important;
+    font-family: 'Jost', sans-serif !important;
+}
+
+:deep(.vc-header) {
+    padding: 10px 16px 6px !important;
+}
+
+:deep(.vc-title) {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1rem !important;
+    color: #2C1810 !important;
+}
+
+:deep(.vc-weekday) {
+    color: #8a7060 !important;
+    font-size: 0.72rem !important;
+}
+
+:deep(.vc-day-content) {
+    font-size: 0.82rem !important;
+    border-radius: 8px !important;
+}
+
+:deep(.vc-highlight) {
+    background-color: #4A6741 !important;
+}
+
+:deep(.vc-highlight-content-solid) {
+    color: #fff !important;
 }
 </style>

@@ -100,7 +100,14 @@
       "periodWeek": "Week",
       "periodMonth": "Month",
       "periodYear": "Year",
-      "products": "products"
+      "products": "products",
+      "pickDate": "Pick Date",
+      "clearDate": "Clear",
+      "applyDate": "Apply",
+      "justNow": "just now",
+      "minAgo": "{n} min ago",
+      "hrsAgo": "{n}h ago",
+      "daysAgo": "{n}d ago"
     },
     "categories": {
       "title": "Categories",

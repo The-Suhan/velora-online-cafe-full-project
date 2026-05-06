@@ -100,7 +100,14 @@
       "periodWeek": "Неделя",
       "periodMonth": "Месяц",
       "periodYear": "Год",
-      "products": "товаров"
+      "products": "товаров",
+      "pickDate": "Выбрать дату",
+      "clearDate": "Очистить",
+      "applyDate": "Применить",
+      "justNow": "только что",
+      "minAgo": "{n} мин назад",
+      "hrsAgo": "{n} ч назад",
+      "daysAgo": "{n} дн назад"
     },
     "categories": {
       "title": "Категории",

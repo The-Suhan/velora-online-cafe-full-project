@@ -7,6 +7,7 @@ use App\Models\Feedback;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -29,7 +30,6 @@ class AdminController extends Controller
         $lastWeekOrders = Order::whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count();
 
         $pendingOrders = Order::where('status', 'pending')->count();
-
         $unreadFeedbacks = Feedback::where('is_done', false)->count();
 
         // Top rated products
@@ -38,7 +38,7 @@ class AdminController extends Controller
             ->orderByDesc('avg_rating')
             ->take(4)
             ->get();
-            
+
         // Recent delivered orders
         $recentOrders = Order::with(['user', 'items.product'])
             ->where('status', 'delivered')
@@ -80,20 +80,27 @@ class AdminController extends Controller
 
     // ── ORDER CHART ───────────────────────────────────────────
     // GET /api/admin/orders/chart?period=weekly
+    // GET /api/admin/orders/chart?period=custom&start_date=2024-08-01&end_date=2024-08-31
 
     public function ordersChart(Request $request): JsonResponse
     {
-        $period = $request->query('period', 'weekly'); // daily, weekly, monthly, yearly
+        $period = $request->query('period', 'weekly');
 
         $data = match ($period) {
             'daily' => $this->chartDaily(),
             'monthly' => $this->chartMonthly(),
             'yearly' => $this->chartYearly(),
+            'custom' => $this->chartCustom(
+                $request->query('start_date', now()->subDays(30)->toDateString()),
+                $request->query('end_date', now()->toDateString())
+            ),
             default => $this->chartWeekly(),
         };
 
         return response()->json($data);
     }
+
+    // ── CHART HELPERS ─────────────────────────────────────────
 
     private function chartWeekly(): array
     {
@@ -137,6 +144,7 @@ class AdminController extends Controller
         $weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
         $data = [];
         $start = now()->startOfMonth();
+
         for ($w = 0; $w < 4; $w++) {
             $from = $start->copy()->addWeeks($w);
             $to = $from->copy()->addWeek()->subSecond();
@@ -163,20 +171,60 @@ class AdminController extends Controller
         return ['labels' => $months, 'data' => $data];
     }
 
+    // ── NEW: Custom date range ────────────────────────────────
+    // Returns one data point per day between $from and $to.
+    // Labels: "01 Aug", "02 Aug", ...
+
+    private function chartCustom(string $from, string $to): array
+    {
+        // Guard: max 366 days to prevent huge queries
+        $start = Carbon::parse($from)->startOfDay();
+        $end = Carbon::parse($to)->endOfDay();
+
+        if ($start->diffInDays($end) > 366) {
+            $end = $start->copy()->addDays(366)->endOfDay();
+        }
+
+        $results = Order::selectRaw('DATE(created_at) as day, COUNT(*) as count')
+            ->whereBetween('created_at', [$start, $end])
+            ->groupBy('day')
+            ->orderBy('day')
+            ->pluck('count', 'day')
+            ->toArray();
+
+        // Build a complete date series (fill gaps with 0)
+        $labels = [];
+        $data = [];
+        $cursor = $start->copy();
+
+        while ($cursor->lte($end)) {
+            $key = $cursor->toDateString();          // "2024-08-01"
+            $labels[] = $cursor->format('d M');            // "01 Aug"
+            $data[] = (int) ($results[$key] ?? 0);
+            $cursor->addDay();
+        }
+
+        return ['labels' => $labels, 'data' => $data];
+    }
+
+    // ── GROWTH CALC ───────────────────────────────────────────
+
     private function calcGrowth(int $last, int $current): float
     {
         if ($last === 0) {
-            return $current > 0 ? 100 : 0;
+            return $current > 0 ? 100.0 : 0.0;
         }
 
         return round((($current - $last) / $last) * 100, 1);
     }
 
+    // ── USERS ─────────────────────────────────────────────────
+    // GET /api/admin/users
+
     public function users(Request $request): JsonResponse
     {
         $query = User::query();
 
-        // Search: name, email, role
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'ilike', "%{$search}%")
@@ -185,7 +233,6 @@ class AdminController extends Controller
             });
         }
 
-        // Role / status filter
         if ($role = $request->query('role')) {
             if ($role === 'suspended') {
                 $query->where('is_verified', false);
@@ -203,7 +250,7 @@ class AdminController extends Controller
         return response()->json($users);
     }
 
-    // ── USER STATS ────────────────────────────────────────────────
+    // ── USER STATS ────────────────────────────────────────────
     // GET /api/admin/users/stats
 
     public function userStats(): JsonResponse
@@ -224,7 +271,7 @@ class AdminController extends Controller
         ]);
     }
 
-    // ── USER SHOW (Preview) ───────────────────────────────────────
+    // ── USER SHOW ─────────────────────────────────────────────
     // GET /api/admin/users/{id}
 
     public function showUser(User $user): JsonResponse
@@ -232,12 +279,11 @@ class AdminController extends Controller
         return response()->json($this->formatUser($user, detail: true));
     }
 
-    // ── USER DELETE ───────────────────────────────────────────────
+    // ── USER DELETE ───────────────────────────────────────────
     // DELETE /api/admin/users/{id}
 
     public function destroyUser(User $user): JsonResponse
     {
-        // Kendini silemesin
         if ($user->id === auth()->id()) {
             return response()->json(['message' => 'You cannot delete your own account.'], 403);
         }
@@ -247,7 +293,7 @@ class AdminController extends Controller
         return response()->json(['message' => 'User deleted successfully.']);
     }
 
-    // ── PRIVATE HELPER ────────────────────────────────────────────
+    // ── PRIVATE HELPER ────────────────────────────────────────
 
     private function formatUser(User $u, bool $detail = false): array
     {

@@ -100,7 +100,14 @@
       "periodWeek": "Hepde",
       "periodMonth": "Aý",
       "periodYear": "Ýyl",
-      "products": "önüm"
+      "products": "önüm",
+      "pickDate": "Senäni saýla",
+      "clearDate": "Arassala",
+      "applyDate": "Tassykla",
+      "justNow": "häzir",
+      "minAgo": "{n} min öň",
+      "hrsAgo": "{n} sag öň",
+      "daysAgo": "{n} gün öň"
     },
     "categories": {
       "title": "Kategoriýalar",
