@@ -11,12 +11,9 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
-    // ── LIST ──────────────────────────────────────────────────
-    // GET /api/admin/categories?search=&page=1&per_page=6
-
     public function index(Request $request): JsonResponse
     {
-        $query = Category::withCount('products');
+        $query = Category::withCount('products')->with('translations');
 
         if ($search = $request->query('search')) {
             $query->where('name', 'ilike', "%{$search}%");
@@ -31,9 +28,6 @@ class CategoryController extends Controller
 
         return response()->json($categories);
     }
-
-    // ── STATS ─────────────────────────────────────────────────
-    // GET /api/admin/categories/stats
 
     public function stats(): JsonResponse
     {
@@ -57,19 +51,12 @@ class CategoryController extends Controller
         ]);
     }
 
-    // ── SHOW ──────────────────────────────────────────────────
-    // GET /api/admin/categories/{id}
-
     public function show(Category $category): JsonResponse
     {
-        $category->loadCount('products');
+        $category->loadCount('products')->load('translations');
 
         return response()->json($this->formatCategory($category, detail: true));
     }
-
-    // ── STORE ─────────────────────────────────────────────────
-    // POST /api/admin/categories
-    // Body: multipart/form-data { name, description?, is_active?, image? }
 
     public function store(Request $request): JsonResponse
     {
@@ -79,10 +66,19 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'translations' => 'nullable|array',
+            'translations.en' => 'nullable|array',
+            'translations.en.name' => 'required_with:translations.en|string|max:100',
+            'translations.en.description' => 'nullable|string',
+            'translations.ru' => 'nullable|array',
+            'translations.ru.name' => 'required_with:translations.ru|string|max:100',
+            'translations.ru.description' => 'nullable|string',
+            'translations.tm' => 'nullable|array',
+            'translations.tm.name' => 'required_with:translations.tm|string|max:100',
+            'translations.tm.description' => 'nullable|string',
         ]);
 
         $imageUrl = null;
-
         if ($request->hasFile('image')) {
             $imageUrl = $this->uploadImage($request->file('image'));
         }
@@ -95,13 +91,20 @@ class CategoryController extends Controller
             'image_url' => $imageUrl,
         ]);
 
-        $category->loadCount('products');
+        foreach (['en', 'ru', 'tm'] as $locale) {
+            if ($data = $request->input("translations.$locale")) {
+                $category->translations()->create([
+                    'locale' => $locale,
+                    'name' => $data['name'],
+                    'description' => $data['description'] ?? null,
+                ]);
+            }
+        }
+
+        $category->loadCount('products')->load('translations');
 
         return response()->json($this->formatCategory($category), 201);
     }
-
-    // ── UPDATE ────────────────────────────────────────────────
-    // POST /api/admin/categories/{id}?_method=PUT  (multipart icin)
 
     public function update(Request $request, Category $category): JsonResponse
     {
@@ -111,6 +114,16 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'translations' => 'nullable|array',
+            'translations.en' => 'nullable|array',
+            'translations.en.name' => 'required_with:translations.en|string|max:100',
+            'translations.en.description' => 'nullable|string',
+            'translations.ru' => 'nullable|array',
+            'translations.ru.name' => 'required_with:translations.ru|string|max:100',
+            'translations.ru.description' => 'nullable|string',
+            'translations.tm' => 'nullable|array',
+            'translations.tm.name' => 'required_with:translations.tm|string|max:100',
+            'translations.tm.description' => 'nullable|string',
         ]);
 
         $data = array_filter($request->only(['name', 'description']), fn ($v) => $v !== null);
@@ -131,13 +144,20 @@ class CategoryController extends Controller
         }
 
         $category->update($data);
-        $category->loadCount('products');
+
+        foreach (['en', 'ru', 'tm'] as $locale) {
+            if ($data = $request->input("translations.$locale")) {
+                $category->translations()->updateOrCreate(
+                    ['locale' => $locale],
+                    ['name' => $data['name'], 'description' => $data['description'] ?? null]
+                );
+            }
+        }
+
+        $category->loadCount('products')->load('translations');
 
         return response()->json($this->formatCategory($category));
     }
-
-    // ── DESTROY ───────────────────────────────────────────────
-    // DELETE /api/admin/categories/{id}
 
     public function destroy(Category $category): JsonResponse
     {
@@ -156,9 +176,6 @@ class CategoryController extends Controller
         return response()->json(['message' => 'Category deleted successfully.']);
     }
 
-    // ── TOGGLE ACTIVE ─────────────────────────────────────────
-    // PATCH /api/admin/categories/{id}/toggle
-
     public function toggle(Category $category): JsonResponse
     {
         $category->update(['is_active' => ! $category->is_active]);
@@ -170,7 +187,21 @@ class CategoryController extends Controller
         ]);
     }
 
-    // ── PRIVATE HELPERS ───────────────────────────────────────
+    public function translations(Category $category): JsonResponse
+    {
+        return response()->json($category->translations->keyBy('locale'));
+    }
+
+    public function parentCategories(): JsonResponse
+    {
+        $categories = Category::whereNull('parent_id')
+            ->where('is_active', true)
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json($categories);
+    }
 
     private function uploadImage(UploadedFile $file): string
     {
@@ -198,6 +229,7 @@ class CategoryController extends Controller
             'is_active' => $c->is_active,
             'products_count' => $c->products_count ?? 0,
             'created_at' => $c->created_at?->format('M d, Y'),
+            'translations' => $c->translations->keyBy('locale'),
         ];
 
         if ($detail) {
@@ -208,16 +240,5 @@ class CategoryController extends Controller
         }
 
         return $base;
-    }
-
-    public function parentCategories(): JsonResponse
-    {
-        $categories = Category::whereNull('parent_id')
-            ->where('is_active', true)
-            ->select('id', 'name')
-            ->orderBy('name')
-            ->get();
-
-        return response()->json($categories);
     }
 }

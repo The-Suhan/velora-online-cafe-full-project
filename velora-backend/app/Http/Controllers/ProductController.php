@@ -11,24 +11,18 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    // ── LIST ──────────────────────────────────────────────────
-    // GET /api/admin/products?search=&category_id=&is_active=&page=1&per_page=8
-
     public function index(Request $request): JsonResponse
     {
-        $query = Product::with('category:id,name');
+        $query = Product::with(['category:id,name', 'translations']);
 
-        // Search
         if ($search = $request->query('search')) {
             $query->where('name', 'ilike', "%{$search}%");
         }
 
-        // Category filter
         if ($categoryId = $request->query('category_id')) {
             $query->where('category_id', $categoryId);
         }
 
-        // Active/inactive filter (comes from filter button)
         if ($request->has('is_active') && $request->query('is_active') !== '') {
             $query->where('is_active', filter_var($request->query('is_active'), FILTER_VALIDATE_BOOLEAN));
         }
@@ -42,9 +36,6 @@ class ProductController extends Controller
 
         return response()->json($products);
     }
-
-    // ── STATS ─────────────────────────────────────────────────
-    // GET /api/admin/products/stats
 
     public function stats(): JsonResponse
     {
@@ -68,19 +59,12 @@ class ProductController extends Controller
         ]);
     }
 
-    // ── SHOW ──────────────────────────────────────────────────
-    // GET /api/admin/products/{id}
-
     public function show(Product $product): JsonResponse
     {
-        $product->load('category:id,name');
+        $product->load(['category:id,name', 'translations']);
 
         return response()->json($this->formatProduct($product, detail: true));
     }
-
-    // ── STORE ─────────────────────────────────────────────────
-    // POST /api/admin/products
-    // Body: multipart/form-data
 
     public function store(Request $request): JsonResponse
     {
@@ -91,10 +75,19 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'is_active' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'translations' => 'nullable|array',
+            'translations.en' => 'nullable|array',
+            'translations.en.name' => 'required_with:translations.en|string|max:200',
+            'translations.en.description' => 'nullable|string',
+            'translations.ru' => 'nullable|array',
+            'translations.ru.name' => 'required_with:translations.ru|string|max:200',
+            'translations.ru.description' => 'nullable|string',
+            'translations.tm' => 'nullable|array',
+            'translations.tm.name' => 'required_with:translations.tm|string|max:200',
+            'translations.tm.description' => 'nullable|string',
         ]);
 
         $imageUrl = null;
-
         if ($request->hasFile('image')) {
             $imageUrl = $this->uploadImage($request->file('image'));
         }
@@ -108,13 +101,20 @@ class ProductController extends Controller
             'image_url' => $imageUrl,
         ]);
 
-        $product->load('category:id,name');
+        foreach (['en', 'ru', 'tm'] as $locale) {
+            if ($data = $request->input("translations.$locale")) {
+                $product->translations()->create([
+                    'locale' => $locale,
+                    'name' => $data['name'],
+                    'description' => $data['description'] ?? null,
+                ]);
+            }
+        }
+
+        $product->load(['category:id,name', 'translations']);
 
         return response()->json($this->formatProduct($product), 201);
     }
-
-    // ── UPDATE ────────────────────────────────────────────────
-    // POST /api/admin/products/{id}   (use _method=PUT for multipart)
 
     public function update(Request $request, Product $product): JsonResponse
     {
@@ -125,9 +125,18 @@ class ProductController extends Controller
             'price' => 'sometimes|numeric|min:0',
             'is_active' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'translations' => 'nullable|array',
+            'translations.en' => 'nullable|array',
+            'translations.en.name' => 'required_with:translations.en|string|max:200',
+            'translations.en.description' => 'nullable|string',
+            'translations.ru' => 'nullable|array',
+            'translations.ru.name' => 'required_with:translations.ru|string|max:200',
+            'translations.ru.description' => 'nullable|string',
+            'translations.tm' => 'nullable|array',
+            'translations.tm.name' => 'required_with:translations.tm|string|max:200',
+            'translations.tm.description' => 'nullable|string',
         ]);
 
-        // Only take provided fields
         $data = array_filter(
             $request->only(['category_id', 'name', 'description', 'price']),
             fn ($v) => $v !== null
@@ -137,7 +146,6 @@ class ProductController extends Controller
             $data['is_active'] = $request->boolean('is_active');
         }
 
-        // If a new image is uploaded, delete the old one
         if ($request->hasFile('image')) {
             if ($product->image_url) {
                 $this->deleteImage($product->image_url);
@@ -146,17 +154,23 @@ class ProductController extends Controller
         }
 
         $product->update($data);
-        $product->load('category:id,name');
+
+        foreach (['en', 'ru', 'tm'] as $locale) {
+            if ($data = $request->input("translations.$locale")) {
+                $product->translations()->updateOrCreate(
+                    ['locale' => $locale],
+                    ['name' => $data['name'], 'description' => $data['description'] ?? null]
+                );
+            }
+        }
+
+        $product->load(['category:id,name', 'translations']);
 
         return response()->json($this->formatProduct($product));
     }
 
-    // ── DESTROY ───────────────────────────────────────────────
-    // DELETE /api/admin/products/{id}
-
     public function destroy(Product $product): JsonResponse
     {
-        // Cannot delete product if it is used in orders
         if ($product->orderItems()->exists()) {
             return response()->json([
                 'message' => 'This product has been used in orders and cannot be deleted.',
@@ -169,13 +183,8 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return response()->json([
-            'message' => 'Product deleted successfully.',
-        ]);
+        return response()->json(['message' => 'Product deleted successfully.']);
     }
-
-    // ── TOGGLE ACTIVE ─────────────────────────────────────────
-    // PATCH /api/admin/products/{id}/toggle
 
     public function toggle(Product $product): JsonResponse
     {
@@ -190,19 +199,21 @@ class ProductController extends Controller
         ]);
     }
 
-    // ── PRIVATE HELPERS ───────────────────────────────────────
+    public function translations(Product $product): JsonResponse
+    {
+        return response()->json($product->translations->keyBy('locale'));
+    }
 
     private function uploadImage(UploadedFile $file): string
     {
         $filename = Str::uuid().'.'.$file->getClientOriginalExtension();
-        $path = $file->storeAs('products', $filename, 'public');  // storage/app/public/products/
+        $path = $file->storeAs('products', $filename, 'public');
 
-        return Storage::url($path);   // /storage/products/uuid.jpg
+        return Storage::url($path);
     }
 
     private function deleteImage(string $url): void
     {
-        // "/storage/products/uuid.jpg" → "products/uuid.jpg"
         $path = ltrim(str_replace('/storage', '', parse_url($url, PHP_URL_PATH)), '/');
         Storage::disk('public')->delete($path);
     }
@@ -222,12 +233,12 @@ class ProductController extends Controller
                 'name' => $p->category->name,
             ] : null,
             'created_at' => $p->created_at?->format('M d, Y'),
+            'translations' => $p->translations->keyBy('locale'),
         ];
 
-        // Preview modal
         if ($detail) {
             $base['ratings_count'] = $p->ratings()->count();
-            $base['order_count'] = $p->orderItems()->sum('quantity');
+            'order_count' && $base['order_count'] = $p->orderItems()->sum('quantity');
         }
 
         return $base;

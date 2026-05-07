@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/categories/{category}', [CategoryController::class, 'update']);
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
         Route::patch('/categories/{category}/toggle', [CategoryController::class, 'toggle']);
+        Route::get('/categories/{category}/translations', [CategoryController::class, 'translations']);
 
         // Products
         Route::get('/products/stats', [ProductController::class, 'stats']);
@@ -54,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/products/{product}', [ProductController::class, 'update']);
         Route::delete('/products/{product}', [ProductController::class, 'destroy']);
         Route::patch('/products/{product}/toggle', [ProductController::class, 'toggle']);
+        Route::get('/products/{product}/translations', [ProductController::class, 'translations']);
 
         // Orders
         Route::get('/orders/stats', [OrderController::class, 'stats']);

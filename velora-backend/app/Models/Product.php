@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
@@ -20,9 +20,9 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'price'      => 'decimal:2',
+        'price' => 'decimal:2',
         'avg_rating' => 'decimal:2',
-        'is_active'  => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     // ── Relations ─────────────────────────────────────────────
@@ -40,6 +40,31 @@ class Product extends Model
     public function ratings()
     {
         return $this->hasMany(Rating::class);
+    }
+
+    public function translations()
+    {
+        return $this->hasMany(ProductTranslation::class);
+    }
+
+    public function translation(string $locale = 'en'): ?ProductTranslation
+    {
+        return $this->translations->firstWhere('locale', $locale);
+    }
+
+    // Aktif locale için name döndür, fallback: en, sonra orijinal name
+    public function getTranslatedName(string $locale = 'en'): string
+    {
+        return $this->translation($locale)?->name
+            ?? $this->translation('en')?->name
+            ?? $this->name;
+    }
+
+    public function getTranslatedDescription(string $locale = 'en'): ?string
+    {
+        return $this->translation($locale)?->description
+            ?? $this->translation('en')?->description
+            ?? $this->description;
     }
 
     // ── Helpers ───────────────────────────────────────────────

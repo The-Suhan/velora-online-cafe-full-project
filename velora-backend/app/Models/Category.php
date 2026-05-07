@@ -55,4 +55,28 @@ class Category extends Model
     {
         return $query->whereNotNull('parent_id');
     }
+
+    public function translations()
+    {
+        return $this->hasMany(CategoryTranslation::class);
+    }
+
+    public function translation(string $locale = 'en'): ?CategoryTranslation
+    {
+        return $this->translations->firstWhere('locale', $locale);
+    }
+
+    public function getTranslatedName(string $locale = 'en'): string
+    {
+        return $this->translation($locale)?->name
+            ?? $this->translation('en')?->name
+            ?? $this->name;
+    }
+
+    public function getTranslatedDescription(string $locale = 'en'): ?string
+    {
+        return $this->translation($locale)?->description
+            ?? $this->translation('en')?->description
+            ?? $this->description;
+    }
 }
