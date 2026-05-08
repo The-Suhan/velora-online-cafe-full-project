@@ -412,7 +412,7 @@ export function useOrders(fixedStatus?: OrderStatus) {
             </table>
             <div class="total-row">
               <span>TOTAL</span>
-              <span>$${order.total_price.toFixed(2)}</span>
+              <span>$${order.total_price.toFixed(2)} $</span>
             </div>
             ${order.note ? `
             <div class="note-box">
