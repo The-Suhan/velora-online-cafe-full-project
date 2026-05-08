@@ -79,8 +79,8 @@
                             <td>
                                 <div class="cat-name-cell">
                                     <div class="cat-img-wrap">
-                                        <img v-if="cat.image_url" :src="resolveImageUrl(cat.image_url)" :alt="cat.name"
-                                            class="cat-img" />
+                                        <img v-if="cat.image_url" :src="resolveImageUrl(cat.image_url)"
+                                            :alt="displayName(cat)" class="cat-img" />
                                         <div v-else class="cat-img-placeholder">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="1.5" width="20" height="20">
@@ -92,13 +92,13 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <p class="cat-name">{{ cat.name }}</p>
+                                        <p class="cat-name">{{ displayName(cat) }}</p>
                                         <p class="cat-products-count">{{ cat.products_count }} {{
                                             $t('admin.dashboard.products') }}</p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="cat-desc">{{ cat.description || '—' }}</td>
+                            <td class="cat-desc">{{ displayDesc(cat) || '—' }}</td>
                             <td>
                                 <span v-if="cat.parent_name" class="parent-badge">
                                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -162,7 +162,7 @@
                     <div v-for="cat in categories" :key="cat.id" class="mobile-card">
                         <div class="mobile-card-left">
                             <div class="cat-img-wrap">
-                                <img v-if="cat.image_url" :src="resolveImageUrl(cat.image_url)" :alt="cat.name"
+                                <img v-if="cat.image_url" :src="resolveImageUrl(cat.image_url)" :alt="displayName(cat)"
                                     class="cat-img" />
                                 <div v-else class="cat-img-placeholder">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -175,16 +175,13 @@
                                 </div>
                             </div>
                             <div>
-                                <p class="cat-name">{{ cat.name }}</p>
+                                <p class="cat-name">{{ displayName(cat) }}</p>
                                 <p class="cat-products-count">{{ cat.products_count }} {{ $t('admin.dashboard.products')
-                                }}</p>
+                                    }}</p>
                                 <div class="mt-1">
-                                    <span v-if="cat.parent_name" class="parent-badge small">
-                                        {{ cat.parent_name }}
-                                    </span>
-                                    <span v-else class="main-badge small">
-                                        {{ $t('admin.categories.mainCategory') }}
-                                    </span>
+                                    <span v-if="cat.parent_name" class="parent-badge small">{{ cat.parent_name }}</span>
+                                    <span v-else class="main-badge small">{{ $t('admin.categories.mainCategory')
+                                        }}</span>
                                 </div>
                                 <p class="cat-date mt-1">{{ cat.created_at }}</p>
                             </div>
@@ -324,7 +321,7 @@
                         </div>
                     </div>
 
-                    <!-- Parent Category Dropdown — ADD modal uses full parentCategories (no self to exclude) -->
+                    <!-- Parent Category Dropdown -->
                     <Transition name="slide-down">
                         <div v-if="form.type === 'sub'" class="form-group">
                             <label class="form-label">{{ $t('admin.categories.parentCategoryLabel') }} <span
@@ -350,18 +347,80 @@
                         </div>
                     </Transition>
 
-                    <div class="form-group">
-                        <label class="form-label">{{ $t('admin.categories.nameLabel') }} <span
-                                class="required">*</span></label>
-                        <input v-model="form.name" type="text" class="form-input"
-                            :placeholder="$t('admin.categories.namePlaceholder')" />
-                        <p v-if="formErrors.name" class="form-error">{{ formErrors.name }}</p>
+                    <!-- Translations -->
+                    <div class="translations-section">
+                        <div class="translations-header">
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="15"
+                                height="15">
+                                <path d="M3 5h8M7 3v2M11 5a9 9 0 01-4 7.5M5 12s1.5 2 4 2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M13 10h4M15 8v2M17 10a5 5 0 01-2 4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                            <span>{{ $t('admin.common.translations') }}</span>
+                        </div>
+
+                        <!-- EN -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇬🇧</span>
+                                <span class="locale-label">English (EN)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.categories.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.en.name" type="text" class="form-input"
+                                    placeholder="Name in English" />
+                                <p v-if="formErrors.name_en" class="form-error">{{ formErrors.name_en }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.categories.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.en.description" class="form-input form-textarea"
+                                    placeholder="Description in English" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- RU -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇷🇺</span>
+                                <span class="locale-label">Русский (RU)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.categories.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.ru.name" type="text" class="form-input"
+                                    placeholder="Название на русском" />
+                                <p v-if="formErrors.name_ru" class="form-error">{{ formErrors.name_ru }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.categories.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.ru.description" class="form-input form-textarea"
+                                    placeholder="Описание на русском" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- TM -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇹🇲</span>
+                                <span class="locale-label">Türkmençe (TM)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.categories.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.tm.name" type="text" class="form-input"
+                                    placeholder="Türkmen dilinde ady" />
+                                <p v-if="formErrors.name_tm" class="form-error">{{ formErrors.name_tm }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.categories.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.tm.description" class="form-input form-textarea"
+                                    placeholder="Türkmen dilinde beýany" rows="2"></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">{{ $t('admin.categories.descriptionLabel') }}</label>
-                        <textarea v-model="form.description" class="form-input form-textarea"
-                            :placeholder="$t('admin.categories.descriptionPlaceholder')" rows="3"></textarea>
-                    </div>
+
                     <div class="form-group">
                         <label class="form-label">{{ $t('admin.categories.imageLabel') }}</label>
                         <div class="image-upload-zone" :class="{ 'has-file': imagePreview, 'drag-over': isDragging }"
@@ -444,7 +503,7 @@
                         </div>
                     </div>
 
-                    <!-- Parent Category Dropdown — EDIT modal uses availableParents (self excluded) -->
+                    <!-- Parent Category Dropdown -->
                     <Transition name="slide-down">
                         <div v-if="form.type === 'sub'" class="form-group">
                             <label class="form-label">{{ $t('admin.categories.parentCategoryLabel') }} <span
@@ -453,7 +512,6 @@
                                 <select v-model="form.parent_id" class="form-select"
                                     :class="{ 'has-error': formErrors.parent_id }">
                                     <option value="" disabled>{{ $t('admin.categories.selectParent') }}</option>
-                                    <!-- FIX: availableParents filters out the category being edited -->
                                     <option v-for="p in availableParents" :key="p.id" :value="p.id">{{ p.name }}
                                     </option>
                                 </select>
@@ -471,16 +529,80 @@
                         </div>
                     </Transition>
 
-                    <div class="form-group">
-                        <label class="form-label">{{ $t('admin.categories.nameLabel') }} <span
-                                class="required">*</span></label>
-                        <input v-model="form.name" type="text" class="form-input" />
-                        <p v-if="formErrors.name" class="form-error">{{ formErrors.name }}</p>
+                    <!-- Translations -->
+                    <div class="translations-section">
+                        <div class="translations-header">
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="15"
+                                height="15">
+                                <path d="M3 5h8M7 3v2M11 5a9 9 0 01-4 7.5M5 12s1.5 2 4 2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M13 10h4M15 8v2M17 10a5 5 0 01-2 4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                            <span>{{ $t('admin.common.translations') }}</span>
+                        </div>
+
+                        <!-- EN -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇬🇧</span>
+                                <span class="locale-label">English (EN)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.categories.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.en.name" type="text" class="form-input"
+                                    placeholder="Name in English" />
+                                <p v-if="formErrors.name_en" class="form-error">{{ formErrors.name_en }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.categories.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.en.description" class="form-input form-textarea"
+                                    placeholder="Description in English" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- RU -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇷🇺</span>
+                                <span class="locale-label">Русский (RU)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.categories.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.ru.name" type="text" class="form-input"
+                                    placeholder="Название на русском" />
+                                <p v-if="formErrors.name_ru" class="form-error">{{ formErrors.name_ru }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.categories.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.ru.description" class="form-input form-textarea"
+                                    placeholder="Описание на русском" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- TM -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇹🇲</span>
+                                <span class="locale-label">Türkmençe (TM)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.categories.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.tm.name" type="text" class="form-input"
+                                    placeholder="Türkmen dilinde ady" />
+                                <p v-if="formErrors.name_tm" class="form-error">{{ formErrors.name_tm }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.categories.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.tm.description" class="form-input form-textarea"
+                                    placeholder="Türkmen dilinde beýany" rows="2"></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">{{ $t('admin.categories.descriptionLabel') }}</label>
-                        <textarea v-model="form.description" class="form-input form-textarea" rows="3"></textarea>
-                    </div>
+
                     <div class="form-group">
                         <label class="form-label">{{ $t('admin.categories.imageLabel') }}</label>
                         <div class="image-upload-zone" :class="{ 'has-file': imagePreview, 'drag-over': isDragging }"
@@ -535,7 +657,7 @@
                 <div class="modal-body">
                     <div class="preview-image-wrap">
                         <img v-if="selectedCategory.image_url" :src="resolveImageUrl(selectedCategory.image_url)"
-                            :alt="selectedCategory.name" class="preview-big-img" />
+                            :alt="displayName(selectedCategory)" class="preview-big-img" />
                         <div v-else class="preview-no-img">
                             <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="48"
                                 height="48">
@@ -550,11 +672,11 @@
                     <div class="preview-info">
                         <div class="preview-row">
                             <span class="preview-key">{{ $t('admin.common.name') }}</span>
-                            <span class="preview-val">{{ selectedCategory.name }}</span>
+                            <span class="preview-val">{{ displayName(selectedCategory) }}</span>
                         </div>
                         <div class="preview-row">
                             <span class="preview-key">{{ $t('admin.common.description') }}</span>
-                            <span class="preview-val">{{ selectedCategory.description || '—' }}</span>
+                            <span class="preview-val">{{ displayDesc(selectedCategory) || '—' }}</span>
                         </div>
                         <div class="preview-row">
                             <span class="preview-key">{{ $t('admin.categories.parentCategory') }}</span>
@@ -578,10 +700,40 @@
                             <span class="preview-val">
                                 <span class="status-badge" :class="selectedCategory.is_active ? 'active' : 'inactive'">
                                     {{ selectedCategory.is_active ? $t('admin.common.active') :
-                                        $t('admin.common.inactive') }}
+                                    $t('admin.common.inactive') }}
                                 </span>
                             </span>
                         </div>
+                    </div>
+
+                    <!-- All translations -->
+                    <div class="preview-translation-block">
+                        <div class="preview-translation-header">
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14"
+                                height="14">
+                                <path d="M3 5h8M7 3v2M11 5a9 9 0 01-4 7.5M5 12s1.5 2 4 2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M13 10h4M15 8v2M17 10a5 5 0 01-2 4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                            <span>{{ $t('admin.common.translations') }}</span>
+                        </div>
+                        <template v-for="loc in ['en', 'ru', 'tm']" :key="loc">
+                            <div class="translation-preview-locale">
+                                <span class="locale-flag">{{ localeFlag(loc) }}</span>
+                                <span class="locale-label">{{ localeLabel(loc) }}</span>
+                            </div>
+                            <div class="preview-row">
+                                <span class="preview-key">{{ $t('admin.common.name') }}</span>
+                                <span class="preview-val">{{ getTranslation(selectedCategory, loc, 'name') || '—'
+                                    }}</span>
+                            </div>
+                            <div class="preview-row">
+                                <span class="preview-key">{{ $t('admin.common.description') }}</span>
+                                <span class="preview-val">{{ getTranslation(selectedCategory, loc, 'description') || '—'
+                                    }}</span>
+                            </div>
+                        </template>
                     </div>
 
                     <!-- Recent Products -->
@@ -604,9 +756,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-submit" @click="openEditModal(selectedCategory);">{{
+                    <button class="btn-submit" @click="openEditModal(selectedCategory)">{{
                         $t('admin.categories.editBtn')
-                    }}</button>
+                        }}</button>
                 </div>
             </div>
         </Transition>
@@ -634,7 +786,7 @@
                     </div>
                     <p class="delete-title">{{ $t('admin.common.areYouSure') }}</p>
                     <p class="delete-desc">
-                        {{ $t('admin.categories.deleteDesc') }} <strong>{{ selectedCategory.name }}</strong>. {{
+                        {{ $t('admin.categories.deleteDesc') }} <strong>{{ displayName(selectedCategory) }}</strong>. {{
                             $t('admin.common.actionUndone') }}
                         <span v-if="selectedCategory.products_count > 0" class="delete-warning">
                             {{ $t('admin.categories.deleteWarning', { n: selectedCategory.products_count }) }}
@@ -676,7 +828,7 @@ import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 
 definePageMeta({ layout: 'admin' })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const config = useRuntimeConfig()
 const API = config.public.apiBase
 const BACKEND_BASE = API.replace(/\/api\/?$/, '')
@@ -685,6 +837,32 @@ function resolveImageUrl(url: string | null | undefined): string | null {
     if (!url) return null
     if (url.startsWith('http://') || url.startsWith('https://')) return url
     return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
+// ── Translation helpers ───────────────────────────────────
+function getTranslation(item: any, loc: string, field: 'name' | 'description'): string {
+    if (!item?.translations) return ''
+    const tr = item.translations
+    const entry = Array.isArray(tr) ? tr.find((x: any) => x.locale === loc) : tr[loc]
+    return entry?.[field] ?? ''
+}
+
+function displayName(item: any): string {
+    const loc = locale.value
+    return getTranslation(item, loc, 'name') || getTranslation(item, 'en', 'name') || item?.name || ''
+}
+
+function displayDesc(item: any): string {
+    const loc = locale.value
+    return getTranslation(item, loc, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
+}
+
+function localeFlag(loc: string): string {
+    return { en: '🇬🇧', ru: '🇷🇺', tm: '🇹🇲' }[loc] ?? ''
+}
+
+function localeLabel(loc: string): string {
+    return { en: 'English (EN)', ru: 'Русский (RU)', tm: 'Türkmençe (TM)' }[loc] ?? loc
 }
 
 const { token } = useAuth()
@@ -712,18 +890,22 @@ const imageFile = ref<File | null>(null)
 
 let searchTimeout: ReturnType<typeof setTimeout>
 
+const defaultTranslation = () => ({ name: '', description: '' })
+
 const form = reactive({
-    name: '',
-    description: '',
     is_active: true,
     type: 'main' as 'main' | 'sub',
     parent_id: '' as number | '',
+    translations: {
+        en: defaultTranslation(),
+        ru: defaultTranslation(),
+        tm: defaultTranslation(),
+    },
 })
-const formErrors = reactive({ name: '', parent_id: '' })
-
+const formErrors = reactive({ parent_id: '', name_en: '', name_ru: '', name_tm: '' })
 const toast = reactive({ visible: false, message: '', type: 'success' })
 
-// ── Pagination pages ──────────────────────────────────────────
+// ── Pagination ────────────────────────────────────────────────
 const visiblePages = computed(() => {
     const cur = pagination.value.current_page
     const last = pagination.value.last_page
@@ -736,14 +918,12 @@ const visiblePages = computed(() => {
     return pages
 })
 
-// ── FIX: availableParents excludes the category currently being edited ────────
-// Used only in the Edit modal so a category cannot be its own parent.
 const availableParents = computed(() =>
     parentCategories.value.filter(p => p.id !== selectedCategory.value?.id)
 )
 
 // ── API calls ─────────────────────────────────────────────────
-async function fetchCategories(page = 1) {
+async function fetchCategoriesData(page = 1) {
     loading.value = true
     try {
         const params = new URLSearchParams({ page: String(page), per_page: '6' })
@@ -782,13 +962,14 @@ async function fetchCategoryDetail(id: number) {
     try {
         const data = await $fetch<any>(`${API}/admin/categories/${id}`, { headers: authHeaders.value })
         previewProducts.value = data.products || []
+        selectedCategory.value = { ...selectedCategory.value, ...data }
     } catch { }
 }
 
 // ── Lifecycle ─────────────────────────────────────────────────
 onMounted(() => {
     fetchStats()
-    fetchCategories()
+    fetchCategoriesData()
     fetchParentCategories()
 })
 
@@ -797,13 +978,13 @@ function onSearch() {
     clearTimeout(searchTimeout)
     searchTimeout = setTimeout(() => {
         currentPage.value = 1
-        fetchCategories(1)
+        fetchCategoriesData(1)
     }, 400)
 }
 
 function goToPage(page: number) {
     currentPage.value = page
-    fetchCategories(page)
+    fetchCategoriesData(page)
 }
 
 // ── Type change ───────────────────────────────────────────────
@@ -824,12 +1005,22 @@ function openAddModal() {
 function openEditModal(cat: any) {
     resetForm()
     selectedCategory.value = cat
-    form.name = cat.name
-    form.description = cat.description || ''
     form.is_active = cat.is_active
     form.type = cat.parent_id ? 'sub' : 'main'
     form.parent_id = cat.parent_id || ''
     imagePreview.value = resolveImageUrl(cat.image_url)
+
+    const tr = cat.translations
+    if (tr) {
+        for (const loc of ['en', 'ru', 'tm'] as const) {
+            const entry = Array.isArray(tr) ? tr.find((x: any) => x.locale === loc) : tr[loc]
+            if (entry) {
+                form.translations[loc].name = entry.name || ''
+                form.translations[loc].description = entry.description || ''
+            }
+        }
+    }
+
     activeModal.value = 'edit'
     openDropdown.value = null
 }
@@ -856,166 +1047,135 @@ function closeModal() {
 }
 
 function resetForm() {
-    form.name = ''
-    form.description = ''
     form.is_active = true
     form.type = 'main'
     form.parent_id = ''
-    formErrors.name = ''
     formErrors.parent_id = ''
+    formErrors.name_en = ''
+    formErrors.name_ru = ''
+    formErrors.name_tm = ''
+    form.translations.en = defaultTranslation()
+    form.translations.ru = defaultTranslation()
+    form.translations.tm = defaultTranslation()
     imagePreview.value = null
     imageFile.value = null
 }
 
 // ── Dropdown ──────────────────────────────────────────────────
 function toggleDropdown(id: number, event: MouseEvent) {
-    if (openDropdown.value === id) {
-        openDropdown.value = null
-        return
-    }
+    if (openDropdown.value === id) { openDropdown.value = null; return }
     const btn = event.currentTarget as HTMLElement
     const rect = btn.getBoundingClientRect()
-    dropdownPos.value = {
-        top: rect.bottom + 6,
-        right: window.innerWidth - rect.right,
-    }
+    dropdownPos.value = { top: rect.bottom + 6, right: window.innerWidth - rect.right }
     openDropdown.value = id
     nextTick(() => {
-        const handler = (e: MouseEvent) => {
-            openDropdown.value = null
-            document.removeEventListener('click', handler)
-        }
+        const handler = (e: MouseEvent) => { openDropdown.value = null; document.removeEventListener('click', handler) }
         document.addEventListener('click', handler)
     })
 }
 
 // ── Image upload ──────────────────────────────────────────────
 function triggerFileInput() { fileInput.value?.click() }
-
-function onFileSelect(e: Event) {
-    const file = (e.target as HTMLInputElement).files?.[0]
-    if (file) handleFile(file)
-}
-
-function onDrop(e: DragEvent) {
-    isDragging.value = false
-    const file = e.dataTransfer?.files[0]
-    if (file) handleFile(file)
-}
-
+function onFileSelect(e: Event) { const file = (e.target as HTMLInputElement).files?.[0]; if (file) handleFile(file) }
+function onDrop(e: DragEvent) { isDragging.value = false; const file = e.dataTransfer?.files[0]; if (file) handleFile(file) }
 function handleFile(file: File) {
-    if (file.size > 2 * 1024 * 1024) {
-        showToast(t('admin.common.imageTooLarge'), 'error')
-        return
-    }
+    if (file.size > 2 * 1024 * 1024) { showToast(t('admin.common.imageTooLarge'), 'error'); return }
     imageFile.value = file
     const reader = new FileReader()
     reader.onload = (e) => { imagePreview.value = e.target?.result as string }
     reader.readAsDataURL(file)
 }
+function removeImage() { imagePreview.value = null; imageFile.value = null; if (fileInput.value) fileInput.value.value = '' }
 
-function removeImage() {
-    imagePreview.value = null
-    imageFile.value = null
-    if (fileInput.value) fileInput.value.value = ''
+// ── Build FormData ────────────────────────────────────────────
+function buildFormData(includeMethod = false) {
+    const body = new FormData()
+    if (includeMethod) body.append('_method', 'PUT')
+    // Use EN name as canonical `name` field for backend
+    const canonicalName = form.translations.en.name || form.translations.ru.name || form.translations.tm.name
+    body.append('name', canonicalName)
+    body.append('is_active', form.is_active ? '1' : '0')
+    if (form.type === 'sub' && form.parent_id) {
+        body.append('parent_id', String(form.parent_id))
+    } else if (includeMethod) {
+        body.append('parent_id', '')
+    }
+    if (imageFile.value) body.append('image', imageFile.value)
+
+    for (const loc of ['en', 'ru', 'tm'] as const) {
+        const tr = form.translations[loc]
+        if (tr.name.trim()) {
+            body.append(`translations[${loc}][name]`, tr.name)
+            if (tr.description) body.append(`translations[${loc}][description]`, tr.description)
+        }
+    }
+
+    return body
+}
+
+function validate() {
+    formErrors.name_en = ''; formErrors.name_ru = ''; formErrors.name_tm = ''; formErrors.parent_id = ''
+    let ok = true
+    if (!form.translations.en.name.trim()) { formErrors.name_en = t('admin.common.nameRequired'); ok = false }
+    if (!form.translations.ru.name.trim()) { formErrors.name_ru = t('admin.common.nameRequired'); ok = false }
+    if (!form.translations.tm.name.trim()) { formErrors.name_tm = t('admin.common.nameRequired'); ok = false }
+    if (form.type === 'sub' && !form.parent_id) { formErrors.parent_id = t('admin.categories.parentRequired'); ok = false }
+    return ok
 }
 
 // ── Submit ADD ────────────────────────────────────────────────
 async function submitAdd() {
-    formErrors.name = ''
-    formErrors.parent_id = ''
-    if (!form.name.trim()) { formErrors.name = t('admin.common.nameRequired'); return }
-    if (form.type === 'sub' && !form.parent_id) { formErrors.parent_id = t('admin.categories.parentRequired'); return }
-
+    if (!validate()) return
     submitting.value = true
     try {
-        const body = new FormData()
-        body.append('name', form.name)
-        if (form.description) body.append('description', form.description)
-        body.append('is_active', form.is_active ? '1' : '0')
-        if (form.type === 'sub' && form.parent_id) body.append('parent_id', String(form.parent_id))
-        if (imageFile.value) body.append('image', imageFile.value)
-
-        await $fetch(`${API}/admin/categories`, {
-            method: 'POST',
-            headers: authHeaders.value,
-            body,
-        })
+        await $fetch(`${API}/admin/categories`, { method: 'POST', headers: authHeaders.value, body: buildFormData() })
         showToast(t('admin.categories.createdSuccess'), 'success')
         closeModal()
         fetchStats()
         fetchParentCategories()
-        fetchCategories(currentPage.value)
+        fetchCategoriesData(currentPage.value)
     } catch (err: any) {
         const msg = err?.data?.errors?.name?.[0] || err?.data?.message || t('admin.categories.createFailed')
-        if (err?.data?.errors?.name) formErrors.name = msg
+        if (err?.data?.errors?.name) formErrors.name_en = msg
         else showToast(msg, 'error')
-    } finally {
-        submitting.value = false
-    }
+    } finally { submitting.value = false }
 }
 
 // ── Submit EDIT ───────────────────────────────────────────────
 async function submitEdit() {
-    formErrors.name = ''
-    formErrors.parent_id = ''
-    if (!form.name.trim()) { formErrors.name = t('admin.common.nameRequired'); return }
-    if (form.type === 'sub' && !form.parent_id) { formErrors.parent_id = t('admin.categories.parentRequired'); return }
-
+    if (!validate()) return
     submitting.value = true
     try {
-        const body = new FormData()
-        body.append('_method', 'PUT')
-        body.append('name', form.name)
-        if (form.description) body.append('description', form.description)
-        body.append('is_active', form.is_active ? '1' : '0')
-        body.append('parent_id', form.type === 'sub' && form.parent_id ? String(form.parent_id) : '')
-        if (imageFile.value) body.append('image', imageFile.value)
-
-        await $fetch(`${API}/admin/categories/${selectedCategory.value.id}`, {
-            method: 'POST',
-            headers: authHeaders.value,
-            body,
-        })
+        await $fetch(`${API}/admin/categories/${selectedCategory.value.id}`, { method: 'POST', headers: authHeaders.value, body: buildFormData(true) })
         showToast(t('admin.categories.updatedSuccess'), 'success')
         closeModal()
         fetchParentCategories()
-        fetchCategories(currentPage.value)
+        fetchCategoriesData(currentPage.value)
     } catch (err: any) {
         const msg = err?.data?.errors?.name?.[0] || err?.data?.message || t('admin.categories.updateFailed')
-        if (err?.data?.errors?.name) formErrors.name = msg
+        if (err?.data?.errors?.name) formErrors.name_en = msg
         else showToast(msg, 'error')
-    } finally {
-        submitting.value = false
-    }
+    } finally { submitting.value = false }
 }
 
 // ── Submit DELETE ─────────────────────────────────────────────
 async function submitDelete() {
     submitting.value = true
     try {
-        await $fetch(`${API}/admin/categories/${selectedCategory.value.id}`, {
-            method: 'DELETE',
-            headers: authHeaders.value,
-        })
+        await $fetch(`${API}/admin/categories/${selectedCategory.value.id}`, { method: 'DELETE', headers: authHeaders.value })
         showToast(t('admin.categories.deletedSuccess'), 'success')
         closeModal()
         fetchStats()
         fetchParentCategories()
         if (categories.value.length === 1 && currentPage.value > 1) currentPage.value--
-        fetchCategories(currentPage.value)
+        fetchCategoriesData(currentPage.value)
     } catch (err: any) {
         showToast(err?.data?.message || t('admin.categories.deleteFailed'), 'error')
-    } finally {
-        submitting.value = false
-    }
+    } finally { submitting.value = false }
 }
 
-// ── Toast ─────────────────────────────────────────────────────
 function showToast(message: string, type: 'success' | 'error' = 'success') {
-    toast.message = message
-    toast.type = type
-    toast.visible = true
+    toast.message = message; toast.type = type; toast.visible = true
     setTimeout(() => { toast.visible = false }, 3500)
 }
 </script>
@@ -1029,7 +1189,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     min-height: 100%;
 }
 
-/* ── Header ─────────────────────────────────────────────────── */
 .page-header {
     display: flex;
     align-items: flex-start;
@@ -1109,7 +1268,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     background: #2e4422;
 }
 
-/* ── Stats ──────────────────────────────────────────────────── */
 .stats-section {
     margin-bottom: 20px;
 }
@@ -1164,7 +1322,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     color: #dc2626;
 }
 
-/* ── Table Card ─────────────────────────────────────────────── */
 .table-card {
     background: #fff;
     border: 1.5px solid #f0f0f0;
@@ -1256,7 +1413,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     white-space: nowrap;
 }
 
-/* ── Parent / Main badges ────────────────────────────────────── */
 .parent-badge {
     display: inline-flex;
     align-items: center;
@@ -1379,7 +1535,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     background: #fef2f2;
 }
 
-/* ── Mobile Cards ───────────────────────────────────────────── */
 .mobile-cards {
     padding: 8px;
     display: flex;
@@ -1415,7 +1570,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     margin-top: 4px;
 }
 
-/* ── Type Selector ──────────────────────────────────────────── */
 .type-selector {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1466,7 +1620,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     color: #6b8f52;
 }
 
-/* ── Select ─────────────────────────────────────────────────── */
 .select-wrapper {
     position: relative;
 }
@@ -1510,7 +1663,108 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     margin-top: 4px;
 }
 
-/* ── Slide-down transition ──────────────────────────────────── */
+.translations-section {
+    margin-bottom: 18px;
+    border: 1.5px solid #e8f0e4;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.translations-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 14px;
+    background: #f0f4ec;
+    border-bottom: 1.5px solid #e8f0e4;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #3d5a2e;
+}
+
+.translation-block {
+    padding: 14px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.translation-block:last-child {
+    border-bottom: none;
+}
+
+.translation-block-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 10px;
+}
+
+.locale-flag {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.locale-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #374151;
+}
+
+.form-label-sm {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 5px;
+}
+
+.mb-sm {
+    margin-bottom: 10px;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.preview-translation-block {
+    margin-top: 16px;
+    border: 1.5px solid #e8f0e4;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.preview-translation-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 14px;
+    background: #f0f4ec;
+    border-bottom: 1.5px solid #e8f0e4;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #3d5a2e;
+}
+
+.translation-preview-locale {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #374151;
+    background: #fafafa;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.preview-translation-block .preview-row {
+    padding: 8px 14px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.preview-translation-block .preview-row:last-child {
+    border-bottom: none;
+}
+
 .slide-down-enter-active {
     transition: all .22s ease;
     overflow: hidden;
@@ -1534,7 +1788,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     max-height: 120px;
 }
 
-/* ── Pagination ─────────────────────────────────────────────── */
 .pagination {
     display: flex;
     align-items: center;
@@ -1601,7 +1854,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     font-size: 0.9rem;
 }
 
-/* ── Empty ──────────────────────────────────────────────────── */
 .empty-state {
     display: flex;
     flex-direction: column;
@@ -1620,7 +1872,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     font-size: 0.9rem;
 }
 
-/* ── Skeletons ──────────────────────────────────────────────── */
 .loading-state {
     padding: 8px 20px;
 }
@@ -1689,7 +1940,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     }
 }
 
-/* ── Modal Overlay ──────────────────────────────────────────── */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -1698,7 +1948,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     z-index: 200;
 }
 
-/* ── Modal ──────────────────────────────────────────────────── */
 .modal {
     position: fixed;
     top: 50%;
@@ -1772,7 +2021,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     flex-shrink: 0;
 }
 
-/* ── Form ───────────────────────────────────────────────────── */
 .form-group {
     margin-bottom: 18px;
 }
@@ -1812,7 +2060,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 
 .form-textarea {
     resize: vertical;
-    min-height: 80px;
+    min-height: 72px;
     font-family: inherit;
 }
 
@@ -2004,7 +2252,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     }
 }
 
-/* ── Preview Modal ──────────────────────────────────────────── */
 .preview-image-wrap {
     border-radius: 12px;
     overflow: hidden;
@@ -2033,7 +2280,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
 
 .preview-row {
@@ -2103,6 +2350,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     font-weight: 700;
     color: #374151;
     margin-bottom: 10px;
+    margin-top: 20px;
 }
 
 .preview-product-list {
@@ -2170,7 +2418,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     color: #dc2626;
 }
 
-/* ── Delete Modal ───────────────────────────────────────────── */
 .delete-icon-wrap {
     width: 72px;
     height: 72px;
@@ -2205,7 +2452,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     font-weight: 500;
 }
 
-/* ── Toast ──────────────────────────────────────────────────── */
 .toast {
     position: fixed;
     bottom: 24px;
@@ -2231,7 +2477,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     color: #fff;
 }
 
-/* ── Transitions ────────────────────────────────────────────── */
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity .2s ease;
@@ -2274,7 +2519,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     transform: translateY(12px);
 }
 
-/* ── Responsive ─────────────────────────────────────────────── */
 .desktop-only {
     display: table;
 }

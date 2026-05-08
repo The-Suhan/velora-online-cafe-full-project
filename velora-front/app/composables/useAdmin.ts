@@ -14,7 +14,6 @@ export const useAdmin = () => {
         })
     }
 
-    // ── Updated: supports custom period with date range ──────────
     const fetchOrdersChart = async (
         period: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom',
         options?: { startDate?: string; endDate?: string }
@@ -36,10 +35,21 @@ export const useAdmin = () => {
         }
     }
 
-    const fetchCategories = async (params: { per_page?: number; page?: number; search?: string } = {}) => {
+    // ── Categories ────────────────────────────────────────────
+    const fetchCategories = async (params: {
+        per_page?: number
+        page?: number
+        search?: string
+    } = {}) => {
         return await $fetch(`${apiBase}/admin/categories`, {
             headers: authHeaders.value,
             query: params,
+        })
+    }
+
+    const fetchCategoryStats = async () => {
+        return await $fetch(`${apiBase}/admin/categories/stats`, {
+            headers: authHeaders.value,
         })
     }
 
@@ -49,6 +59,43 @@ export const useAdmin = () => {
         })
     }
 
+    const fetchCategory = async (id: number) => {
+        return await $fetch(`${apiBase}/admin/categories/${id}`, {
+            headers: authHeaders.value,
+        })
+    }
+
+    const createCategory = async (formData: FormData) => {
+        return await $fetch(`${apiBase}/admin/categories`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token.value}` },
+            body: formData,
+        })
+    }
+
+    const updateCategory = async (id: number, formData: FormData) => {
+        return await $fetch(`${apiBase}/admin/categories/${id}`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token.value}` },
+            body: formData,
+        })
+    }
+
+    const deleteCategory = async (id: number) => {
+        return await $fetch(`${apiBase}/admin/categories/${id}`, {
+            method: 'DELETE',
+            headers: authHeaders.value,
+        })
+    }
+
+    const toggleCategory = async (id: number) => {
+        return await $fetch(`${apiBase}/admin/categories/${id}/toggle`, {
+            method: 'PATCH',
+            headers: authHeaders.value,
+        })
+    }
+
+    // ── Users ─────────────────────────────────────────────────
     const fetchUsers = async (params: {
         search?: string
         role?: string
@@ -84,11 +131,19 @@ export const useAdmin = () => {
         fetchDashboard,
         fetchOrdersChart,
         initAuth,
+        // categories
+        fetchCategories,
+        fetchCategoryStats,
+        fetchParentCategories,
+        fetchCategory,
+        createCategory,
+        updateCategory,
+        deleteCategory,
+        toggleCategory,
+        // users
         fetchUsers,
         fetchUserStats,
         fetchUser,
         deleteUser,
-        fetchCategories,
-        fetchParentCategories
     }
 }

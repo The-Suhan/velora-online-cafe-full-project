@@ -79,7 +79,8 @@
       "showing": "Showing",
       "to": "to",
       "of": "of",
-      "total": "Total"
+      "total": "Total",
+      "translations": "Translations"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -227,7 +228,7 @@
       "rating": "Rating",
       "sold": "Sold",
       "reviews": "Reviews",
-      "desc": "Desc",
+      "desc": "Description",
       "created": "Created",
       "units": "units",
       "productHeader": "Product",
@@ -481,11 +482,11 @@
       },
       "suffixes": {
         "s1": "— your dashboard is ready.",
-        "s2": "— everything’s running smoothly.",
-        "s3": "— let’s keep things moving.",
-        "s4": "— the team’s all set.",
+        "s2": "— everything's running smoothly.",
+        "s3": "— let's keep things moving.",
+        "s4": "— the team's all set.",
         "s5": "— hope you have a productive session.",
-        "s6": "— you’re in control."
+        "s6": "— you're in control."
       }
     },
     "sidebar": {

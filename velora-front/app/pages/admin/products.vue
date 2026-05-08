@@ -78,8 +78,6 @@
 
         <!-- ── Table Card ─────────────────────────────────────────── -->
         <div class="table-card">
-
-            <!-- Loading -->
             <div v-if="loading" class="loading-state">
                 <div v-for="i in 8" :key="i" class="skeleton-row">
                     <div class="skeleton-img" />
@@ -123,9 +121,8 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <p class="prod-name">{{ p.name }}</p>
-                                        <p class="prod-desc">{{ p.description?.slice(0, 40) }}{{ p.description?.length >
-                                            40 ? '…' : '' }}</p>
+                                        <p class="prod-name">{{ displayName(p) }}</p>
+                                        <p class="prod-desc">{{ displayDesc(p) }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -205,7 +202,7 @@
                                 </div>
                             </div>
                             <div>
-                                <p class="prod-name">{{ p.name }}</p>
+                                <p class="prod-name">{{ displayName(p) }}</p>
                                 <p class="prod-desc">{{ p.category?.name ?? '—' }} · ${{ p.price.toFixed(2) }}</p>
                                 <span class="status-badge mt-1" :class="p.is_active ? 'active' : 'inactive'">
                                     {{ p.is_active ? $t('admin.common.active') : $t('admin.common.inactive') }}
@@ -292,7 +289,7 @@
                 <div v-else-if="products.length > 0" class="pagination-info-only">
                     {{ $t('admin.common.showing') }} 1 {{ $t('admin.common.to') }} {{ products.length }} {{
                         $t('admin.common.of') }} {{
-                    pagination.total }} {{ $t('admin.products.productsTotal') }}
+                        pagination.total }} {{ $t('admin.products.productsTotal') }}
                 </div>
             </template>
         </div>
@@ -315,6 +312,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <!-- Image -->
                     <div class="form-group">
                         <label class="form-label">{{ $t('admin.products.imageLabel') }}</label>
                         <div class="image-upload-zone" :class="{ 'has-file': imagePreview, 'drag-over': isDragging }"
@@ -336,14 +334,9 @@
                         <button v-if="imagePreview" class="remove-image-btn" @click.stop="removeImage">{{
                             $t('admin.common.removeImage') }}</button>
                     </div>
+
+                    <!-- Price + Category row -->
                     <div class="form-row">
-                        <div class="form-group fg-flex2">
-                            <label class="form-label">{{ $t('admin.products.nameLabel') }} <span
-                                    class="required">*</span></label>
-                            <input v-model="form.name" type="text" class="form-input"
-                                :placeholder="$t('admin.products.namePlaceholder')" />
-                            <p v-if="formErrors.name" class="form-error">{{ formErrors.name }}</p>
-                        </div>
                         <div class="form-group fg-flex1">
                             <label class="form-label">{{ $t('admin.products.priceLabel') }} <span
                                     class="required">*</span></label>
@@ -351,21 +344,91 @@
                                 :placeholder="$t('admin.products.pricePlaceholder')" />
                             <p v-if="formErrors.price" class="form-error">{{ formErrors.price }}</p>
                         </div>
+                        <div class="form-group fg-flex2">
+                            <label class="form-label">{{ $t('admin.products.categoryLabel') }} <span
+                                    class="required">*</span></label>
+                            <select v-model="form.category_id" class="form-input form-select">
+                                <option value="">{{ $t('admin.products.categoryPlaceholder') }}</option>
+                                <option v-for="c in allCategories" :key="c.id" :value="c.id">{{ c.name }}</option>
+                            </select>
+                            <p v-if="formErrors.category_id" class="form-error">{{ formErrors.category_id }}</p>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">{{ $t('admin.products.categoryLabel') }} <span
-                                class="required">*</span></label>
-                        <select v-model="form.category_id" class="form-input form-select">
-                            <option value="">{{ $t('admin.products.categoryPlaceholder') }}</option>
-                            <option v-for="c in allCategories" :key="c.id" :value="c.id">{{ c.name }}</option>
-                        </select>
-                        <p v-if="formErrors.category_id" class="form-error">{{ formErrors.category_id }}</p>
+
+                    <!-- Translations -->
+                    <div class="translations-section">
+                        <div class="translations-header">
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="15"
+                                height="15">
+                                <path d="M3 5h8M7 3v2M11 5a9 9 0 01-4 7.5M5 12s1.5 2 4 2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M13 10h4M15 8v2M17 10a5 5 0 01-2 4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                            <span>{{ $t('admin.common.translations') }}</span>
+                        </div>
+
+                        <!-- EN -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇬🇧</span>
+                                <span class="locale-label">English (EN)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.products.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.en.name" type="text" class="form-input"
+                                    placeholder="Name in English" />
+                                <p v-if="formErrors.name_en" class="form-error">{{ formErrors.name_en }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.products.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.en.description" class="form-input form-textarea"
+                                    placeholder="Description in English" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- RU -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇷🇺</span>
+                                <span class="locale-label">Русский (RU)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.products.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.ru.name" type="text" class="form-input"
+                                    placeholder="Название на русском" />
+                                <p v-if="formErrors.name_ru" class="form-error">{{ formErrors.name_ru }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.products.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.ru.description" class="form-input form-textarea"
+                                    placeholder="Описание на русском" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- TM -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇹🇲</span>
+                                <span class="locale-label">Türkmençe (TM)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.products.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.tm.name" type="text" class="form-input"
+                                    placeholder="Türkmen dilinde ady" />
+                                <p v-if="formErrors.name_tm" class="form-error">{{ formErrors.name_tm }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.products.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.tm.description" class="form-input form-textarea"
+                                    placeholder="Türkmen dilinde beýany" rows="2"></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">{{ $t('admin.products.descriptionLabel') }}</label>
-                        <textarea v-model="form.description" class="form-input form-textarea" rows="3"
-                            :placeholder="$t('admin.products.descriptionPlaceholder')" />
-                    </div>
+
                     <div class="form-group toggle-group">
                         <label class="form-label">{{ $t('admin.products.activeLabel') }}</label>
                         <button class="toggle-btn" :class="{ on: form.is_active }"
@@ -397,6 +460,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <!-- Image -->
                     <div class="form-group">
                         <label class="form-label">{{ $t('admin.products.imageLabel') }}</label>
                         <div class="image-upload-zone" :class="{ 'has-file': imagePreview, 'drag-over': isDragging }"
@@ -417,33 +481,100 @@
                         <button v-if="imagePreview" class="remove-image-btn" @click.stop="removeImage">{{
                             $t('admin.common.removeImage') }}</button>
                     </div>
+
+                    <!-- Price + Category row -->
                     <div class="form-row">
-                        <div class="form-group fg-flex2">
-                            <label class="form-label">{{ $t('admin.products.nameLabel') }} <span
-                                    class="required">*</span></label>
-                            <input v-model="form.name" type="text" class="form-input" />
-                            <p v-if="formErrors.name" class="form-error">{{ formErrors.name }}</p>
-                        </div>
                         <div class="form-group fg-flex1">
                             <label class="form-label">{{ $t('admin.products.priceLabel') }} <span
                                     class="required">*</span></label>
                             <input v-model="form.price" type="number" step="0.01" min="0" class="form-input" />
                             <p v-if="formErrors.price" class="form-error">{{ formErrors.price }}</p>
                         </div>
+                        <div class="form-group fg-flex2">
+                            <label class="form-label">{{ $t('admin.products.categoryLabel') }} <span
+                                    class="required">*</span></label>
+                            <select v-model="form.category_id" class="form-input form-select">
+                                <option value="">{{ $t('admin.products.categoryPlaceholder') }}</option>
+                                <option v-for="c in allCategories" :key="c.id" :value="c.id">{{ c.name }}</option>
+                            </select>
+                            <p v-if="formErrors.category_id" class="form-error">{{ formErrors.category_id }}</p>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">{{ $t('admin.products.categoryLabel') }} <span
-                                class="required">*</span></label>
-                        <select v-model="form.category_id" class="form-input form-select">
-                            <option value="">{{ $t('admin.products.categoryPlaceholder') }}</option>
-                            <option v-for="c in allCategories" :key="c.id" :value="c.id">{{ c.name }}</option>
-                        </select>
-                        <p v-if="formErrors.category_id" class="form-error">{{ formErrors.category_id }}</p>
+
+                    <!-- Translations -->
+                    <div class="translations-section">
+                        <div class="translations-header">
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="15"
+                                height="15">
+                                <path d="M3 5h8M7 3v2M11 5a9 9 0 01-4 7.5M5 12s1.5 2 4 2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M13 10h4M15 8v2M17 10a5 5 0 01-2 4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                            <span>{{ $t('admin.common.translations') }}</span>
+                        </div>
+
+                        <!-- EN -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇬🇧</span>
+                                <span class="locale-label">English (EN)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.products.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.en.name" type="text" class="form-input"
+                                    placeholder="Name in English" />
+                                <p v-if="formErrors.name_en" class="form-error">{{ formErrors.name_en }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.products.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.en.description" class="form-input form-textarea"
+                                    placeholder="Description in English" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- RU -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇷🇺</span>
+                                <span class="locale-label">Русский (RU)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.products.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.ru.name" type="text" class="form-input"
+                                    placeholder="Название на русском" />
+                                <p v-if="formErrors.name_ru" class="form-error">{{ formErrors.name_ru }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.products.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.ru.description" class="form-input form-textarea"
+                                    placeholder="Описание на русском" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- TM -->
+                        <div class="translation-block">
+                            <div class="translation-block-header">
+                                <span class="locale-flag">🇹🇲</span>
+                                <span class="locale-label">Türkmençe (TM)</span>
+                            </div>
+                            <div class="form-group mb-sm">
+                                <label class="form-label-sm">{{ $t('admin.products.nameLabel') }} <span
+                                        class="required">*</span></label>
+                                <input v-model="form.translations.tm.name" type="text" class="form-input"
+                                    placeholder="Türkmen dilinde ady" />
+                                <p v-if="formErrors.name_tm" class="form-error">{{ formErrors.name_tm }}</p>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label-sm">{{ $t('admin.products.descriptionLabel') }}</label>
+                                <textarea v-model="form.translations.tm.description" class="form-input form-textarea"
+                                    placeholder="Türkmen dilinde beýany" rows="2"></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">{{ $t('admin.products.descriptionLabel') }}</label>
-                        <textarea v-model="form.description" class="form-input form-textarea" rows="3" />
-                    </div>
+
                     <div class="form-group toggle-group">
                         <label class="form-label">{{ $t('admin.products.activeLabel') }}</label>
                         <button class="toggle-btn" :class="{ on: form.is_active }"
@@ -477,7 +608,7 @@
                 <div class="modal-body">
                     <div class="preview-image-wrap">
                         <img v-if="selectedProd.image_url" :src="resolveUrl(selectedProd.image_url)"
-                            :alt="selectedProd.name" class="preview-big-img" />
+                            :alt="displayName(selectedProd)" class="preview-big-img" />
                         <div v-else class="preview-no-img">
                             <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="48"
                                 height="48">
@@ -490,7 +621,7 @@
                     <div class="preview-info">
                         <div class="preview-row">
                             <span class="preview-key">{{ $t('admin.common.name') }}</span>
-                            <span class="preview-val">{{ selectedProd.name }}</span>
+                            <span class="preview-val">{{ displayName(selectedProd) }}</span>
                         </div>
                         <div class="preview-row">
                             <span class="preview-key">{{ $t('admin.products.category') }}</span>
@@ -529,14 +660,43 @@
                             <span class="preview-key">{{ $t('admin.products.reviews') }}</span>
                             <span class="preview-val">{{ selectedProd.ratings_count }}</span>
                         </div>
-                        <div v-if="selectedProd.description" class="preview-row">
+                        <div v-if="displayDesc(selectedProd)" class="preview-row">
                             <span class="preview-key">{{ $t('admin.products.desc') }}</span>
-                            <span class="preview-val">{{ selectedProd.description }}</span>
+                            <span class="preview-val">{{ displayDesc(selectedProd) }}</span>
                         </div>
                         <div class="preview-row">
                             <span class="preview-key">{{ $t('admin.products.created') }}</span>
                             <span class="preview-val">{{ selectedProd.created_at }}</span>
                         </div>
+                    </div>
+
+                    <!-- All translations -->
+                    <div class="preview-translation-block">
+                        <div class="preview-translation-header">
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14"
+                                height="14">
+                                <path d="M3 5h8M7 3v2M11 5a9 9 0 01-4 7.5M5 12s1.5 2 4 2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M13 10h4M15 8v2M17 10a5 5 0 01-2 4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                            <span>{{ $t('admin.common.translations') }}</span>
+                        </div>
+                        <template v-for="loc in ['en', 'ru', 'tm']" :key="loc">
+                            <div class="translation-preview-locale">
+                                <span class="locale-flag">{{ localeFlag(loc) }}</span>
+                                <span class="locale-label">{{ localeLabel(loc) }}</span>
+                            </div>
+                            <div class="preview-row">
+                                <span class="preview-key">{{ $t('admin.common.name') }}</span>
+                                <span class="preview-val">{{ getTranslation(selectedProd, loc, 'name') || '—' }}</span>
+                            </div>
+                            <div class="preview-row">
+                                <span class="preview-key">{{ $t('admin.products.descriptionLabel') }}</span>
+                                <span class="preview-val">{{ getTranslation(selectedProd, loc, 'description') || '—'
+                                    }}</span>
+                            </div>
+                        </template>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -569,7 +729,7 @@
                     </div>
                     <p class="delete-title">{{ $t('admin.common.areYouSure') }}</p>
                     <p class="delete-desc">
-                        {{ $t('admin.products.deleteDesc') }} <strong>{{ selectedProd.name }}</strong>. {{
+                        {{ $t('admin.products.deleteDesc') }} <strong>{{ displayName(selectedProd) }}</strong>. {{
                             $t('admin.common.actionUndone') }}
                         <span class="delete-warning">{{ $t('admin.products.deleteWarning') }}</span>
                     </p>
@@ -600,7 +760,6 @@
                 {{ toast.message }}
             </div>
         </Transition>
-
     </div>
 </template>
 
@@ -609,7 +768,7 @@ import { nextTick } from 'vue'
 
 definePageMeta({ layout: 'admin' as any, middleware: 'admin' })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const config = useRuntimeConfig()
 const API = config.public.apiBase
 const BACKEND_BASE = API.replace(/\/api\/?$/, '')
@@ -618,6 +777,34 @@ const resolveUrl = (url: string | null | undefined): string | null => {
     if (!url) return null
     if (url.startsWith('http')) return url
     return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
+// ── Translation helpers ───────────────────────────────────
+function getTranslation(item: any, loc: string, field: 'name' | 'description'): string {
+    if (!item?.translations) return ''
+    const tr = item.translations
+    const entry = Array.isArray(tr) ? tr.find((x: any) => x.locale === loc) : tr[loc]
+    return entry?.[field] ?? ''
+}
+
+function displayName(item: any): string {
+    const loc = locale.value
+    return getTranslation(item, loc, 'name') || getTranslation(item, 'en', 'name') || item?.name || ''
+}
+
+function displayDesc(item: any): string {
+    const loc = locale.value
+    const full = getTranslation(item, loc, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
+    if (!full) return ''
+    return full.length > 40 ? full.slice(0, 40) + '…' : full
+}
+
+function localeFlag(loc: string): string {
+    return { en: '🇬🇧', ru: '🇷🇺', tm: '🇹🇲' }[loc] ?? ''
+}
+
+function localeLabel(loc: string): string {
+    return { en: 'English (EN)', ru: 'Русский (RU)', tm: 'Türkmençe (TM)' }[loc] ?? loc
 }
 
 import { useProducts } from '~/composables/useProducts'
@@ -647,14 +834,22 @@ const imagePreview = ref<string | null>(null)
 const imageFile = ref<File | null>(null)
 let searchTimeout: ReturnType<typeof setTimeout>
 
+const defaultTranslation = () => ({ name: '', description: '' })
+
 const form = reactive({
-    name: '', description: '', price: '' as string | number,
-    category_id: '' as string | number, is_active: true,
+    price: '' as string | number,
+    category_id: '' as string | number,
+    is_active: true,
+    translations: {
+        en: defaultTranslation(),
+        ru: defaultTranslation(),
+        tm: defaultTranslation(),
+    },
 })
-const formErrors = reactive({ name: '', price: '', category_id: '' })
+const formErrors = reactive({ price: '', category_id: '', name_en: '', name_ru: '', name_tm: '' })
 const toast = reactive({ visible: false, message: '', type: 'success' })
 
-// ── Computed ───────────────────────────────────────────────
+// ── Computed ──────────────────────────────────────────────
 const visiblePages = computed(() => {
     const cur = pagination.value.current_page
     const last = pagination.value.last_page
@@ -667,7 +862,7 @@ const visiblePages = computed(() => {
     return pages
 })
 
-// ── Load ───────────────────────────────────────────────────
+// ── Load ──────────────────────────────────────────────────
 onMounted(async () => {
     await Promise.all([loadProducts(), loadStats(), loadCategories()])
     document.addEventListener('click', () => { openDrop.value = null; showFilter.value = false })
@@ -731,26 +926,43 @@ function handleFile(file: File) {
 function removeImage() { imagePreview.value = null; imageFile.value = null; if (fileInputRef.value) fileInputRef.value.value = '' }
 
 function resetForm() {
-    form.name = ''; form.description = ''; form.price = ''; form.category_id = ''; form.is_active = true
-    formErrors.name = ''; formErrors.price = ''; formErrors.category_id = ''
+    form.price = ''; form.category_id = ''; form.is_active = true
+    formErrors.price = ''; formErrors.category_id = ''
+    formErrors.name_en = ''; formErrors.name_ru = ''; formErrors.name_tm = ''
+    form.translations.en = defaultTranslation()
+    form.translations.ru = defaultTranslation()
+    form.translations.tm = defaultTranslation()
     imagePreview.value = null; imageFile.value = null
 }
 
 function buildFD() {
     const fd = new FormData()
-    fd.append('name', form.name)
+    // Use EN name as the canonical `name` field for backend
+    const canonicalName = form.translations.en.name || form.translations.ru.name || form.translations.tm.name
+    fd.append('name', canonicalName)
     fd.append('price', String(form.price))
     fd.append('category_id', String(form.category_id))
     fd.append('is_active', form.is_active ? '1' : '0')
-    if (form.description) fd.append('description', form.description)
     if (imageFile.value) fd.append('image', imageFile.value)
+
+    for (const loc of ['en', 'ru', 'tm'] as const) {
+        const tr = form.translations[loc]
+        if (tr.name.trim()) {
+            fd.append(`translations[${loc}][name]`, tr.name)
+            if (tr.description) fd.append(`translations[${loc}][description]`, tr.description)
+        }
+    }
+
     return fd
 }
 
 function validate() {
-    formErrors.name = ''; formErrors.price = ''; formErrors.category_id = ''
+    formErrors.price = ''; formErrors.category_id = ''
+    formErrors.name_en = ''; formErrors.name_ru = ''; formErrors.name_tm = ''
     let ok = true
-    if (!form.name.trim()) { formErrors.name = t('admin.common.nameRequired'); ok = false }
+    if (!form.translations.en.name.trim()) { formErrors.name_en = t('admin.common.nameRequired'); ok = false }
+    if (!form.translations.ru.name.trim()) { formErrors.name_ru = t('admin.common.nameRequired'); ok = false }
+    if (!form.translations.tm.name.trim()) { formErrors.name_tm = t('admin.common.nameRequired'); ok = false }
     if (!form.price) { formErrors.price = t('admin.common.priceRequired'); ok = false }
     if (!form.category_id) { formErrors.category_id = t('admin.common.categoryRequired'); ok = false }
     return ok
@@ -761,12 +973,22 @@ function openAddModal() { resetForm(); activeModal.value = 'add' }
 function openEditModal(p: any) {
     resetForm()
     selectedProd.value = p
-    form.name = p.name
-    form.description = p.description ?? ''
     form.price = p.price
     form.category_id = p.category?.id ?? ''
     form.is_active = p.is_active
     imagePreview.value = resolveUrl(p.image_url)
+
+    const tr = p.translations
+    if (tr) {
+        for (const loc of ['en', 'ru', 'tm'] as const) {
+            const entry = Array.isArray(tr) ? tr.find((x: any) => x.locale === loc) : tr[loc]
+            if (entry) {
+                form.translations[loc].name = entry.name || ''
+                form.translations[loc].description = entry.description || ''
+            }
+        }
+    }
+
     activeModal.value = 'edit'
     openDrop.value = null
 }
@@ -775,7 +997,10 @@ async function openPreviewModal(p: any) {
     selectedProd.value = p
     activeModal.value = 'preview'
     openDrop.value = null
-    try { selectedProd.value = await fetchProduct(p.id) } catch { }
+    try {
+        const detail = await fetchProduct(p.id) as any
+        selectedProd.value = detail
+    } catch { }
 }
 
 function openDeleteModal(p: any) { selectedProd.value = p; activeModal.value = 'delete'; openDrop.value = null }
@@ -790,8 +1015,7 @@ async function submitAdd() {
         closeModal(); await loadProducts(currentPage.value); await loadStats()
     } catch (err: any) {
         const errs = err?.data?.errors
-        if (errs?.name) formErrors.name = errs.name[0]
-        else if (errs?.price) formErrors.price = errs.price[0]
+        if (errs?.name) formErrors.name_en = errs.name[0]
         else showToast(err?.data?.message || t('admin.products.createFailed'), 'error')
     } finally { submitting.value = false }
 }
@@ -800,12 +1024,14 @@ async function submitEdit() {
     if (!validate()) return
     submitting.value = true
     try {
-        await updateProduct(selectedProd.value.id, buildFD())
+        const fd = buildFD()
+        fd.append('_method', 'PUT')
+        await updateProduct(selectedProd.value.id, fd)
         showToast(t('admin.products.updatedSuccess'), 'success')
         closeModal(); await loadProducts(currentPage.value)
     } catch (err: any) {
         const errs = err?.data?.errors
-        if (errs?.name) formErrors.name = errs.name[0]
+        if (errs?.name) formErrors.name_en = errs.name[0]
         else showToast(err?.data?.message || t('admin.products.updateFailed'), 'error')
     } finally { submitting.value = false }
 }
@@ -1516,6 +1742,111 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     font-size: 0.9rem;
 }
 
+/* ── Translations Section ───────────────────────────────── */
+.translations-section {
+    margin-bottom: 18px;
+    border: 1.5px solid #e8f0e4;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.translations-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 14px;
+    background: #f0f4ec;
+    border-bottom: 1.5px solid #e8f0e4;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #3d5a2e;
+}
+
+.translation-block {
+    padding: 14px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.translation-block:last-child {
+    border-bottom: none;
+}
+
+.translation-block-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 10px;
+}
+
+.locale-flag {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.locale-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #374151;
+}
+
+.form-label-sm {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 5px;
+}
+
+.mb-sm {
+    margin-bottom: 10px;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+/* ── Preview translation block ──────────────────────────── */
+.preview-translation-block {
+    margin-top: 16px;
+    border: 1.5px solid #e8f0e4;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.preview-translation-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 14px;
+    background: #f0f4ec;
+    border-bottom: 1.5px solid #e8f0e4;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #3d5a2e;
+}
+
+.translation-preview-locale {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #374151;
+    background: #fafafa;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.preview-translation-block .preview-row {
+    padding: 8px 14px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.preview-translation-block .preview-row:last-child {
+    border-bottom: none;
+}
+
+/* ── Modal ──────────────────────────────────────────────── */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -1646,7 +1977,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 
 .form-textarea {
     resize: vertical;
-    min-height: 80px;
+    min-height: 72px;
 }
 
 .form-select {

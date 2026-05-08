@@ -27,11 +27,9 @@
 
         <!-- Middle row: chart + recent orders -->
         <div class="mid-row">
-            <!-- Orders Overview chart — now a standalone component -->
             <div class="oc-card">
                 <div class="oc-head">
                     <span class="oc-title">{{ $t('admin.dashboard.ordersOverview') }}</span>
-
                     <div class="oc-controls">
                         <div class="oc-tabs">
                             <button v-for="p in periods" :key="p.value" class="oc-tab"
@@ -39,7 +37,6 @@
                                 {{ p.label }}
                             </button>
                         </div>
-
                         <div class="oc-cal-wrap" ref="calendarRef">
                             <button class="oc-cal-btn" :class="{ active: period === 'custom' }"
                                 @click.stop="isOpen = !isOpen">
@@ -50,7 +47,6 @@
                                 </svg>
                                 <span class="oc-cal-label">{{ rangeLabel ?? $t('admin.dashboard.pickDate') }}</span>
                             </button>
-
                             <Transition name="oc-pop">
                                 <div v-if="isOpen" class="oc-cal-popup" @click.stop>
                                     <DatePicker color="green" :model-value="(range as any)"
@@ -72,10 +68,8 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- loading=true → skeleton | loading=false → canvas -->
                 <div class="oc-chart-wrap">
-                    <div v-if="loading" class="oc-loading">
+                    <div v-if="chartLoading" class="oc-loading">
                         <div class="oc-skeleton" />
                     </div>
                     <canvas v-else ref="chartCanvas" />
@@ -132,11 +126,11 @@
                     <div v-for="(product, idx) in topProducts" :key="product.id" class="product-row">
                         <span class="product-rank">{{ idx + 1 }}</span>
                         <div class="product-img-wrap">
-                            <img v-if="product.image_url" :src="product.image_url" :alt="product.name"
+                            <img v-if="product.image_url" :src="product.image_url" :alt="getProductName(product)"
                                 class="product-img" />
                             <div v-else class="product-img-placeholder" />
                         </div>
-                        <span class="product-name">{{ product.name }}</span>
+                        <span class="product-name">{{ getProductName(product) }}</span>
                         <div class="stars">
                             <span v-for="s in 5" :key="s" class="star"
                                 :class="s <= Math.round(product.avg_rating) ? 'filled' : 'empty'">★</span>
@@ -163,7 +157,7 @@
                                 <line x1="3" y1="6" x2="21" y2="6" />
                             </svg>
                         </div>
-                        <span class="cat-name">{{ cat.name }}</span>
+                        <span class="cat-name">{{ getCategoryName(cat) }}</span>
                         <span class="cat-count">{{ cat.products_count }}</span>
                     </div>
                     <p v-if="!loading && categories.length === 0" class="empty-msg">
@@ -176,22 +170,65 @@
 </template>
 
 <script setup lang="ts">
+import {
+    Chart,
+    LineController,
+    LineElement,
+    PointElement,
+    LinearScale,
+    CategoryScale,
+    Filler,
+    Tooltip,
+} from 'chart.js'
+import { DatePicker } from 'v-calendar'
+import 'v-calendar/style.css'
+import { nextTick } from 'vue'
+
 definePageMeta({
     layout: 'admin' as any,
     middleware: 'admin',
 })
 
+Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip)
+
 const { t, locale } = useI18n()
-const { fetchDashboard } = useAdmin()
-const pendingOrders = useState('admin:pendingOrders')
-const unreadFeedbacks = useState('admin:unreadFeedbacks')
+const { fetchDashboard, fetchOrdersChart } = useAdmin()
 
 // ── State ──────────────────────────────────────────────────
 const loading = ref(true)
+const chartLoading = ref(true)
 const stats = ref<any>({})
 const recentOrders = ref<any[]>([])
 const topProducts = ref<any[]>([])
 const categories = ref<any[]>([])
+
+// ── Translation helpers ────────────────────────────────────
+// Returns translated name from translations object/array, falls back to .name
+function getTranslatedField(item: any, field: 'name' | 'description'): string {
+    if (!item) return ''
+    const tr = item.translations
+    if (tr) {
+        const loc = locale.value
+        const entry = Array.isArray(tr)
+            ? tr.find((x: any) => x.locale === loc)
+            : tr[loc]
+        if (entry?.[field]) return entry[field]
+        // fallback to EN
+        const enEntry = Array.isArray(tr)
+            ? tr.find((x: any) => x.locale === 'en')
+            : tr['en']
+        if (enEntry?.[field]) return enEntry[field]
+    }
+    return item[field] ?? item.name ?? ''
+}
+
+function getCategoryName(cat: any): string {
+    return getTranslatedField(cat, 'name')
+}
+
+function getProductName(product: any): string {
+    return getTranslatedField(product, 'name')
+}
 
 // ── Stat cards ─────────────────────────────────────────────
 const statCards = computed(() => [
@@ -240,29 +277,10 @@ const statCards = computed(() => [
     },
 ])
 
-// ── Load data ──────────────────────────────────────────────
-const calendarLocale = computed(() => {
-    return locale.value === 'tm' ? 'en' : locale.value
-})
+// ── Calendar locale ────────────────────────────────────────
+const calendarLocale = computed(() => locale.value === 'tm' ? 'en' : locale.value)
 
-import {
-    Chart,
-    LineController,
-    LineElement,
-    PointElement,
-    LinearScale,
-    CategoryScale,
-    Filler,
-    Tooltip,
-} from 'chart.js'
-import { DatePicker } from 'v-calendar'
-import 'v-calendar/style.css'
-import { nextTick } from 'vue'
-
-Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip)
-
-const { fetchOrdersChart } = useAdmin()
-
+// ── Chart ──────────────────────────────────────────────────
 type Period = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
 
 const chartCanvas = ref<HTMLCanvasElement | null>(null)
@@ -299,17 +317,9 @@ watch(chartCanvas, (canvas) => {
     }
 })
 
-// ── Chart render ──────────────────────────────────────────
 const renderChart = (data: { labels: string[]; data: number[] }) => {
-    if (!chartCanvas.value) {
-        pendingData.value = data
-        return
-    }
-
-    if (chartInstance) {
-        chartInstance.destroy()
-        chartInstance = null
-    }
+    if (!chartCanvas.value) { pendingData.value = data; return }
+    if (chartInstance) { chartInstance.destroy(); chartInstance = null }
 
     chartInstance = new Chart(chartCanvas.value, {
         type: 'line',
@@ -350,87 +360,74 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                     min: 0,
                     suggestedMax: 1,
                     grid: { color: 'rgba(0,0,0,0.04)' },
-                    ticks: {
-                        font: { family: 'Jost', size: 11 },
-                        color: '#8a7060',
-                        stepSize: 1,
-                        precision: 0,
-                    },
+                    ticks: { font: { family: 'Jost', size: 11 }, color: '#8a7060', stepSize: 1, precision: 0 },
                 },
                 x: {
                     grid: { display: false },
-                    ticks: {
-                        font: { family: 'Jost', size: 11 },
-                        color: '#8a7060',
-                        maxRotation: 45,
-                        autoSkip: true,
-                        maxTicksLimit: 12,
-                    },
+                    ticks: { font: { family: 'Jost', size: 11 }, color: '#8a7060', maxRotation: 45, autoSkip: true, maxTicksLimit: 12 },
                 },
             },
         },
     })
 }
 
-// ── Data load ─────────────────────────────────────────────
 const loadPeriod = async (p: Exclude<Period, 'custom'>) => {
-    loading.value = true
+    chartLoading.value = true
     try {
         const data = await fetchOrdersChart(p)
-        loading.value = false
+        chartLoading.value = false
         await nextTick()
         renderChart(data as any)
     } catch (e) {
         console.error('Chart load error:', e)
-        loading.value = false
+        chartLoading.value = false
     }
 }
 
 const loadCustomRange = async () => {
     if (!range.value?.start || !range.value?.end) return
-    loading.value = true
+    chartLoading.value = true
     try {
         const data = await fetchOrdersChart('custom', {
             startDate: toISODate(range.value.start),
             endDate: toISODate(range.value.end),
         })
-        loading.value = false
+        chartLoading.value = false
         await nextTick()
         renderChart(data as any)
     } catch (e) {
         console.error('Custom chart error:', e)
+        chartLoading.value = false
+    }
+}
+
+const applyRange = () => { isOpen.value = false; period.value = 'custom'; loadCustomRange() }
+const clearRange = () => { range.value = null; period.value = 'weekly'; isOpen.value = false; loadPeriod('weekly') }
+const changePeriod = (p: Exclude<Period, 'custom'>) => { period.value = p; range.value = null; isOpen.value = false; loadPeriod(p) }
+
+const onClickOutside = (e: MouseEvent) => {
+    if (calendarRef.value && !calendarRef.value.contains(e.target as HTMLElement)) isOpen.value = false
+}
+
+// ── Dashboard data ─────────────────────────────────────────
+const loadDashboard = async () => {
+    loading.value = true
+    try {
+        const data = await fetchDashboard() as any
+        stats.value = data.stats ?? data
+        recentOrders.value = data.recent_orders ?? []
+        topProducts.value = data.top_products ?? []
+        categories.value = data.categories ?? []
+    } catch (e) {
+        console.error('Dashboard load error:', e)
+    } finally {
         loading.value = false
     }
 }
 
-const applyRange = () => {
-    isOpen.value = false
-    period.value = 'custom'
-    loadCustomRange()
-}
-
-const clearRange = () => {
-    range.value = null
-    period.value = 'weekly'
-    isOpen.value = false
-    loadPeriod('weekly')
-}
-
-const changePeriod = (p: Exclude<Period, 'custom'>) => {
-    period.value = p
-    range.value = null
-    isOpen.value = false
-    loadPeriod(p)
-}
-
-const onClickOutside = (e: MouseEvent) => {
-    const target = e.target as HTMLElement
-    if (calendarRef.value && !calendarRef.value.contains(target)) {
-        isOpen.value = false
-    }
-}
-
+// ── Lifecycle ──────────────────────────────────────────────
 onMounted(() => {
+    loadDashboard()
     loadPeriod('weekly')
     document.addEventListener('click', onClickOutside)
 })
@@ -480,7 +477,6 @@ const timeAgo = (dateStr: string) => {
     margin: 0;
 }
 
-/* ── Stat cards ─────────────────────────────────────────── */
 .stat-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -541,7 +537,6 @@ const timeAgo = (dateStr: string) => {
     color: #c0392b;
 }
 
-/* ── Mid row ────────────────────────────────────────────── */
 .mid-row {
     display: grid;
     grid-template-columns: 1fr 380px;
@@ -549,7 +544,6 @@ const timeAgo = (dateStr: string) => {
     margin-bottom: 16px;
 }
 
-/* ── Cards ──────────────────────────────────────────────── */
 .recent-card,
 .bottom-card {
     background: #fff;
@@ -583,7 +577,6 @@ const timeAgo = (dateStr: string) => {
     text-decoration: underline;
 }
 
-/* Recent orders */
 .orders-list {
     display: flex;
     flex-direction: column;
@@ -660,7 +653,6 @@ const timeAgo = (dateStr: string) => {
     margin: 0;
 }
 
-/* Skeleton */
 .loading-placeholder {
     display: flex;
     flex-direction: column;
@@ -685,14 +677,12 @@ const timeAgo = (dateStr: string) => {
     }
 }
 
-/* ── Bottom row ─────────────────────────────────────────── */
 .bottom-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
 }
 
-/* Top products */
 .products-list {
     display: flex;
     flex-direction: column;
@@ -756,7 +746,6 @@ const timeAgo = (dateStr: string) => {
     text-align: right;
 }
 
-/* Categories */
 .cat-list {
     display: flex;
     flex-direction: column;
@@ -807,7 +796,6 @@ const timeAgo = (dateStr: string) => {
     padding: 12px 0;
 }
 
-/* ── Responsive ─────────────────────────────────────────── */
 @media (max-width: 1024px) {
     .stat-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -837,6 +825,7 @@ const timeAgo = (dateStr: string) => {
     }
 }
 
+/* ── Chart card ──────────────────────────────────────────── */
 .oc-card {
     background: #fff;
     border-radius: 16px;
@@ -1020,16 +1009,6 @@ const timeAgo = (dateStr: string) => {
     background: linear-gradient(90deg, #F0EDE6 25%, #e8e2d9 50%, #F0EDE6 75%);
     background-size: 400px 100%;
     animation: shimmer 1.2s infinite linear;
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: -400px 0;
-    }
-
-    100% {
-        background-position: 400px 0;
-    }
 }
 
 :deep(.vc-container) {
