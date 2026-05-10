@@ -108,7 +108,9 @@
       "justNow": "just now",
       "minAgo": "{n} min ago",
       "hrsAgo": "{n}h ago",
-      "daysAgo": "{n}d ago"
+      "daysAgo": "{n}d ago",
+      "weeklyRevenue": "Weekly Revenue",
+      "yearlyRevenue": "Yearly Revenue"
     },
     "categories": {
       "title": "Categories",

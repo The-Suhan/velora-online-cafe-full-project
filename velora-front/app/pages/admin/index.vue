@@ -16,7 +16,9 @@
                 </div>
                 <div class="stat-body">
                     <p class="stat-label">{{ card.label }}</p>
-                    <p class="stat-value">{{ formatNumber(card.value) }}</p>
+                    <p class="stat-value">
+                        {{ card.format === 'currency' ? formatCurrency(card.value) : formatNumber(card.value) }} $
+                    </p>
                     <p class="stat-growth" :class="card.growth >= 0 ? 'positive' : 'negative'">
                         {{ card.growth >= 0 ? '↑' : '↓' }} {{ Math.abs(card.growth) }}%
                         {{ $t('admin.dashboard.thisWeek') }}
@@ -88,15 +90,6 @@
                     </div>
                     <template v-else>
                         <div v-for="order in recentOrders" :key="order.id" class="order-row">
-                            <div class="order-img-wrap">
-                                <img v-if="order.product_img" :src="order.product_img" :alt="order.product_name"
-                                    class="order-img" />
-                                <div v-else class="order-img-placeholder">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                                    </svg>
-                                </div>
-                            </div>
                             <div class="order-info">
                                 <p class="order-no">{{ order.order_no }}</p>
                                 <p class="order-product">{{ order.product_name }}</p>
@@ -237,6 +230,7 @@ const statCards = computed(() => [
         value: stats.value.total_users ?? 0,
         growth: stats.value.users_growth ?? 0,
         bg: '#e8f0e4',
+        format: 'number',
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.8">
       <circle cx="12" cy="8" r="4"/>
       <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -247,6 +241,7 @@ const statCards = computed(() => [
         value: stats.value.total_orders ?? 0,
         growth: stats.value.orders_growth ?? 0,
         bg: '#fdf3e4',
+        format: 'number',
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8">
       <path d="M6 2h12l3 7H3L6 2z"/>
       <path d="M3 9v11a2 2 0 002 2h14a2 2 0 002-2V9"/>
@@ -257,6 +252,7 @@ const statCards = computed(() => [
         value: stats.value.total_products ?? 0,
         growth: 0,
         bg: '#2C1810',
+        format: 'number',
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8">
       <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
       <line x1="3" y1="6" x2="21" y2="6"/>
@@ -268,11 +264,32 @@ const statCards = computed(() => [
         value: stats.value.total_categories ?? 0,
         growth: 0,
         bg: '#e8f0e4',
+        format: 'number',
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.8">
       <rect x="3" y="3" width="7" height="7" rx="1"/>
       <rect x="14" y="3" width="7" height="7" rx="1"/>
       <rect x="3" y="14" width="7" height="7" rx="1"/>
       <rect x="14" y="14" width="7" height="7" rx="1"/>
+    </svg>`,
+    },
+    {
+        label: t('admin.dashboard.weeklyRevenue'),
+        value: stats.value.weekly_revenue ?? 0,
+        growth: stats.value.revenue_growth ?? 0,
+        bg: '#fdf3e4',
+        format: 'number',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8">
+      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+    </svg>`,
+    },
+    {
+        label: t('admin.dashboard.yearlyRevenue'),
+        value: stats.value.yearly_revenue ?? 0,
+        growth: 0,
+        bg: '#e8f0e4',
+        format: 'number',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.8">
+      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
     </svg>`,
     },
 ])
@@ -449,6 +466,8 @@ const timeAgo = (dateStr: string) => {
     if (hrs < 24) return t('admin.dashboard.hrsAgo', { n: hrs })
     return t('admin.dashboard.daysAgo', { n: Math.floor(hrs / 24) })
 }
+const formatCurrency = (n: number) =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n ?? 0)
 </script>
 
 <style scoped>

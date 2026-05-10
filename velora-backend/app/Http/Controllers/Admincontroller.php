@@ -32,6 +32,20 @@ class AdminController extends Controller
         $pendingOrders = Order::where('status', 'pending')->count();
         $unreadFeedbacks = Feedback::where('is_done', false)->count();
 
+        // Weekly revenue
+        $thisWeekRevenue = Order::where('status', 'delivered')
+            ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
+            ->sum('total_price');
+
+        $lastWeekRevenue = Order::where('status', 'delivered')
+            ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
+            ->sum('total_price');
+
+        // Yearly revenue
+        $yearlyRevenue = Order::where('status', 'delivered')
+            ->whereYear('created_at', now()->year)
+            ->sum('total_price');
+
         // Top rated products
         $topProducts = Product::with('ratings')
             ->where('avg_rating', '>', 0)
@@ -71,6 +85,9 @@ class AdminController extends Controller
                 'orders_growth' => $this->calcGrowth($lastWeekOrders, $thisWeekOrders),
                 'pending_orders' => $pendingOrders,
                 'unread_feedbacks' => $unreadFeedbacks,
+                'weekly_revenue' => (float) $thisWeekRevenue,
+                'yearly_revenue' => (float) $yearlyRevenue,
+                'revenue_growth' => $this->calcGrowth((int) $lastWeekRevenue, (int) $thisWeekRevenue),
             ],
             'recent_orders' => $recentOrders,
             'top_products' => $topProducts,

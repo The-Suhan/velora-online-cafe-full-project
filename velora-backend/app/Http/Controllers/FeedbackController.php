@@ -55,7 +55,7 @@ class FeedbackController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Feedback::with([
-            'user:id,name,email,profile_photo_path',
+            'user:id,name,email',
             'resolver:id,name',
         ]);
 
@@ -96,7 +96,7 @@ class FeedbackController extends Controller
     public function pending(Request $request): JsonResponse
     {
         $query = Feedback::with([
-            'user:id,name,email,profile_photo_path',
+            'user:id,name,email',
         ])->where('is_done', false);
 
         if ($search = $request->query('search')) {
@@ -129,7 +129,7 @@ class FeedbackController extends Controller
     public function resolved(Request $request): JsonResponse
     {
         $query = Feedback::with([
-            'user:id,name,email,profile_photo_path',
+            'user:id,name,email',
             'resolver:id,name',
         ])->where('is_done', true);
 
@@ -159,7 +159,7 @@ class FeedbackController extends Controller
     public function show(Feedback $feedback): JsonResponse
     {
         $feedback->load([
-            'user:id,name,email,profile_photo_path',
+            'user:id,name,email',
             'resolver:id,name',
         ]);
 
@@ -245,7 +245,6 @@ class FeedbackController extends Controller
                 'id' => $f->user->id,
                 'name' => $f->user->name,
                 'email' => $f->user->email,
-                'avatar' => $f->user->profile_photo_path,
             ] : null,
             'created_at' => $f->created_at?->format('M d, Y'),
         ];

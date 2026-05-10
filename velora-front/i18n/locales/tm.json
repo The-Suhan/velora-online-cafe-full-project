@@ -108,7 +108,9 @@
       "justNow": "ýaňy",
       "minAgo": "{n} min. öň",
       "hrsAgo": "{n} s. öň",
-      "daysAgo": "{n} gün öň"
+      "daysAgo": "{n} gün öň",
+      "weeklyRevenue": "Hepdelik Girdeji",
+      "yearlyRevenue": "Ýyllyk Girdeji"
     },
     "categories": {
       "title": "Kategoriýalar",

@@ -108,7 +108,9 @@
       "justNow": "только что",
       "minAgo": "{n} мин. назад",
       "hrsAgo": "{n} ч. назад",
-      "daysAgo": "{n} дн. назад"
+      "daysAgo": "{n} дн. назад",
+      "weeklyRevenue": "Выручка за неделю",
+      "yearlyRevenue": "Годовая выручка"
     },
     "categories": {
       "title": "Категории",
