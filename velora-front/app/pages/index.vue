@@ -1,150 +1,165 @@
-<template>
-    <main class="velora-page">
-
-        <!-- Category Filter -->
-        <section class="category-bar">
-            <div class="category-bar-inner">
-                <button @click="selectCategory(null)"
-                    :class="['cat-btn', { 'cat-btn--active': selectedCategory === null }]">
-                    All Products
-                </button>
-                <button v-for="cat in categories" :key="cat.id" @click="selectCategory(cat.id)"
-                    :class="['cat-btn', { 'cat-btn--active': selectedCategory === cat.id }]">
-                    {{ cat.name }}
-                </button>
-            </div>
-        </section>
-
-        <!-- Search + Sort row -->
-        <section class="toolbar">
-            <div class="toolbar-inner">
-                <div class="sort-group">
-                    <button v-for="s in sortOptions" :key="s.value" @click="selectSort(s.value)"
-                        :class="['sort-btn', { 'sort-btn--active': currentSort === s.value }]">
-                        {{ s.label }}
-                    </button>
-                </div>
-                <span class="product-count" v-if="!loading">{{ total }} items</span>
-            </div>
-        </section>
-
-        <!-- Grid -->
-        <section class="product-grid-section">
-            <div class="product-grid">
-
-                <!-- Skeleton -->
-                <template v-if="loading">
-                    <div v-for="n in 12" :key="n" class="product-card product-card--skeleton">
-                        <div class="card-image skeleton-block" />
-                        <div class="card-body">
-                            <div class="skeleton-line skeleton-line--title" />
-                            <div class="skeleton-line skeleton-line--desc" />
-                            <div class="skeleton-line skeleton-line--desc short" />
-                        </div>
-                    </div>
-                </template>
-
-                <!-- Cards -->
-                <div v-else v-for="product in products" :key="product.id" class="product-card">
-                    <!-- Image -->
-                    <div class="card-image" :style="{ background: cardGradient(product.id) }">
-                        <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="card-img" />
-                        <span v-if="product.category?.name" class="card-badge">
-                            {{ product.category.name }}
-                        </span>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="card-body">
-                        <h3 class="card-title">{{ product.name }}</h3>
-                        <p class="card-desc">{{ product.description }}</p>
-
-                        <!-- Stars -->
-                        <div class="card-rating">
-                            <StarRating :score="userRatings[product.id] ?? product.avg_rating" :interactive="true"
-                                @rate="(s) => rateProduct(product, s)" />
-                            <span class="rating-value">
-                                {{ (userRatings[product.id] ?? product.avg_rating).toFixed(1) }}
-                            </span>
-                        </div>
-
-                        <!-- Price + CTA -->
-                        <div class="card-footer">
-                            <span class="card-price">${{ Number(product.price).toFixed(2) }}</span>
-
-                            <!-- Add button -->
-                            <button v-if="!cartItem(product.id)" @click="addToCart(product)" class="add-btn">
-                                + Add
-                            </button>
-
-                            <!-- Qty controls -->
-                            <div v-else class="qty-ctrl">
-                                <button class="qty-btn" @click="decreaseQty(product.id)">−</button>
-                                <span class="qty-num">{{ cartItem(product.id).quantity }}</span>
-                                <button class="qty-btn" @click="increaseQty(product.id)">+</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Empty -->
-            <div v-if="!loading && products.length === 0" class="empty-state">
-                <p>No products found.</p>
-            </div>
-
-            <!-- Pagination -->
-            <div v-if="lastPage > 1" class="pagination">
-                <button v-for="p in lastPage" :key="p" @click="goToPage(p)"
-                    :class="['page-btn', { 'page-btn--active': currentPage === p }]">{{ p }}</button>
-            </div>
-        </section>
-
-    </main>
-</template>
-
 <script setup>
-import { ref, computed, onMounted, h, defineComponent } from 'vue'
+import { ref, onMounted, defineComponent, h } from 'vue'
+import { useCart } from '~/composables/useCart'
 
-definePageMeta({
-    layout: 'client',
-    middleware: 'auth'
-})
+const config = useRuntimeConfig()
+const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
+
+const resolveUrl = (url) => {
+    if (!url) return null
+    if (url.startsWith('http')) return url
+    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
+definePageMeta({ layout: 'client', middleware: 'auth' })
 
 useHead({
     link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         {
             rel: 'stylesheet',
-            href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Lato:wght@300;400&display=swap'
-        }
-    ]
+            href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Lato:wght@300;400&display=swap',
+        },
+    ],
 })
 
-// ... StarRating component aynı kalıyor ...
+// ─── Cart ─────────────────────────────────────────────────────
+const { addItem, increaseQty, decreaseQty, getItem } = useCart()
 
-// ─── State ───────────────────────────────────────────────────
-const api = useApi()   // ← BU EKLENDİ
+// ─── State ────────────────────────────────────────────────────
+const api = useApi()
+const loading = ref(true)
 
-const loading = ref(false)
-const categories = ref([])
-const products = ref([])
-const selectedCategory = ref(null)
-const currentSort = ref('newest')
-const currentPage = ref(1)
-const lastPage = ref(1)
-const total = ref(0)
+// sub-categories with their products embedded
+const categoryRows = ref([])   // [{ id, name, products: [] }]
+
+// ─── StarRating ───────────────────────────────────────────────
+const StarRating = defineComponent({
+    props: { score: { type: Number, default: 0 }, interactive: { type: Boolean, default: false } },
+    emits: ['rate'],
+    setup(props, { emit }) {
+        const hovered = ref(null)
+        function stars() {
+            return Array.from({ length: 5 }, (_, i) => {
+                const fill = Math.min(Math.max((props.score - i), 0), 1) * 100
+                return h('button', {
+                    class: 'star-wrap',
+                    onClick: () => props.interactive && emit('rate', i + 1),
+                    onMouseenter: () => { if (props.interactive) hovered.value = i + 1 },
+                    onMouseleave: () => { if (props.interactive) hovered.value = null },
+                }, [
+                    h('svg', { class: 'star-svg', viewBox: '0 0 24 24' }, [
+                        h('polygon', { points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26', fill: '#E8DDD0', stroke: 'none' }),
+                    ]),
+                    h('div', { class: 'star-fill', style: { width: `${hovered.value !== null && props.interactive ? (i < hovered.value ? 100 : 0) : fill}%` } }, [
+                        h('svg', { class: 'star-svg', viewBox: '0 0 24 24' }, [
+                            h('polygon', { points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26', fill: '#C9A96E', stroke: 'none' }),
+                        ]),
+                    ]),
+                ])
+            })
+        }
+        return () => h('div', { class: 'stars' }, stars())
+    },
+})
+
+// ─── Carousel refs (one per category row) ────────────────────
+const trackRefs = ref({})
+
+function setTrackRef(el, catId) {
+    if (el) trackRefs.value[catId] = el
+}
+
+// Drag-to-scroll state per carousel
+const dragState = {}
+
+function initDrag(catId) {
+    dragState[catId] = { down: false, startX: 0, scrollLeft: 0 }
+}
+
+function onMouseDown(e, catId) {
+    if (!dragState[catId]) initDrag(catId)
+    const track = trackRefs.value[catId]
+    if (!track) return
+    dragState[catId].down = true
+    dragState[catId].startX = e.pageX - track.offsetLeft
+    dragState[catId].scrollLeft = track.scrollLeft
+    track.style.cursor = 'grabbing'
+    track.style.userSelect = 'none'
+}
+
+function onMouseMove(e, catId) {
+    if (!dragState[catId]?.down) return
+    const track = trackRefs.value[catId]
+    if (!track) return
+    e.preventDefault()
+    const x = e.pageX - track.offsetLeft
+    const walk = (x - dragState[catId].startX) * 1.2
+    track.scrollLeft = dragState[catId].scrollLeft - walk
+}
+
+function onMouseUp(catId) {
+    if (!dragState[catId]) return
+    dragState[catId].down = false
+    const track = trackRefs.value[catId]
+    if (track) { track.style.cursor = 'grab'; track.style.userSelect = '' }
+}
+
+function scrollCarousel(catId, dir) {
+    const track = trackRefs.value[catId]
+    if (!track) return
+    const cardW = track.querySelector('.product-card')?.offsetWidth ?? 300
+    track.scrollBy({ left: dir * (cardW * 3 + 24), behavior: 'smooth' })
+}
+
+// ─── API ──────────────────────────────────────────────────────
 const userRatings = ref({})
 
-const cart = useState('cart', () => [])
+async function loadAll() {
+    loading.value = true
+    try {
+        // Backend: main categoryleri döndürür, sub-categoryler her birinin children[] içinde
+        const mainCats = await api('/categories')
 
-const sortOptions = [
-    { label: 'Newest', value: 'newest' },
-    { label: 'Price ↑', value: 'price_asc' },
-    { label: 'Price ↓', value: 'price_desc' },
-    { label: 'Top Rated', value: 'rating' },
-]
+        // Tüm children'ları düzleştir → bunlar sub-categoryler
+        const subCats = mainCats.flatMap(c => Array.isArray(c.children) ? c.children : [])
+
+        // Sub-category yoksa main categoryleri kullan
+        const targetCats = subCats.length > 0 ? subCats : mainCats
+
+        const rows = await Promise.all(
+            targetCats.map(async (cat) => {
+                try {
+                    const data = await api(`/categories/${cat.id}/products`, {
+                        params: { per_page: 20, sort: 'newest' },
+                    })
+                    return { ...cat, products: data.data ?? [] }
+                } catch {
+                    return { ...cat, products: [] }
+                }
+            })
+        )
+
+        categoryRows.value = rows.filter(r => r.products.length > 0)
+    } catch (e) {
+        console.error('[loadAll] error:', e)
+    } finally {
+        loading.value = false
+    }
+}
+
+async function rateProduct(product, score) {
+    try {
+        const res = await api(`/products/${product.id}/rate`, { method: 'POST', body: { score } })
+        userRatings.value[product.id] = res.score
+        for (const row of categoryRows.value) {
+            const p = row.products.find(p => p.id === product.id)
+            if (p) p.avg_rating = res.avg_rating
+        }
+    } catch (e) { console.error(e) }
+}
+
+function cartItem(productId) { return getItem(productId) }
 
 const gradients = [
     'linear-gradient(135deg,#C9A96E 0%,#9B7B3E 100%)',
@@ -153,238 +168,312 @@ const gradients = [
     'linear-gradient(135deg,#B8924F 0%,#D4A853 100%)',
 ]
 function cardGradient(id) { return gradients[id % gradients.length] }
-function cartItem(productId) { return cart.value.find(i => i.product_id === productId) ?? null }
 
-// ─── API ─────────────────────────────────────────────────────
-async function fetchCategories() {
-    try {
-        categories.value = await api('/categories')   // ← değişti
-    } catch (e) { console.error(e) }
-}
-
-async function fetchProducts(page = 1) {
-    loading.value = true
-    try {
-        const params = { page, per_page: 12, sort: currentSort.value }
-        const url = selectedCategory.value
-            ? `/categories/${selectedCategory.value}/products`   // ← değişti
-            : '/products'                                         // ← değişti
-
-        const data = await api(url, { params })   // ← değişti
-        products.value = data.data
-        lastPage.value = data.last_page
-        currentPage.value = data.current_page
-        total.value = data.total
-    } catch (e) { console.error(e) }
-    finally { loading.value = false }
-}
-
-function selectCategory(id) {
-    selectedCategory.value = id
-    currentPage.value = 1
-    fetchProducts(1)
-}
-
-function selectSort(val) {
-    currentSort.value = val
-    fetchProducts(1)
-}
-
-function goToPage(p) {
-    fetchProducts(p)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
-// ─── Cart ─────────────────────────────────────────────────────
-function addToCart(product) {
-    const existing = cart.value.find(i => i.product_id === product.id)
-    if (existing) { existing.quantity++; return }
-    cart.value.push({
-        product_id: product.id,
-        product_name: product.name,
-        image_url: product.image_url,
-        price: product.price,
-        quantity: 1,
-    })
-}
-
-function increaseQty(id) {
-    const item = cart.value.find(i => i.product_id === id)
-    if (item) item.quantity = Math.min(item.quantity + 1, 99)
-}
-
-function decreaseQty(id) {
-    const idx = cart.value.findIndex(i => i.product_id === id)
-    if (idx === -1) return
-    cart.value[idx].quantity <= 1
-        ? cart.value.splice(idx, 1)
-        : cart.value[idx].quantity--
-}
-
-// ─── Rating ───────────────────────────────────────────────────
-async function rateProduct(product, score) {
-    try {
-        const res = await api(`/products/${product.id}/rate`, {   // ← değişti
-            method: 'POST',
-            body: { score },
-        })
-        userRatings.value[product.id] = res.score
-        const p = products.value.find(p => p.id === product.id)
-        if (p) p.avg_rating = res.avg_rating
-    } catch (e) { console.error(e) }
-}
-
-// ─── Init ─────────────────────────────────────────────────────
-onMounted(async () => {
-    await fetchCategories()
-    await fetchProducts()
-})
+onMounted(loadAll)
 </script>
 
+<template>
+    <main class="velora-page">
+
+        <!-- ── Loading skeleton ── -->
+        <template v-if="loading">
+            <div v-for="n in 3" :key="n" class="category-section">
+                <div class="section-head">
+                    <div class="skeleton-line sk-title" />
+                    <div class="skeleton-line sk-btn" />
+                </div>
+                <div class="carousel-wrap">
+                    <div class="carousel-track no-scroll">
+                        <div v-for="k in 5" :key="k" class="product-card product-card--skeleton">
+                            <div class="card-image skeleton-block" />
+                            <div class="card-body">
+                                <div class="skeleton-line sk-name" />
+                                <div class="skeleton-line sk-desc" />
+                                <div class="skeleton-line sk-short" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- ── Category rows ── -->
+        <template v-else>
+            <section v-for="(cat, rowIdx) in categoryRows" :key="cat.id" class="category-section"
+                :style="{ '--row-delay': `${rowIdx * 60}ms` }">
+                <!-- Section header -->
+                <div class="section-head">
+                    <div class="section-head-left">
+                        <h2 class="section-title">{{ cat.name }}</h2>
+                        <span class="section-count">{{ cat.products.length }} items</span>
+                    </div>
+                    <NuxtLink :to="`/categories/${cat.id}`" class="see-all-btn">
+                        See all
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </NuxtLink>
+                </div>
+
+                <!-- Carousel -->
+                <div class="carousel-wrap">
+                    <!-- Left arrow -->
+                    <button class="carousel-arrow carousel-arrow--left" @click="scrollCarousel(cat.id, -1)"
+                        aria-label="Scroll left">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                    </button>
+
+                    <!-- Track -->
+                    <div class="carousel-track" :ref="el => setTrackRef(el, cat.id)"
+                        @mousedown="onMouseDown($event, cat.id)" @mousemove="onMouseMove($event, cat.id)"
+                        @mouseup="onMouseUp(cat.id)" @mouseleave="onMouseUp(cat.id)">
+                        <div v-for="(product, cardIdx) in cat.products" :key="product.id" class="product-card"
+                            :style="{ '--card-delay': `${rowIdx * 60 + cardIdx * 30}ms` }">
+                            <!-- Image -->
+                            <div class="card-image" :style="{ background: cardGradient(product.id) }">
+                                <img v-if="product.image_url" :src="resolveUrl(product.image_url)" :alt="product.name"
+                                    class="card-img" draggable="false" />
+                                <span v-if="product.category?.name" class="card-badge">
+                                    {{ product.category.name }}
+                                </span>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="card-body">
+                                <h3 class="card-title">{{ product.name }}</h3>
+                                <p class="card-desc">{{ product.description }}</p>
+
+                                <div class="card-rating">
+                                    <StarRating :score="userRatings[product.id] ?? product.avg_rating"
+                                        :interactive="true" @rate="(s) => rateProduct(product, s)" />
+                                    <span class="rating-value">
+                                        {{ (userRatings[product.id] ?? product.avg_rating).toFixed(1) }}
+                                    </span>
+                                </div>
+
+                                <div class="card-footer">
+                                    <span class="card-price">${{ Number(product.price).toFixed(2) }}</span>
+                                    <button v-if="!cartItem(product.id)" @click="addItem(product)" class="add-btn">
+                                        + Add
+                                    </button>
+                                    <div v-else class="qty-ctrl">
+                                        <button class="qty-btn" @click="decreaseQty(product.id)">−</button>
+                                        <span class="qty-num">{{ cartItem(product.id).quantity }}</span>
+                                        <button class="qty-btn" @click="increaseQty(product.id)">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right arrow -->
+                    <button class="carousel-arrow carousel-arrow--right" @click="scrollCarousel(cat.id, 1)"
+                        aria-label="Scroll right">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Empty state -->
+            <div v-if="categoryRows.length === 0" class="empty-state">
+                <p>No products available.</p>
+            </div>
+        </template>
+
+    </main>
+</template>
+
 <style scoped>
-/* ── Page wrapper ── */
+/* ── Page ── */
 .velora-page {
     min-height: 100vh;
     background: #F5F0E8;
     font-family: 'Lato', sans-serif;
+    padding-bottom: 4rem;
 }
 
-/* ── Category bar ── */
-.category-bar {
-    border-bottom: 1px solid rgba(26, 10, 0, 0.08);
-    background: #F5F0E8;
-    position: sticky;
-    top: 72px;
-    /* header height */
-    z-index: 30;
+/* ── Category section ── */
+.category-section {
+    padding: 2.5rem 0 0;
+    animation: fadeUp 0.45s ease both;
+    animation-delay: var(--row-delay, 0ms);
 }
 
-.category-bar-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Section head ── */
+.section-head {
     display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-    height: 52px;
-    align-items: center;
-}
-
-.category-bar-inner::-webkit-scrollbar {
-    display: none;
-}
-
-.cat-btn {
-    flex-shrink: 0;
-    padding: 0.35rem 1.1rem;
-    border: 1px solid rgba(201, 169, 110, 0.5);
-    background: transparent;
-    color: #2C1A0E;
-    font-family: 'Lato', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.18s, border-color 0.18s;
-    white-space: nowrap;
-}
-
-.cat-btn:hover {
-    background: rgba(201, 169, 110, 0.12);
-}
-
-.cat-btn--active {
-    background: #2C1A0E;
-    color: #F5F0E8;
-    border-color: #2C1A0E;
-}
-
-/* ── Toolbar ── */
-.toolbar {
-    border-bottom: 1px solid rgba(26, 10, 0, 0.06);
-    background: #F5F0E8;
-}
-
-.toolbar-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0.75rem 2rem;
-    display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
+    padding: 0 3.5rem 1rem;
     gap: 1rem;
 }
 
-.sort-group {
+.section-head-left {
     display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.85rem;
 }
 
-.sort-btn {
-    padding: 0.3rem 0.9rem;
-    border: 1px solid rgba(201, 169, 110, 0.45);
-    background: transparent;
-    color: #5a3e2b;
+.section-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.65rem;
+    font-weight: 400;
+    color: #2C1A0E;
+    margin: 0;
+    letter-spacing: 0.01em;
+}
+
+.section-count {
+    font-size: 0.7rem;
+    color: #9a7a68;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.see-all-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
     font-family: 'Lato', sans-serif;
     font-size: 0.7rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.15s;
-    border-radius: 2px;
-}
-
-.sort-btn:hover {
-    background: rgba(201, 169, 110, 0.1);
-}
-
-.sort-btn--active {
-    background: rgba(201, 169, 110, 0.2);
-    border-color: #C9A96E;
-    color: #2C1A0E;
-}
-
-.product-count {
-    font-size: 0.72rem;
-    color: #8a6a50;
-    letter-spacing: 0.06em;
+    color: #C9A96E;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
-/* ── Grid section ── */
-.product-grid-section {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+.see-all-btn:hover {
+    color: #b8924f;
+    border-bottom-color: #b8924f;
 }
 
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
+/* ── Carousel wrap ── */
+.carousel-wrap {
+    position: relative;
+}
+
+/* Arrow buttons */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(44, 26, 14, 0.15);
+    background: #F5F0E8;
+    color: #2C1A0E;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(44, 26, 14, 0.12);
+    transition: background 0.18s, box-shadow 0.18s, opacity 0.18s;
+}
+
+.carousel-arrow:hover {
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(44, 26, 14, 0.18);
+}
+
+.carousel-arrow--left {
+    left: 16px;
+}
+
+.carousel-arrow--right {
+    right: 16px;
+}
+
+/* ── Track ── */
+.carousel-track {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    padding: 0.5rem 3.5rem 1.5rem;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 3.5rem;
+    cursor: grab;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    /* Son kartta sağ padding çalışsın */
+    box-sizing: border-box;
+}
+
+/* Pseudo-element ile son karta sağ padding vermek yerine doğrudan after ile boşluk ekle */
+.carousel-track::after {
+    content: '';
+    flex: 0 0 2.25rem;
+    display: block;
+}
+
+.carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-track.no-scroll {
+    overflow: hidden;
 }
 
 /* ── Card ── */
 .product-card {
+    flex: 0 0 260px;
+    width: 260px;
     background: #fff;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    scroll-snap-align: start;
     box-shadow: 0 1px 4px rgba(44, 26, 14, 0.07);
     transition: box-shadow 0.25s, transform 0.25s;
+    animation: cardIn 0.4s ease both;
+    animation-delay: var(--card-delay, 0ms);
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .product-card:hover {
-    box-shadow: 0 6px 24px rgba(44, 26, 14, 0.12);
+    box-shadow: 0 6px 24px rgba(44, 26, 14, 0.13);
     transform: translateY(-2px);
 }
 
 /* Image */
 .card-image {
     position: relative;
-    height: 220px;
+    height: 190px;
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -394,6 +483,7 @@ onMounted(async () => {
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
+    pointer-events: none;
 }
 
 .product-card:hover .card-img {
@@ -406,7 +496,7 @@ onMounted(async () => {
     left: 12px;
     background: rgba(255, 255, 255, 0.92);
     color: #2C1A0E;
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     padding: 3px 10px;
@@ -415,31 +505,38 @@ onMounted(async () => {
 
 /* Body */
 .card-body {
-    padding: 1.1rem 1.25rem 1.25rem;
+    padding: 1rem 1.15rem 1.15rem;
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    gap: 0.5rem;
     flex: 1;
 }
 
 .card-title {
     font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 400;
     color: #2C1A0E;
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .card-desc {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     color: #7A6652;
-    line-height: 1.55;
+    line-height: 1.5;
     margin: 0;
     flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-/* Rating row */
 .card-rating {
     display: flex;
     align-items: center;
@@ -447,11 +544,10 @@ onMounted(async () => {
 }
 
 .rating-value {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: #8a6a50;
 }
 
-/* Stars */
 :deep(.stars) {
     display: flex;
     gap: 2px;
@@ -459,8 +555,8 @@ onMounted(async () => {
 
 :deep(.star-wrap) {
     position: relative;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border: none;
     background: transparent;
     padding: 0;
@@ -492,25 +588,24 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 0.6rem;
+    padding-top: 0.55rem;
     border-top: 1px solid #F0E8D8;
     margin-top: auto;
 }
 
 .card-price {
     font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: #2C1A0E;
 }
 
-/* Add button */
 .add-btn {
     background: #C9A96E;
     color: #fff;
     border: none;
-    padding: 0.45rem 1.1rem;
+    padding: 0.4rem 1rem;
     font-family: 'Lato', sans-serif;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     cursor: pointer;
@@ -521,7 +616,6 @@ onMounted(async () => {
     background: #b8924f;
 }
 
-/* Qty controls */
 .qty-ctrl {
     display: flex;
     align-items: center;
@@ -529,8 +623,8 @@ onMounted(async () => {
 }
 
 .qty-btn {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     border: none;
     background: transparent;
     color: #C9A96E;
@@ -547,9 +641,9 @@ onMounted(async () => {
 }
 
 .qty-num {
-    width: 28px;
+    width: 26px;
     text-align: center;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: #2C1A0E;
     font-family: 'Lato', sans-serif;
 }
@@ -560,7 +654,7 @@ onMounted(async () => {
 }
 
 .skeleton-block {
-    height: 220px;
+    height: 190px;
     background: linear-gradient(90deg, #EDE5D8 25%, #E4DAC8 50%, #EDE5D8 75%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite;
@@ -572,20 +666,32 @@ onMounted(async () => {
     background: linear-gradient(90deg, #EDE5D8 25%, #E4DAC8 50%, #EDE5D8 75%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite;
-    margin-bottom: 8px;
 }
 
-.skeleton-line--title {
-    height: 18px;
-    width: 70%;
-}
-
-.skeleton-line--desc {
-    width: 90%;
-}
-
-.skeleton-line.short {
+.sk-title {
+    height: 22px;
     width: 55%;
+    margin-bottom: 0;
+}
+
+.sk-btn {
+    height: 16px;
+    width: 60px;
+}
+
+.sk-name {
+    height: 16px;
+    width: 70%;
+    margin-bottom: 6px;
+}
+
+.sk-desc {
+    width: 90%;
+    margin-bottom: 6px;
+}
+
+.sk-short {
+    width: 50%;
 }
 
 @keyframes shimmer {
@@ -601,68 +707,87 @@ onMounted(async () => {
 /* ── Empty ── */
 .empty-state {
     text-align: center;
-    padding: 4rem 0;
+    padding: 5rem 0;
     color: #8a6a50;
     font-size: 0.9rem;
-    font-family: 'Lato', sans-serif;
-}
-
-/* ── Pagination ── */
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 3rem;
-}
-
-.page-btn {
-    width: 36px;
-    height: 36px;
-    border: 1px solid rgba(201, 169, 110, 0.5);
-    background: transparent;
-    color: #2C1A0E;
-    font-family: 'Lato', sans-serif;
-    font-size: 0.82rem;
-    cursor: pointer;
-    transition: background 0.15s;
-}
-
-.page-btn:hover {
-    background: rgba(201, 169, 110, 0.12);
-}
-
-.page-btn--active {
-    background: #2C1A0E;
-    color: #F5F0E8;
-    border-color: #2C1A0E;
 }
 
 /* ── Responsive ── */
+
+/* Tablet */
 @media (max-width: 1024px) {
-    .product-grid {
-        grid-template-columns: repeat(3, 1fr);
+    .product-card {
+        flex: 0 0 230px;
+        width: 230px;
+    }
+
+    .section-head {
+        padding: 0 2.5rem 0.85rem;
+    }
+
+    .carousel-track {
+        padding: 0.5rem 2.5rem 1.5rem;
+    }
+
+    .carousel-arrow--left {
+        left: 10px;
+    }
+
+    .carousel-arrow--right {
+        right: 10px;
     }
 }
 
+/* Mobile: arrows gizle */
 @media (max-width: 768px) {
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .carousel-arrow {
+        display: none;
+    }
+
+    .product-card {
+        flex: 0 0 200px;
+        width: 200px;
+    }
+
+    .card-image {
+        height: 160px;
+    }
+
+    .section-head {
+        padding: 0 1.5rem 0.75rem;
+    }
+
+    .carousel-track {
+        padding: 0.5rem 1.5rem 1.25rem;
         gap: 1rem;
     }
 
-    .product-grid-section {
-        padding: 1.25rem;
-    }
-
-    .category-bar-inner,
-    .toolbar-inner {
-        padding: 0 1.25rem;
+    .section-title {
+        font-size: 1.35rem;
     }
 }
 
 @media (max-width: 480px) {
-    .product-grid {
-        grid-template-columns: 1fr;
+    .product-card {
+        flex: 0 0 175px;
+        width: 175px;
+    }
+
+    .card-image {
+        height: 140px;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-price {
+        font-size: 1.05rem;
+    }
+
+    .add-btn {
+        padding: 0.35rem 0.75rem;
+        font-size: 0.64rem;
     }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="client-layout">
-        <ClientHeader :bag-count="bagCount" @open-search="searchOpen = true" @toggle-menu="menuOpen = !menuOpen" />
+        <ClientHeader :bag-count="totalCount" @open-search="searchOpen = true" @toggle-menu="menuOpen = !menuOpen" />
 
         <!-- Mobile slide-down menu (tablet/mobile burger) -->
         <Transition name="slide-down">
@@ -25,19 +25,19 @@
         </main>
 
         <!-- Bottom Tabbar (tablet + mobile) -->
-        <ClientTabbar :bag-count="bagCount" />
+        <ClientFooter />
+        <ClientTabbar :bag-count="totalCount" />
     </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
+import { useCart } from '~/composables/useCart'
 
 const menuOpen = ref(false)
 const searchOpen = ref(false)
 
-const bagCount = computed(() => {
-    return 2
-})
+const { totalCount } = useCart()
 </script>
 
 <style scoped>
