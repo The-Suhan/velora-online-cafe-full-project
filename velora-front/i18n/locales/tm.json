@@ -1,4 +1,16 @@
 {
+  "nav": {
+    "home": "Baş sahypa",
+    "menu": "Menýu",
+    "categories": "Kategoriýalar",
+    "profile": "Profil"
+  },
+
+
+
+
+
+  
   "auth": {
     "name": "Ady",
     "email": "Elektron poçta",

@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
         $now = now();
 
         DB::table('users')->insert([
-            // ── id = 1  (orders & feedbacks bu kullanıcıya bağlı) ──────────
+            // ── id = 1  ──────────
             [
                 'name' => 'Suhan',
                 'email' => 'begenjov@velora.com',

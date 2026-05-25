@@ -3,9 +3,11 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\OrderController;
+// Client
 use App\Http\Controllers\ProductController;
 
 // ── Auth ──────────────────────────────────────────────────────
@@ -77,4 +79,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/feedback/{feedback}/unresolve', [FeedbackController::class, 'unresolve']);
         Route::delete('/feedback/{feedback}', [FeedbackController::class, 'destroy']);
     });
+
+    // Client api
+    Route::get('/categories', [CustomerController::class, 'categories']);
+    Route::get('/categories/{category}/products', [CustomerController::class, 'categoryProducts']);
+    Route::get('/products', [CustomerController::class, 'products']);
+    Route::get('/products/{product}', [CustomerController::class, 'showProduct']);
+    Route::get('/products/{product}/ratings', [CustomerController::class, 'productRatings']);
+
+    // Ratings
+    Route::post('/products/{product}/rate', [CustomerController::class, 'rateProduct']);
+    Route::delete('/products/{product}/rate', [CustomerController::class, 'deleteRating']);
+
+    // Orders
+    Route::post('/orders', [CustomerController::class, 'placeOrder']);
+    Route::get('/orders', [CustomerController::class, 'myOrders']);
+    Route::get('/orders/{order}', [CustomerController::class, 'showOrder']);
+    Route::patch('/orders/{order}/cancel', [CustomerController::class, 'cancelOrder']);
 });

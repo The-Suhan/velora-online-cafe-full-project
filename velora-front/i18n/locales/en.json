@@ -1,4 +1,13 @@
 {
+  "nav": {
+    "home": "Home",
+    "menu": "Menu",
+    "categories": "Categories",
+    "profile": "Profile"
+  },
+
+
+  
   "auth": {
     "name": "Name",
     "email": "Email",

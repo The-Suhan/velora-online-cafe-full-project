@@ -1,10 +1,10 @@
 <template>
     <header class="admin-header">
         <div class="header-left">
-            <p class="greeting">
+            <!-- <p class="greeting">
                 {{ greeting }}, <span class="user-name">{{ userName }}</span>
                 <span class="greeting-suffix">{{ suffix }}</span>
-            </p>
+            </p> -->
         </div>
         <div class="header-right">
             <LanguageSwitcher />
