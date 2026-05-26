@@ -5,12 +5,6 @@
     "categories": "Kategoriýalar",
     "profile": "Profil"
   },
-
-
-
-
-
-  
   "auth": {
     "name": "Ady",
     "email": "Elektron poçta",
@@ -323,7 +317,8 @@
           "note": "Bellik",
           "created": "Döredilen",
           "updated": "Täzelenen",
-          "delivery": "Eltip beriş maglumaty"
+          "delivery": "Eltip beriş maglumaty",
+          "deliveryFee": "Eltip bermek hyzmaty"
         },
         "edit": {
           "title": "Ýagdaýy üýtget",
@@ -364,7 +359,8 @@
           "downloadPdf": "PDF göçür",
           "deliveryType": "Görnüşi",
           "address": "Salgy",
-          "phone": "Telefon"
+          "phone": "Telefon",
+          "deliveryFee": "Eltip bermek hyzmaty"
         }
       },
       "pending": {

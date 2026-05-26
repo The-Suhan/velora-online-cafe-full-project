@@ -17,7 +17,7 @@
                 <div class="stat-body">
                     <p class="stat-label">{{ card.label }}</p>
                     <p class="stat-value">
-                        {{ card.format === 'currency' ? formatCurrency(card.value) : formatNumber(card.value) }} $
+                        {{ card.format === 'currency' ? formatCurrency(card.value) : formatNumber(card.value) }}{{card.showCurrency ? ' $' : '' }}
                     </p>
                     <p class="stat-growth" :class="card.growth >= 0 ? 'positive' : 'negative'">
                         {{ card.growth >= 0 ? '↑' : '↓' }} {{ Math.abs(card.growth) }}%
@@ -231,6 +231,7 @@ const statCards = computed(() => [
         growth: stats.value.users_growth ?? 0,
         bg: '#e8f0e4',
         format: 'number',
+        showCurrency: false,
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.8">
       <circle cx="12" cy="8" r="4"/>
       <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -240,6 +241,7 @@ const statCards = computed(() => [
         label: t('admin.dashboard.totalOrders'),
         value: stats.value.total_orders ?? 0,
         growth: stats.value.orders_growth ?? 0,
+        showCurrency: false,
         bg: '#fdf3e4',
         format: 'number',
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8">
@@ -251,6 +253,7 @@ const statCards = computed(() => [
         label: t('admin.dashboard.totalProducts'),
         value: stats.value.total_products ?? 0,
         growth: 0,
+        showCurrency: false,
         bg: '#2C1810',
         format: 'number',
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8">
@@ -263,6 +266,7 @@ const statCards = computed(() => [
         label: t('admin.dashboard.totalCategories'),
         value: stats.value.total_categories ?? 0,
         growth: 0,
+        showCurrency: false,
         bg: '#e8f0e4',
         format: 'number',
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.8">
@@ -277,6 +281,7 @@ const statCards = computed(() => [
         value: stats.value.weekly_revenue ?? 0,
         growth: stats.value.revenue_growth ?? 0,
         bg: '#fdf3e4',
+        showCurrency: true,
         format: 'number',
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8">
       <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
@@ -288,6 +293,7 @@ const statCards = computed(() => [
         growth: 0,
         bg: '#e8f0e4',
         format: 'number',
+        showCurrency: true,
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.8">
       <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
     </svg>`,

@@ -11,21 +11,6 @@
             <span class="tab-label">{{ $t('nav.home') }}</span>
         </NuxtLink>
 
-        <NuxtLink to="/menu" class="tab-item" active-class="tab-item--active">
-            <span class="tab-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="8" y1="6" x2="21" y2="6" />
-                    <line x1="8" y1="12" x2="21" y2="12" />
-                    <line x1="8" y1="18" x2="21" y2="18" />
-                    <line x1="3" y1="6" x2="3.01" y2="6" />
-                    <line x1="3" y1="12" x2="3.01" y2="12" />
-                    <line x1="3" y1="18" x2="3.01" y2="18" />
-                </svg>
-            </span>
-            <span class="tab-label">{{ $t('nav.menu') }}</span>
-        </NuxtLink>
-
         <NuxtLink to="/categories" class="tab-item" active-class="tab-item--active">
             <span class="tab-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"

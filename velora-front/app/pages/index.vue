@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, defineComponent, h } from 'vue'
+import { ref, watch, onMounted, defineComponent, h } from 'vue'
 import { useCart } from '~/composables/useCart'
+import { useSearch } from '~/composables/useSearch'
 
 const config = useRuntimeConfig()
 const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
@@ -23,15 +24,43 @@ useHead({
     ],
 })
 
+const selectedProduct = ref(null)
+const modalOpen = ref(false)
+
+function openModal(product) {
+    selectedProduct.value = product
+    modalOpen.value = true
+}
+
 // ─── Cart ─────────────────────────────────────────────────────
 const { addItem, increaseQty, decreaseQty, getItem } = useCart()
+
+// ─── Search ───────────────────────────────────────────────────
+const { searchQuery } = useSearch()
 
 // ─── State ────────────────────────────────────────────────────
 const api = useApi()
 const loading = ref(true)
 
-// sub-categories with their products embedded
-const categoryRows = ref([])   // [{ id, name, products: [] }]
+const allCategoryRows = ref([])   
+const categoryRows = ref([])      
+
+watch(searchQuery, (q) => {
+    const term = q.trim().toLowerCase()
+    if (!term) {
+        categoryRows.value = allCategoryRows.value
+        return
+    }
+    categoryRows.value = allCategoryRows.value
+        .map(cat => ({
+            ...cat,
+            products: cat.products.filter(p =>
+                p.name?.toLowerCase().includes(term) ||
+                p.description?.toLowerCase().includes(term)
+            )
+        }))
+        .filter(cat => cat.products.length > 0)
+})
 
 // ─── StarRating ───────────────────────────────────────────────
 const StarRating = defineComponent({
@@ -63,14 +92,13 @@ const StarRating = defineComponent({
     },
 })
 
-// ─── Carousel refs (one per category row) ────────────────────
+// ─── Carousel refs ────────────────────────────────────────────
 const trackRefs = ref({})
 
 function setTrackRef(el, catId) {
     if (el) trackRefs.value[catId] = el
 }
 
-// Drag-to-scroll state per carousel
 const dragState = {}
 
 function initDrag(catId) {
@@ -118,13 +146,8 @@ const userRatings = ref({})
 async function loadAll() {
     loading.value = true
     try {
-        // Backend: main categoryleri döndürür, sub-categoryler her birinin children[] içinde
         const mainCats = await api('/categories')
-
-        // Tüm children'ları düzleştir → bunlar sub-categoryler
         const subCats = mainCats.flatMap(c => Array.isArray(c.children) ? c.children : [])
-
-        // Sub-category yoksa main categoryleri kullan
         const targetCats = subCats.length > 0 ? subCats : mainCats
 
         const rows = await Promise.all(
@@ -140,7 +163,9 @@ async function loadAll() {
             })
         )
 
-        categoryRows.value = rows.filter(r => r.products.length > 0)
+        const filtered = rows.filter(r => r.products.length > 0)
+        allCategoryRows.value = filtered   
+        categoryRows.value = filtered      
     } catch (e) {
         console.error('[loadAll] error:', e)
     } finally {
@@ -257,13 +282,19 @@ onMounted(loadAll)
 
                                 <div class="card-footer">
                                     <span class="card-price">${{ Number(product.price).toFixed(2) }}</span>
-                                    <button v-if="!cartItem(product.id)" @click="addItem(product)" class="add-btn">
-                                        + Add
-                                    </button>
-                                    <div v-else class="qty-ctrl">
-                                        <button class="qty-btn" @click="decreaseQty(product.id)">−</button>
-                                        <span class="qty-num">{{ cartItem(product.id).quantity }}</span>
-                                        <button class="qty-btn" @click="increaseQty(product.id)">+</button>
+
+                                    <div class="card-actions">
+                                        <button class="detail-btn" @click.stop="openModal(product)">Detail</button>
+
+                                        <button v-if="!cartItem(product.id)" @click.stop="addItem(product)"
+                                            class="add-btn">
+                                            + Add
+                                        </button>
+                                        <div v-else class="qty-ctrl">
+                                            <button class="qty-btn" @click.stop="decreaseQty(product.id)">−</button>
+                                            <span class="qty-num">{{ cartItem(product.id).quantity }}</span>
+                                            <button class="qty-btn" @click.stop="increaseQty(product.id)">+</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -286,8 +317,8 @@ onMounted(loadAll)
                 <p>No products available.</p>
             </div>
         </template>
-
     </main>
+    <ProductModal v-model="modalOpen" :product="selectedProduct" />
 </template>
 
 <style scoped>
@@ -692,6 +723,30 @@ onMounted(loadAll)
 
 .sk-short {
     width: 50%;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.detail-btn {
+    background: transparent;
+    color: #C9A96E;
+    border: 1px solid #C9A96E;
+    padding: 0.4rem 0.75rem;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+}
+
+.detail-btn:hover {
+    background: #C9A96E;
+    color: #fff;
 }
 
 @keyframes shimmer {

@@ -6,7 +6,7 @@
             <NuxtLink to="/" class="header-logo">
                 <img src="/logo-black.png" alt="Velaro Café" class="logo-img" />
                 <div class="logo-text">
-                    <span class="logo-name">Velaro</span>
+                    <span class="logo-name">Velora</span>
                     <span class="logo-sub">Taste the calm</span>
                 </div>
             </NuxtLink>
@@ -14,16 +14,18 @@
             <!-- Desktop Nav (hidden on mobile/tablet) -->
             <nav class="header-nav desktop-only">
                 <NuxtLink to="/" class="nav-link" exact-active-class="nav-link--active">{{ $t('nav.home') }}</NuxtLink>
-                <NuxtLink to="/menu" class="nav-link" active-class="nav-link--active">{{ $t('nav.menu') }}</NuxtLink>
-                <NuxtLink to="/categories" class="nav-link" active-class="nav-link--active">{{ $t('nav.categories') }}</NuxtLink>
-                <NuxtLink to="/profile" class="nav-link" active-class="nav-link--active">{{ $t('nav.profile') }}</NuxtLink>
+                <NuxtLink to="/categories" class="nav-link" active-class="nav-link--active">{{ $t('nav.categories') }}
+                </NuxtLink>
+                <NuxtLink to="/profile" class="nav-link" active-class="nav-link--active">{{ $t('nav.profile') }}
+                </NuxtLink>
             </nav>
 
             <!-- Right Actions -->
             <div class="header-actions">
 
                 <!-- Search (always visible) -->
-                <button class="icon-btn" aria-label="Search" @click="searchOpen = !searchOpen">
+                <button class="icon-btn" aria-label="Search" @click="searchOpen = !searchOpen"
+                    v-if="route.path === '/'">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                         stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8" />
@@ -57,7 +59,7 @@
 
         <!-- Search Bar Dropdown -->
         <Transition name="search-drop">
-            <div v-if="searchOpen" class="search-bar-wrap">
+            <div v-if="searchOpen && route.path === '/'" class="search-bar-wrap">
                 <div class="search-bar-inner">
                     <svg class="search-bar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -83,14 +85,16 @@
 
 <script setup>
 import { ref, watch, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
+import { useSearch } from '~/composables/useSearch'
 
 defineProps({
     bagCount: { type: Number, default: 0 }
 })
 defineEmits(['toggle-menu'])
 
-const searchOpen = ref(false)
-const searchQuery = ref('')
+const route = useRoute()
+const { searchQuery, searchOpen } = useSearch()
 const searchInput = ref(null)
 
 watch(searchOpen, async (val) => {
@@ -104,7 +108,6 @@ watch(searchOpen, async (val) => {
 
 function handleSearch() {
     if (!searchQuery.value.trim()) return
-    // TODO: navigateTo(`/search?q=${searchQuery.value}`)
     console.log('search:', searchQuery.value)
 }
 </script>

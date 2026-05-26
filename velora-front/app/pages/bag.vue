@@ -30,7 +30,7 @@
                     </div>
                     <p class="empty-title">Your bag is empty</p>
                     <p class="empty-sub">Add something delicious from the menu.</p>
-                    <NuxtLink to="/menu" class="browse-btn">Browse Menu</NuxtLink>
+                    <NuxtLink to="/" class="browse-btn">Browse Menu</NuxtLink>
                 </div>
 
                 <!-- ── Layout: Items + Summary ── -->
@@ -199,7 +199,7 @@
                     </p>
                     <div class="success-actions">
                         <NuxtLink to="/profile" class="success-btn success-btn--ghost">View Orders</NuxtLink>
-                        <NuxtLink to="/menu" class="success-btn success-btn--primary">Back to Menu</NuxtLink>
+                        <NuxtLink to="/" class="success-btn success-btn--primary">Back to Menu</NuxtLink>
                     </div>
                 </div>
             </div>

@@ -165,7 +165,12 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="price-td">${{ order.total_price.toFixed(2) }}</td>
+                                <td class="price-td">
+                                    ${{ displayPrice(order).toFixed(2) }}
+                                    <span v-if="order.delivery_type === 'delivery'" class="delivery-tag">
+                                        +${{ DELIVERY_FEE }} delivery
+                                    </span>
+                                </td>
                                 <td>
                                     <span class="status-badge" :class="`status-${order.status}`">
                                         <span class="status-dot" :class="`dot-${order.status}`" />
@@ -261,12 +266,16 @@
                             </span>
                         </div>
                         <div class="mobile-bottom">
-                            <span class="mobile-price">${{ order.total_price.toFixed(2) }}</span>
+                            <span class="mobile-price">
+                                ${{ displayPrice(order).toFixed(2) }}
+                                <span v-if="order.delivery_type === 'delivery'" class="delivery-tag">+${{ DELIVERY_FEE
+                                }}</span>
+                            </span>
                             <span class="mobile-meta">{{ order.items_count }} {{ $t('admin.orders.items') }} · {{
                                 order.created_at }}</span>
                             <div class="mobile-actions">
                                 <button class="btn-view-sm" @click="openPreviewModal(order)">{{ $t('admin.orders.view')
-                                }}</button>
+                                    }}</button>
                                 <div class="dropdown-wrap">
                                     <button class="btn-dots" @click.stop="toggleDropdown(order.id, $event)">
                                         <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15">
@@ -345,9 +354,9 @@
         <!-- ── Modals ──────────────────────────────────────────────── -->
         <OrderModals :active-modal="activeModal" :selected-order="selectedOrder" :detail-loading="detailLoading"
             :submitting="submitting" :pdf-loading="pdfLoading" :edit-form="editForm" :edit-errors="editErrors"
-            @close-modal="closeModal" @open-receipt="openReceiptModal" @open-edit="openEditModal"
-            @submit-edit="submitEdit" @submit-cancel="submitCancel" @submit-delete="submitDelete"
-            @download-pdf="downloadPdf" />
+            :delivery-fee="DELIVERY_FEE" @close-modal="closeModal" @open-receipt="openReceiptModal"
+            @open-edit="openEditModal" @submit-edit="submitEdit" @submit-cancel="submitCancel"
+            @submit-delete="submitDelete" @download-pdf="downloadPdf" />
 
         <!-- Toast -->
         <Transition name="toast">
@@ -383,7 +392,7 @@ const {
     loadOrders, loadStats, onSearch, setStatusFilter, applyFilter, resetFilter, goToPage,
     toggleDropdown, openPreviewModal, openEditModal, openReceiptModal, openCancelModal,
     openDeleteModal, closeModal, submitEdit, submitCancel, submitDelete, downloadPdf,
-    capitalize, initials, canCancel, canDelete, handleOutsideClick,
+    capitalize, initials, canCancel, canDelete, handleOutsideClick, DELIVERY_FEE, displayPrice
 } = useOrders()
 
 onMounted(async () => {
@@ -639,6 +648,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
     background: #fef2f2;
     color: #dc2626;
 }
+
 
 .stat-label {
     font-size: 0.68rem;
@@ -1062,6 +1072,14 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
     flex-direction: column;
     gap: 6px;
     flex: 1;
+}
+
+.delivery-tag {
+    display: block;
+    font-size: 0.63rem;
+    font-weight: 500;
+    color: #8a7060;
+    margin-top: 2px;
 }
 
 .sk-line {

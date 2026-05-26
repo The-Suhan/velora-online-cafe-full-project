@@ -5,9 +5,6 @@
     "categories": "Categories",
     "profile": "Profile"
   },
-
-
-  
   "auth": {
     "name": "Name",
     "email": "Email",
@@ -361,7 +358,8 @@
           "downloadPdf": "Download PDF",
           "deliveryType": "Type",
           "address": "Address",
-          "phone": "Phone"
+          "phone": "Phone",
+          "deliveryFee": "Delivery Fee"
         }
       },
       "pending": {

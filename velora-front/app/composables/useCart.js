@@ -73,6 +73,7 @@ export function useCart() {
     function getItem(productId) {
         return items.value.find((i) => i.product_id === productId) ?? null
     }
+    
 
     return {
         items,

@@ -8,8 +8,6 @@
                 <div class="mobile-menu-inner">
                     <NuxtLink to="/" class="mobile-nav-link" @click="menuOpen = false"
                         exact-active-class="mobile-nav-link--active">{{ $t('nav.home') }}</NuxtLink>
-                    <NuxtLink to="/menu" class="mobile-nav-link" @click="menuOpen = false"
-                        active-class="mobile-nav-link--active">{{ $t('nav.menu') }}</NuxtLink>
                     <NuxtLink to="/categories" class="mobile-nav-link" @click="menuOpen = false"
                         active-class="mobile-nav-link--active">{{ $t('nav.categories') }}</NuxtLink>
                     <NuxtLink to="/profile" class="mobile-nav-link" @click="menuOpen = false"

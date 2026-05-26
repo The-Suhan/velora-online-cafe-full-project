@@ -38,29 +38,16 @@
                             <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
                         </svg>
                     </a>
-                    <a href="#" class="social-btn" aria-label="Facebook">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                        </svg>
-                    </a>
-                    <a href="#" class="social-btn" aria-label="X / Twitter">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 4l16 16M4 20L20 4" />
-                        </svg>
-                    </a>
                     <a href="#" class="social-btn" aria-label="TikTok">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
                         </svg>
                     </a>
-                    <a href="#" class="social-btn" aria-label="Pinterest">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <a href="#" class="social-btn" aria-label="Youtube">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                             <path
-                                d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.76 1.23-5.22 1.23-5.22s-.31-.63-.31-1.57c0-1.47.85-2.57 1.91-2.57.9 0 1.34.68 1.34 1.49 0 .91-.58 2.27-.88 3.53-.25 1.05.52 1.91 1.55 1.91 1.86 0 3.11-2.39 3.11-5.22 0-2.15-1.45-3.76-4.08-3.76-2.98 0-4.83 2.23-4.83 4.73 0 .86.25 1.46.64 1.93.18.22.21.3.14.55-.05.18-.15.62-.2.79-.07.25-.27.34-.5.25-1.4-.57-2.05-2.12-2.05-3.84 0-3 2.57-6.63 7.69-6.63 4.11 0 6.83 2.99 6.83 6.2 0 4.25-2.36 7.43-5.85 7.43-1.17 0-2.28-.63-2.66-1.34l-.72 2.76c-.26 1-.97 2.24-1.45 3 1.09.33 2.25.51 3.44.51 5.52 0 10-4.48 10-10S17.52 2 12 2z" />
+                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                         </svg>
                     </a>
                 </div>
@@ -68,6 +55,8 @@
 
             <!-- ── Nav columns ── -->
             <nav class="footer-nav-group">
+
+                <!-- Explore: Home, Menu, Categories only -->
                 <div class="footer-col">
                     <h4 class="col-heading">Explore</h4>
                     <ul class="col-links">
@@ -75,17 +64,12 @@
                             <NuxtLink to="/" class="col-link">Home</NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="/menu" class="col-link">Menu</NuxtLink>
-                        </li>
-                        <li>
                             <NuxtLink to="/categories" class="col-link">Categories</NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink to="/bag" class="col-link">My Bag</NuxtLink>
                         </li>
                     </ul>
                 </div>
 
+                <!-- Visit: address, single work time, phone -->
                 <div class="footer-col">
                     <h4 class="col-heading">Visit</h4>
                     <ul class="col-links">
@@ -95,7 +79,7 @@
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                                 <circle cx="12" cy="10" r="3" />
                             </svg>
-                            <span>12 Serene Ave, Istanbul</span>
+                            <span>Ashgabat</span>
                         </li>
                         <li class="col-info">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -103,15 +87,7 @@
                                 <circle cx="12" cy="12" r="10" />
                                 <polyline points="12 6 12 12 16 14" />
                             </svg>
-                            <span>Mon–Fri 07:00–22:00</span>
-                        </li>
-                        <li class="col-info">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10" />
-                                <polyline points="12 6 12 12 16 14" />
-                            </svg>
-                            <span>Sat–Sun 08:00–23:00</span>
+                            <span>Every day 07:00–23:00</span>
                         </li>
                         <li class="col-info">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -119,64 +95,61 @@
                                 <path
                                     d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 5.59 5.59l.96-.96a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
                             </svg>
-                            <span>+90 212 000 00 00</span>
+                            <span>+993 63 846663</span>
                         </li>
                     </ul>
                 </div>
 
+                <!-- Get the App: App Store + Google Play -->
                 <div class="footer-col">
-                    <h4 class="col-heading">Stay in touch</h4>
-                    <p class="newsletter-desc">Receive seasonal menus and quiet updates.</p>
-                    <div class="newsletter-form">
-                        <input v-model="email" type="email" placeholder="your@email.com" class="newsletter-input"
-                            @keydown.enter="subscribe" />
-                        <button class="newsletter-btn" @click="subscribe" :disabled="subscribed">
-                            <span v-if="!subscribed">→</span>
-                            <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </button>
+                    <h4 class="col-heading">Get the App</h4>
+                    <p class="app-desc">Order from anywhere. Download the Velora app.</p>
+                    <div class="app-btns">
+                        <!-- App Store -->
+                        <a href="" class="app-btn" aria-label="Download on the App Store">
+                            <i class="bi bi-apple store-icon-bi"></i>
+                            <div class="app-btn-text">
+                                <span class="app-btn-sub">Download on the</span>
+                                <span class="app-btn-name">App Store</span>
+                            </div>
+                        </a>
+                        <!-- Google Play -->
+                        <a href="" class="app-btn" aria-label="Get it on Google Play">
+                            <i class="bi bi-google-play store-icon-bi"></i>
+                            <div class="app-btn-text">
+                                <span class="app-btn-sub">Get it on</span>
+                                <span class="app-btn-name">Google Play</span>
+                            </div>
+                        </a>
                     </div>
-                    <Transition name="fade">
-                        <p v-if="subscribed" class="subscribed-msg">Thank you — you're on the list.</p>
-                    </Transition>
                 </div>
-            </nav>
 
+            </nav>
         </div>
 
-        <!-- ── Copyright bar ── -->
+        <!-- ── Copyright bar: centered, white ── -->
         <div class="footer-bottom">
             <p class="copyright">
                 &copy; {{ currentYear }} Velora Café. All rights reserved.
             </p>
-            <div class="legal-links">
-                <a href="#" class="legal-link">Privacy Policy</a>
-                <span class="legal-dot">·</span>
-                <a href="#" class="legal-link">Terms of Use</a>
-                <span class="legal-dot">·</span>
-                <a href="#" class="legal-link">Cookie Policy</a>
-            </div>
         </div>
 
     </footer>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 
-const email = ref('')
-const subscribed = ref(false)
+useHead({
+    link: [
+        {
+            rel: 'stylesheet',
+            href: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',
+        },
+    ],
+})
 
 const currentYear = computed(() => new Date().getFullYear())
-
-function subscribe() {
-    if (!email.value.trim() || subscribed.value) return
-    // TODO: api('/newsletter', { method: 'POST', body: { email: email.value } })
-    subscribed.value = true
-    email.value = ''
-}
 </script>
 
 <style scoped>
@@ -356,127 +329,88 @@ function subscribe() {
     opacity: 0.7;
 }
 
-/* ── Newsletter ── */
-.newsletter-desc {
+/* ── App Store / Google Play buttons ── */
+.app-desc {
     font-size: 0.75rem;
     color: #7a6a58;
     line-height: 1.6;
     margin: 0;
 }
 
-.newsletter-form {
+.app-btns {
     display: flex;
-    border: 1px solid rgba(201, 169, 110, 0.25);
-    border-radius: 3px;
-    overflow: hidden;
+    flex-direction: column;
+    gap: 0.65rem;
 }
 
-.newsletter-input {
-    flex: 1;
-    background: rgba(255, 255, 255, 0.04);
-    border: none;
-    outline: none;
-    padding: 0.55rem 0.85rem;
-    font-family: 'Lato', sans-serif;
-    font-size: 0.78rem;
-    color: #F5F0E8;
-    min-width: 0;
-}
-
-.newsletter-input::placeholder {
-    color: #6a5a48;
-}
-
-.newsletter-input:focus {
-    background: rgba(255, 255, 255, 0.07);
-}
-
-.newsletter-btn {
-    width: 40px;
-    border: none;
-    background: #C9A96E;
-    color: #2C1A0E;
-    font-size: 1rem;
-    cursor: pointer;
+.app-btn {
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: background 0.18s;
+    gap: 0.65rem;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid rgba(201, 169, 110, 0.25);
+    border-radius: 8px;
+    text-decoration: none;
+    color: #F5F0E8;
+    background: rgba(255, 255, 255, 0.04);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.app-btn:hover {
+    border-color: #C9A96E;
+    background: rgba(201, 169, 110, 0.08);
+}
+
+.app-btn svg {
+    flex-shrink: 0;
+    opacity: 0.9;
+}
+
+.store-icon {
     flex-shrink: 0;
 }
 
-.newsletter-btn:hover:not(:disabled) {
-    background: #b8924f;
+.store-icon-bi {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    color: currentColor;
 }
 
-.newsletter-btn:disabled {
-    background: rgba(201, 169, 110, 0.4);
-    cursor: default;
+.app-btn-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
 }
 
-.subscribed-msg {
-    font-size: 0.7rem;
-    color: #C9A96E;
+.app-btn-sub {
+    font-size: 0.58rem;
+    color: #9a8a78;
     letter-spacing: 0.06em;
-    margin: 0;
+    text-transform: uppercase;
+}
+
+.app-btn-name {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 0.95rem;
+    color: #F5F0E8;
+    letter-spacing: 0.02em;
 }
 
 /* ── Copyright bar ── */
 .footer-bottom {
     border-top: 1px solid rgba(201, 169, 110, 0.1);
     padding: 1.1rem 3.5rem;
-    max-width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
+    text-align: center;
 }
 
 .copyright {
     font-size: 0.68rem;
-    color: #5a4a38;
+    color: #ffffff;
     letter-spacing: 0.06em;
     margin: 0;
 }
 
-.legal-links {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.legal-link {
-    font-size: 0.67rem;
-    color: #5a4a38;
-    text-decoration: none;
-    letter-spacing: 0.05em;
-    transition: color 0.15s;
-}
-
-.legal-link:hover {
-    color: #C9A96E;
-}
-
-.legal-dot {
-    color: #3a2a1a;
-    font-size: 0.7rem;
-}
-
-/* ── Transition ── */
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.25s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
-
 /* ── Responsive ── */
-
-/* Tablet */
 @media (max-width: 1024px) {
     .footer-inner {
         grid-template-columns: 240px 1fr;
@@ -494,12 +428,10 @@ function subscribe() {
     }
 
     .footer-nav-group {
-        grid-template-columns: repeat(3, 1fr);
         gap: 1.75rem;
     }
 }
 
-/* Small tablet: stack brand + nav */
 @media (max-width: 860px) {
     .footer-inner {
         grid-template-columns: 1fr;
@@ -521,19 +453,16 @@ function subscribe() {
     }
 
     .footer-nav-group {
-        grid-template-columns: repeat(3, 1fr);
         gap: 1.5rem;
     }
 }
 
-/* Mobile */
 @media (max-width: 600px) {
     .footer-nav-group {
         grid-template-columns: 1fr 1fr;
         gap: 1.75rem;
     }
 
-    /* Newsletter column spans full width */
     .footer-col:last-child {
         grid-column: 1 / -1;
     }
@@ -548,14 +477,10 @@ function subscribe() {
     }
 
     .footer-bottom {
-        flex-direction: column;
-        align-items: flex-start;
         padding: 1rem 1.5rem;
-        gap: 0.5rem;
     }
 }
 
-/* Very small */
 @media (max-width: 380px) {
     .footer-nav-group {
         grid-template-columns: 1fr;

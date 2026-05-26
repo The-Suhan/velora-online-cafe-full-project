@@ -2,6 +2,7 @@ import { nextTick } from 'vue'
 
 export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'delivered' | 'cancelled'
 
+
 export interface OrderItem {
     id: number
     quantity: number
@@ -114,6 +115,13 @@ export function useOrders(fixedStatus?: OrderStatus) {
 
     const { token } = useAuth()
     const authHeaders = computed(() => ({ Authorization: `Bearer ${token.value}` }))
+    const DELIVERY_FEE = 15
+
+    const displayPrice = (order: Order): number => {
+        return order.delivery_type === 'delivery'
+            ? order.total_price + DELIVERY_FEE
+            : order.total_price
+    }
 
     // ── State ──────────────────────────────────────────────────
     const orders = ref<Order[]>([])
@@ -350,6 +358,15 @@ export function useOrders(fixedStatus?: OrderStatus) {
         </tr>
       `).join('')
 
+            const deliveryFeeHtml = order.delivery_type === 'delivery' ? `
+    <tr>
+      <td style="padding:6px 0;font-size:12px;color:#8a7060;font-style:italic;">Delivery Fee</td>
+      <td style="padding:6px 0;font-size:12px;color:#8a7060;text-align:center;">×1</td>
+      <td style="padding:6px 0;font-size:12px;font-weight:700;color:#2C1810;text-align:right;">$${DELIVERY_FEE.toFixed(2)}</td>
+    </tr>` : ''
+
+            const finalTotal = displayPrice(order)
+
             const receiptHtml = `
         <!DOCTYPE html>
         <html>
@@ -409,10 +426,11 @@ export function useOrders(fixedStatus?: OrderStatus) {
                 <td style="text-align:right;">Price</td>    
               </tr>
               ${itemsHtml}
+              ${deliveryFeeHtml}
             </table>
             <div class="total-row">
               <span>TOTAL</span>
-              <span>$${order.total_price.toFixed(2)} $</span>
+              <span>$${finalTotal.toFixed(2)}</span>
             </div>
             ${order.note ? `
             <div class="note-box">
@@ -487,7 +505,8 @@ export function useOrders(fixedStatus?: OrderStatus) {
         // state
         orders, stats, loading, detailLoading, search, filterStatus, filterFrom, filterTo,
         showFilter, currentPage, pagination, activeModal, selectedOrder, openDrop, dropPos,
-        submitting, pdfLoading, editForm, editErrors, toast,
+        submitting, pdfLoading, editForm, editErrors, toast, displayPrice,
+        DELIVERY_FEE,
         // computed
         visiblePages,
         // methods

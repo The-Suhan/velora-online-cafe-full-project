@@ -112,7 +112,8 @@
                                     $t('admin.orders.modals.preview.unknownProduct') }}</p>
                                 <p class="item-unit">{{ $t('admin.orders.modals.preview.eachPrice', {
                                     price:
-                                    item.price.toFixed(2) }) }}</p>
+                                        item.price.toFixed(2)
+                                }) }}</p>
                             </div>
                             <div class="item-right">
                                 <span class="item-qty">×{{ item.quantity }}</span>
@@ -120,9 +121,16 @@
                             </div>
                         </div>
                     </div>
+                    <div v-if="selectedOrder.delivery_type === 'delivery'" class="delivery-fee-row">
+                        <span>{{ $t('admin.orders.modals.receipt.deliveryFee') }}</span>
+                        <span>+${{ props.deliveryFee.toFixed(2) }}</span>
+                    </div>
                     <div class="order-total-row">
                         <span>{{ $t('admin.orders.modals.preview.total') }}</span>
-                        <span class="order-total-price">${{ selectedOrder.total_price.toFixed(2) }}</span>
+                        <span class="order-total-price">
+                            ${{ (selectedOrder.total_price + (selectedOrder.delivery_type === 'delivery' ?
+                                props.deliveryFee : 0)).toFixed(2) }}
+                        </span>
                     </div>
                 </div>
 
@@ -339,7 +347,7 @@
                             <span>{{ $t('admin.orders.modals.receipt.deliveryType') }}</span>
                             <span class="receipt-status">{{ selectedOrder.delivery_type === 'delivery' ?
                                 $t('admin.orders.deliveryType.delivery') : $t('admin.orders.deliveryType.pickup')
-                                }}</span>
+                            }}</span>
                         </div>
                         <div v-if="selectedOrder.delivery_type === 'delivery' && selectedOrder.address"
                             class="receipt-info-row">
@@ -370,12 +378,22 @@
                                 <span class="receipt-item-qty">×{{ item.quantity }}</span>
                                 <span class="receipt-item-price">${{ item.subtotal.toFixed(2) }}</span>
                             </div>
+                            <div v-if="selectedOrder.delivery_type === 'delivery'"
+                                class="receipt-item-row receipt-delivery-row">
+                                <span class="receipt-item-name" style="font-style:italic;color:#8a7060;">
+                                    {{ $t('admin.orders.modals.receipt.deliveryFee') }}
+                                </span>
+                                <span class="receipt-item-qty">×1</span>
+                                <span class="receipt-item-price">${{ props.deliveryFee.toFixed(2) }}</span>
+                            </div>
                         </template>
                     </div>
                     <div class="receipt-divider"><span>· · · · · · · · · · · · · · · · · · ·</span></div>
                     <div class="receipt-total">
                         <span>{{ $t('admin.orders.modals.receipt.totalLabel') }}</span>
-                        <span>${{ selectedOrder.total_price.toFixed(2) }}</span>
+                        <span>${{ (selectedOrder.total_price + (selectedOrder.delivery_type === 'delivery' ?
+                            props.deliveryFee :
+                            0)).toFixed(2) }}</span>
                     </div>
                     <div v-if="selectedOrder.note" class="receipt-note">
                         <p class="receipt-note-label">{{ $t('admin.orders.modals.preview.note') }}</p>
@@ -418,6 +436,7 @@ const props = defineProps<{
     pdfLoading: boolean
     editForm: { status: OrderStatus | ''; note: string }
     editErrors: { status: string }
+    deliveryFee: number
 }>()
 
 const statusSteps = [
@@ -561,6 +580,20 @@ function closeModal() {
     justify-content: flex-end;
     gap: 10px;
     flex-shrink: 0;
+}
+
+
+.delivery-fee-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    color: #8a7060;
+    font-style: italic;
+    background: #fafaf8;
+    border-radius: 8px;
+    margin-top: 6px;
 }
 
 /* ── Status Timeline ─────────────────────────────────────── */
