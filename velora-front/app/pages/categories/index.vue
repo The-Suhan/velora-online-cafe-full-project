@@ -53,9 +53,6 @@
             </svg>
           </div>
           <div class="card-overlay"></div>
-          <div v-if="category.children?.length" class="badge">
-            {{ category.children.length }} alt kategori
-          </div>
         </div>
         <div class="card-body">
           <h3 class="card-title">{{ category.name }}</h3>

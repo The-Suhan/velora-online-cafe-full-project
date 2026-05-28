@@ -49,7 +49,7 @@ From the first sip to the last, the experience is crafted to feel natural, warm,
 
 **Deployment:**
 
-* Vercel / Render
+* Vercel / Railway
 
 ---
 

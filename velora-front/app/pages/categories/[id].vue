@@ -32,7 +32,6 @@
 
             <!-- Subcategories -->
             <template v-if="!loading && subcategories.length > 0">
-                <div class="section-label">Alt Kategoriler</div>
                 <div class="sub-grid">
                     <NuxtLink v-for="(sub, index) in subcategories" :key="sub.id" :to="`/categories/${sub.id}/products`"
                         class="sub-card" :style="{ '--delay': `${index * 55}ms` }">
