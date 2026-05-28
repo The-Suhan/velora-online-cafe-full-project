@@ -1,8 +1,6 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
-
-
   devServer: {
     host: '0.0.0.0',
     port: 3000,
@@ -12,8 +10,19 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
   ],
 
+  hooks: {
+    'pages:extend'(pages) {
+      pages.push({
+        name: 'categories-id-products',
+        path: '/categories/:id/products',
+        file: '~/pages/categories/[id]/products.vue',
+      })
+    }
+  },
+  
   experimental: {
     typedPages: true,
+    scanPageMeta: 'after-resolve',
   },
 
   css: ['~/assets/css/main.css'],

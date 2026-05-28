@@ -118,9 +118,10 @@ export function useOrders(fixedStatus?: OrderStatus) {
     const DELIVERY_FEE = 15
 
     const displayPrice = (order: Order): number => {
+        const price = Number(order.total_price) || 0
         return order.delivery_type === 'delivery'
-            ? order.total_price + DELIVERY_FEE
-            : order.total_price
+            ? price + DELIVERY_FEE
+            : price
     }
 
     // ── State ──────────────────────────────────────────────────
@@ -271,7 +272,7 @@ export function useOrders(fixedStatus?: OrderStatus) {
         selectedOrder.value = order
         activeModal.value = 'receipt'
         openDrop.value = null
-        if (!order.items) await loadOrderDetail(order.id)
+        await loadOrderDetail(order.id)  
     }
 
     function openCancelModal(order: Order) {
@@ -352,9 +353,9 @@ export function useOrders(fixedStatus?: OrderStatus) {
             // Build receipt HTML string
             const itemsHtml = items.map(item => `
         <tr>
-          <td style="padding:6px 0;font-size:12px;color:#2C1810;">${item.product?.name ?? 'Item'}</td>
-          <td style="padding:6px 0;font-size:12px;color:#8a7060;text-align:center;">×${item.quantity}</td>
-          <td style="padding:6px 0;font-size:12px;font-weight:700;color:#2C1810;text-align:right;">$${item.subtotal.toFixed(2)}</td>
+          <td ...>${item.product?.name ?? 'Item'}</td>
+          <td ...>×${item.quantity}</td>
+          <td ...>$${Number(item.subtotal).toFixed(2)}</td>  
         </tr>
       `).join('')
 

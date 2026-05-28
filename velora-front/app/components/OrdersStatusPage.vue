@@ -314,10 +314,9 @@
         <!-- ── Modals ──────────────────────────────────────────────── -->
         <OrderModals :active-modal="activeModal" :selected-order="selectedOrder" :detail-loading="detailLoading"
             :submitting="submitting" :pdf-loading="pdfLoading" :edit-form="editForm" :edit-errors="editErrors"
-            @close-modal="closeModal" @open-receipt="openReceiptModal" @open-edit="openEditModal"
-            @submit-edit="submitEdit" @submit-cancel="submitCancel" @submit-delete="submitDelete"
-            @download-pdf="downloadPdf" />
-
+            :delivery-fee="DELIVERY_FEE" @close-modal="closeModal" @open-receipt="openReceiptModal"
+            @open-edit="openEditModal" @submit-edit="submitEdit" @submit-cancel="submitCancel"
+            @submit-delete="submitDelete" @download-pdf="downloadPdf" />
         <!-- Toast -->
         <Transition name="toast">
             <div v-if="toast.visible" class="toast" :class="toast.type">
@@ -362,7 +361,7 @@ const {
     toggleDropdown, openPreviewModal, openEditModal, openReceiptModal,
     openCancelModal, openDeleteModal, closeModal,
     submitEdit, submitCancel, submitDelete, downloadPdf,
-    capitalize, initials, canCancel, canDelete, handleOutsideClick,
+    capitalize, initials, canCancel, canDelete, handleOutsideClick, DELIVERY_FEE, displayPrice,
 } = useOrders(props.status)
 
 onMounted(async () => {

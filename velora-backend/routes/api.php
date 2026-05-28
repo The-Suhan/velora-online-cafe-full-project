@@ -82,7 +82,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Client api
     Route::get('/categories', [CustomerController::class, 'categories']);
-    Route::get('/categories/{category}/products', [CustomerController::class, 'categoryProducts']);
+    Route::get('/categories/{category}/products', [CustomerController::class, 'categoryProducts']); 
+    Route::get('/categories/{category}', [CustomerController::class, 'showCategory']);             
     Route::get('/products', [CustomerController::class, 'products']);
     Route::get('/products/{product}', [CustomerController::class, 'showProduct']);
     Route::get('/products/{product}/ratings', [CustomerController::class, 'productRatings']);
@@ -96,4 +97,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', [CustomerController::class, 'myOrders']);
     Route::get('/orders/{order}', [CustomerController::class, 'showOrder']);
     Route::patch('/orders/{order}/cancel', [CustomerController::class, 'cancelOrder']);
+
 });

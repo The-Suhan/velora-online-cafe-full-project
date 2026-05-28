@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
+    public function showCategory(Category $category): JsonResponse
+    {
+        $category->load([
+            'translations',
+            'children' => fn ($q) => $q->where('is_active', true)->with('translations'),
+        ]);
+
+        return response()->json($this->formatCategory($category, withChildren: true));
+    }
     // ═══════════════════════════════════════════════════════════
     // CATEGORIES
     // ═══════════════════════════════════════════════════════════

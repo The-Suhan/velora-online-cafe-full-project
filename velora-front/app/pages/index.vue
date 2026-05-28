@@ -42,8 +42,8 @@ const { searchQuery } = useSearch()
 const api = useApi()
 const loading = ref(true)
 
-const allCategoryRows = ref([])   
-const categoryRows = ref([])      
+const allCategoryRows = ref([])
+const categoryRows = ref([])
 
 watch(searchQuery, (q) => {
     const term = q.trim().toLowerCase()
@@ -164,8 +164,8 @@ async function loadAll() {
         )
 
         const filtered = rows.filter(r => r.products.length > 0)
-        allCategoryRows.value = filtered   
-        categoryRows.value = filtered      
+        allCategoryRows.value = filtered
+        categoryRows.value = filtered
     } catch (e) {
         console.error('[loadAll] error:', e)
     } finally {
@@ -450,11 +450,9 @@ onMounted(loadAll)
     cursor: grab;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    /* Son kartta sağ padding çalışsın */
     box-sizing: border-box;
 }
 
-/* Pseudo-element ile son karta sağ padding vermek yerine doğrudan after ile boşluk ekle */
 .carousel-track::after {
     content: '';
     flex: 0 0 2.25rem;
@@ -622,6 +620,8 @@ onMounted(loadAll)
     padding-top: 0.55rem;
     border-top: 1px solid #F0E8D8;
     margin-top: auto;
+    gap: 0.4rem;
+    flex-wrap: wrap;
 }
 
 .card-price {
@@ -728,7 +728,9 @@ onMounted(loadAll)
 .card-actions {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .detail-btn {
@@ -820,6 +822,35 @@ onMounted(loadAll)
     .section-title {
         font-size: 1.35rem;
     }
+
+    .card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .card-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .detail-btn,
+    .add-btn {
+        flex: 1;
+        text-align: center;
+        padding: 0.45rem 0.5rem;
+        font-size: 0.62rem;
+    }
+
+    .qty-ctrl {
+        flex: 1;
+        justify-content: space-between;
+    }
+
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -843,6 +874,22 @@ onMounted(loadAll)
     .add-btn {
         padding: 0.35rem 0.75rem;
         font-size: 0.64rem;
+    }
+
+    .detail-btn,
+    .add-btn {
+        padding: 0.4rem 0.4rem;
+        font-size: 0.6rem;
+    }
+
+    .qty-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 1.1rem;
+    }
+
+    .qty-num {
+        font-size: 0.75rem;
     }
 }
 </style>
