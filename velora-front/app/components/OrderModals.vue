@@ -66,7 +66,7 @@
                             {{ selectedOrder.delivery_type === 'delivery' ? $t('admin.orders.deliveryType.delivery') :
                                 $t('admin.orders.deliveryType.pickup') }}
                         </span>
-                        <div v-if="selectedOrder.delivery_type === 'delivery'" class="delivery-details">
+                        <div class="delivery-details">
                             <div v-if="selectedOrder.address" class="delivery-row">
                                 <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" width="13"
                                     height="13" style="flex-shrink:0;color:#8a7060">
@@ -347,15 +347,13 @@
                             <span>{{ $t('admin.orders.modals.receipt.deliveryType') }}</span>
                             <span class="receipt-status">{{ selectedOrder.delivery_type === 'delivery' ?
                                 $t('admin.orders.deliveryType.delivery') : $t('admin.orders.deliveryType.pickup')
-                            }}</span>
+                                }}</span>
                         </div>
-                        <div v-if="selectedOrder.delivery_type === 'delivery' && selectedOrder.address"
-                            class="receipt-info-row">
+                        <div v-if="selectedOrder.address" class="receipt-info-row">
                             <span>{{ $t('admin.orders.modals.receipt.address') }}</span>
                             <span>{{ selectedOrder.address }}</span>
                         </div>
-                        <div v-if="selectedOrder.delivery_type === 'delivery' && selectedOrder.phone"
-                            class="receipt-info-row">
+                        <div v-if="selectedOrder.phone" class="receipt-info-row">
                             <span>{{ $t('admin.orders.modals.receipt.phone') }}</span>
                             <span>{{ selectedOrder.phone }}</span>
                         </div>

@@ -256,7 +256,7 @@ class CustomerController extends Controller
             'note' => 'nullable|string|max:500',
             'delivery_type' => 'nullable|in:pickup,delivery',
             'address' => 'required_if:delivery_type,delivery|nullable|string|max:500',
-            'phone' => 'required_if:delivery_type,delivery|nullable|string|max:20',
+            'phone' => 'required|string|max:20',
         ]);
 
         // Ürünleri tek sorguda çek
@@ -447,10 +447,8 @@ class CustomerController extends Controller
             ]),
         ];
 
-        if ($detail) {
-            $data['address'] = $o->address;
-            $data['phone'] = $o->phone;
-        }
+        $data['address'] = $o->address;
+        $data['phone'] = $o->phone;
 
         return $data;
     }

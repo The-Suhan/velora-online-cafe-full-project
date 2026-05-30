@@ -272,7 +272,7 @@ export function useOrders(fixedStatus?: OrderStatus) {
         selectedOrder.value = order
         activeModal.value = 'receipt'
         openDrop.value = null
-        await loadOrderDetail(order.id)  
+        await loadOrderDetail(order.id)
     }
 
     function openCancelModal(order: Order) {
@@ -416,8 +416,8 @@ export function useOrders(fixedStatus?: OrderStatus) {
             <tr><td>Customer</td><td>${order.customer?.name ?? '—'}</td></tr>
             <tr><td>Status</td><td><span class="status-text">${order.status}</span></td></tr>
             <tr><td>Type</td><td>${order.delivery_type === 'delivery' ? 'Delivery' : 'Pickup'}</td></tr>
-            ${order.delivery_type === 'delivery' && order.address ? `<tr><td>Address</td><td style="text-align:right;">${order.address}</td></tr>` : ''}
-            ${order.delivery_type === 'delivery' && order.phone ? `<tr><td>Phone</td><td>${order.phone}</td></tr>` : ''}
+           ${order.address ? `<tr><td>Address</td><td style="text-align:right;">${order.address}</td></tr>` : ''}
+            <tr><td>Phone</td><td>${order.phone}</td></tr>F
         </table>
             <div class="divider">· · · · · · · · · · · · · · · · · · · ·</div>
             <table class="items-table">
