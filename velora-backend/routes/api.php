@@ -25,6 +25,11 @@ Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'resetPa
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    Route::patch('/me', [AuthController::class, 'updateMe']);
+    Route::get('/me/favorites', [CustomerController::class, 'myFavorites']);
+    Route::get('/me/feedback', [CustomerController::class, 'myFeedback']);
+    Route::post('/me/feedback', [CustomerController::class, 'submitFeedback']);
+    Route::delete('/me', [AuthController::class, 'deleteMe']);
 
     // ── Admin only ────────────────────────────────────────────
     Route::middleware('admin')->prefix('admin')->group(function () {
@@ -82,8 +87,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Client api
     Route::get('/categories', [CustomerController::class, 'categories']);
-    Route::get('/categories/{category}/products', [CustomerController::class, 'categoryProducts']); 
-    Route::get('/categories/{category}', [CustomerController::class, 'showCategory']);             
+    Route::get('/categories/{category}/products', [CustomerController::class, 'categoryProducts']);
+    Route::get('/categories/{category}', [CustomerController::class, 'showCategory']);
     Route::get('/products', [CustomerController::class, 'products']);
     Route::get('/products/{product}', [CustomerController::class, 'showProduct']);
     Route::get('/products/{product}/ratings', [CustomerController::class, 'productRatings']);

@@ -17,7 +17,8 @@
                 <div class="stat-body">
                     <p class="stat-label">{{ card.label }}</p>
                     <p class="stat-value">
-                        {{ card.format === 'currency' ? formatCurrency(card.value) : formatNumber(card.value) }}{{card.showCurrency ? ' $' : '' }}
+                        {{ card.format === 'currency' ? formatCurrency(card.value) : formatNumber(card.value)
+                        }}{{ card.showCurrency ? ' $' : '' }}
                     </p>
                     <p class="stat-growth" :class="card.growth >= 0 ? 'positive' : 'negative'">
                         {{ card.growth >= 0 ? '↑' : '↓' }} {{ Math.abs(card.growth) }}%
@@ -119,8 +120,8 @@
                     <div v-for="(product, idx) in topProducts" :key="product.id" class="product-row">
                         <span class="product-rank">{{ idx + 1 }}</span>
                         <div class="product-img-wrap">
-                            <img v-if="product.image_url" :src="product.image_url" :alt="getProductName(product)"
-                                class="product-img" />
+                            <img v-if="product.image_url" :src="resolveUrl(product.image_url)"
+                                :alt="getProductName(product)" class="product-img" />
                             <div v-else class="product-img-placeholder" />
                         </div>
                         <span class="product-name">{{ getProductName(product) }}</span>
@@ -194,6 +195,15 @@ const stats = ref<any>({})
 const recentOrders = ref<any[]>([])
 const topProducts = ref<any[]>([])
 const categories = ref<any[]>([])
+const config = useRuntimeConfig()
+const API = config.public.apiBase
+const BACKEND_BASE = API.replace(/\/api\/?$/, '')
+
+const resolveUrl = (url: string | null | undefined): string | null => {
+    if (!url) return null
+    if (url.startsWith('http')) return url
+    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
+}
 
 // ── Translation helpers ────────────────────────────────────
 // Returns translated name from translations object/array, falls back to .name

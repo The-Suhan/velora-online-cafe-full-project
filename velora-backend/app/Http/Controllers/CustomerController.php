@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Feedback;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Rating;
@@ -452,5 +453,79 @@ class CustomerController extends Controller
         }
 
         return $data;
+    }
+
+    public function myFavorites(Request $request): JsonResponse
+    {
+        $ratings = Rating::with('product.category:id,name')
+            ->where('user_id', auth()->id())
+            ->orderByDesc('score')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(fn ($r) => [
+                'product_id' => $r->product_id,
+                'score' => (float) $r->score,
+                'product_name' => $r->product?->name,
+                'image_url' => $r->product?->image_url,
+                'price' => (float) ($r->product?->price ?? 0),
+                'category' => $r->product?->category?->name,
+                'rated_at' => $r->created_at?->format('M d, Y'),
+            ]);
+
+        return response()->json($ratings);
+    }
+
+    /**
+     * GET /api/me/feedback
+     * Kullanıcının kendi feedbackleri.
+     */
+    public function myFeedback(Request $request): JsonResponse
+    {
+        $feedbacks = Feedback::where('user_id', auth()->id())
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(fn ($f) => [
+                'id' => $f->id,
+                'type' => $f->type,
+                'subject' => $f->subject,
+                'message' => $f->message,
+                'is_done' => $f->is_done,
+                'created_at' => $f->created_at?->format('M d, Y'),
+            ]);
+
+        return response()->json($feedbacks);
+    }
+
+    /**
+     * POST /api/me/feedback
+     * Yeni feedback gönder.
+     */
+    public function submitFeedback(Request $request): JsonResponse
+    {
+        $request->validate([
+            'type' => 'required|in:complaint,request,question',
+            'subject' => 'required|string|max:200',
+            'message' => 'required|string|max:2000',
+        ]);
+
+        $feedback = Feedback::create([
+            'user_id' => auth()->id(),
+            'type' => $request->type,
+            'subject' => $request->subject,
+            'message' => $request->message,
+            'is_done' => false,
+        ]);
+
+        return response()->json([
+            'message' => 'Feedback submitted successfully.',
+            'feedback' => [
+                'id' => $feedback->id,
+                'type' => $feedback->type,
+                'subject' => $feedback->subject,
+                'message' => $feedback->message,
+                'is_done' => $feedback->is_done,
+                'created_at' => $feedback->created_at?->format('M d, Y'),
+            ],
+        ], 201);
     }
 }

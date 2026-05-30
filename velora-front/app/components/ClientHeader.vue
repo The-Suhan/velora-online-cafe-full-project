@@ -33,6 +33,17 @@
                     </svg>
                 </button>
 
+                <!-- Feedback button -->
+                <button class="icon-btn feedback-btn" aria-label="Feedback" @click="feedbackOpen = true"
+                    v-if="isLoggedIn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        <line x1="9" y1="10" x2="15" y2="10" />
+                        <line x1="9" y1="14" x2="13" y2="14" />
+                    </svg>
+                </button>
+
                 <!-- Bag button — desktop: standalone dark pill | mobile: icon only -->
                 <NuxtLink to="/bag" class="bag-btn" aria-label="Bag">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -43,17 +54,6 @@
                     </svg>
                     <span v-if="bagCount > 0" class="bag-badge">{{ bagCount }}</span>
                 </NuxtLink>
-
-                <!-- Burger — only on mobile/tablet, rightmost, no badge -->
-                <button class="burger-btn mobile-only" aria-label="Open menu" @click="$emit('toggle-menu')">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round">
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <line x1="3" y1="12" x2="21" y2="12" />
-                        <line x1="3" y1="18" x2="21" y2="18" />
-                    </svg>
-                </button>
-
             </div>
         </div>
 
@@ -80,6 +80,93 @@
             </div>
         </Transition>
 
+        <!-- Feedback Modal -->
+        <Teleport to="body">
+            <Transition name="fade">
+                <div v-if="feedbackOpen" class="fixed inset-0 bg-[rgba(44,24,16,0.45)] backdrop-blur-sm z-[200]"
+                    @click.self="feedbackOpen = false" />
+            </Transition>
+
+            <Transition name="modal-pop">
+                <div v-if="feedbackOpen" class="fixed z-[201] bg-white rounded-2xl shadow-2xl w-[92%] max-w-[440px]"
+                    style="top: 80px; left: 50%; transform: translateX(-50%);">
+
+                    <!-- Header -->
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-[#F3F4F6]">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-[#F5EFEA] flex items-center justify-center">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C8A96A"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-[#2C1A14] font-semibold text-sm">Send Feedback</p>
+                                <p class="text-[#8a7060] text-[11px]">We'd love to hear from you</p>
+                            </div>
+                        </div>
+                        <button @click="feedbackOpen = false"
+                            class="w-7 h-7 bg-[#F3F4F6] rounded-lg flex items-center justify-center text-[#6b7280] hover:bg-[#E5E7EB] transition-colors">
+                            <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13">
+                                <path
+                                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Success state -->
+                    <div v-if="submitted" class="px-5 py-10 text-center">
+                        <div class="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" width="26" height="26">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </div>
+                        <p class="text-[#2C1A14] font-semibold">Thank you!</p>
+                        <p class="text-[#8a7060] text-sm mt-1">Your feedback has been received.</p>
+                    </div>
+
+                    <!-- Form -->
+                    <div v-else class="px-5 py-4 space-y-3">
+                        <!-- Type selector -->
+                        <div class="flex gap-2">
+                            <button v-for="t in [
+                                { key: 'complaint', label: 'Complaint' },
+                                { key: 'request', label: 'Request' },
+                                { key: 'question', label: 'Question' }
+                            ]" :key="t.key" @click="feedbackForm.type = t.key"
+                                :class="feedbackForm.type === t.key
+                                    ? 'bg-[#2C1A14] text-[#C8A96A] border-[#2C1A14]'
+                                    : 'bg-white text-[#7A6558] border-[#E0D5CC] hover:border-[#2C1A14] hover:text-[#2C1A14]'"
+                                class="flex-1 py-1.5 text-xs font-medium border rounded-lg transition-colors">
+                                {{ t.label }}
+                            </button>
+                        </div>
+
+                        <!-- Subject -->
+                        <input v-model="feedbackForm.subject" placeholder="Subject"
+                            class="w-full px-3 py-2.5 text-sm border border-[#E0D5CC] rounded-xl outline-none focus:border-[#2C1A14] transition-colors" />
+
+                        <!-- Message -->
+                        <textarea v-model="feedbackForm.message" placeholder="Tell us more…" rows="4"
+                            class="w-full px-3 py-2.5 text-sm border border-[#E0D5CC] rounded-xl outline-none focus:border-[#2C1A14] transition-colors resize-none" />
+
+                        <!-- Footer -->
+                        <div class="flex gap-2 pt-1">
+                            <button @click="feedbackOpen = false"
+                                class="flex-1 py-2.5 border border-[#E0D5CC] text-[#7A6558] text-sm rounded-xl hover:bg-[#F5EFEA] transition-colors">
+                                Cancel
+                            </button>
+                            <button @click="handleFeedbackSubmit"
+                                :disabled="submitting || !feedbackForm.subject.trim() || !feedbackForm.message.trim()"
+                                class="flex-1 py-2.5 bg-[#2C1A14] text-[#C8A96A] text-sm rounded-xl hover:bg-[#3d2416] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                {{ submitting ? 'Sending…' : 'Submit' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </Transition>
+        </Teleport>
     </header>
 </template>
 
@@ -110,9 +197,74 @@ function handleSearch() {
     if (!searchQuery.value.trim()) return
     console.log('search:', searchQuery.value)
 }
+
+const { isLoggedIn } = useAuth()
+const feedbackOpen = ref(false)
+const feedbackForm = ref({ type: 'complaint', subject: '', message: '' })
+const submitting = ref(false)
+const submitted = ref(false)
+
+const { submitFeedback } = useProfile()
+
+async function handleFeedbackSubmit() {
+    if (!feedbackForm.value.subject.trim() || !feedbackForm.value.message.trim()) return
+    submitting.value = true
+    try {
+        await submitFeedback(feedbackForm.value)
+        submitted.value = true
+        feedbackForm.value = { type: 'complaint', subject: '', message: '' }
+        setTimeout(() => {
+            submitted.value = false
+            feedbackOpen.value = false
+        }, 2000)
+    } catch {
+    } finally {
+        submitting.value = false
+    }
+}
+
+watch(feedbackOpen, (val) => {
+    if (!val) {
+        submitted.value = false
+        feedbackForm.value = { type: 'complaint', subject: '', message: '' }
+    }
+})
 </script>
 
 <style scoped>
+.feedback-btn {
+    color: #5a3e2b;
+    margin-right: 0.1rem;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity .2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.modal-pop-enter-active {
+    transition: all .25s cubic-bezier(.34, 1.56, .64, 1);
+}
+
+.modal-pop-leave-active {
+    transition: all .15s ease;
+}
+
+.modal-pop-enter-from {
+    opacity: 0;
+    transform: translateX(-50%) scale(.95) translateY(-8px);
+}
+
+.modal-pop-leave-to {
+    opacity: 0;
+    transform: translateX(-50%) scale(.95) translateY(-8px);
+}
+
 .velora-header {
     position: sticky;
     top: 0;
@@ -207,13 +359,13 @@ function handleSearch() {
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.25rem;
     margin-left: auto;
 }
 
 /* when nav is present push actions flush */
 .header-nav.desktop-only+.header-actions {
-    margin-left: 0.75rem;
+    margin-left: -1rem;
 }
 
 /* Search icon btn */
@@ -365,19 +517,21 @@ function handleSearch() {
         display: none !important;
     }
 
-    .mobile-only {
-        display: flex !important;
-    }
-
     .burger-btn {
         display: flex;
     }
 
     .header-inner {
         padding: 0 1.25rem;
+        gap: 0;
+        justify-content: space-between;
     }
 
-    /* On mobile bag becomes icon-only, same style as icon-btn */
+    .header-actions {
+        margin-left: 0;
+        gap: 0.15rem;
+    }
+
     .bag-btn {
         width: 40px;
         height: 40px;

@@ -26,6 +26,12 @@ useHead({
 // ─── Route ────────────────────────────────────────────────────
 const route = useRoute()
 const categoryId = computed(() => route.params.id)
+const headerStyle = computed(() => {
+    if (category.value?.image_url) {
+        return { '--header-img': `url(${resolveUrl(category.value.image_url)})` }
+    }
+    return {}
+})
 
 // ─── Cart ─────────────────────────────────────────────────────
 const { addItem, increaseQty, decreaseQty, getItem } = useCart()
@@ -136,31 +142,29 @@ watch(categoryId, loadData)
     <main class="velora-cat-page">
 
         <!-- ── Page Header ── -->
-        <div class="page-header">
-            <div class="page-header-inner">
-                <NuxtLink to="/" class="breadcrumb-link">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M19 12H5M12 5l-7 7 7 7" />
-                    </svg>
-                    Home
-                </NuxtLink>
+        <div v-if="loading" class="page-header">
+            <div class="header-inner">
+                <div class="skeleton-breadcrumb" />
+                <div class="skeleton-line sk-title" />
+            </div>
+        </div>
 
-                <div class="header-title-row">
-                    <div>
-                        <h1 class="page-title">
-                            <template v-if="loading">
-                                <div class="skeleton-line sk-title" />
-                            </template>
-                            <template v-else>
-                                {{ category?.name ?? 'Products' }}
-                            </template>
-                        </h1>
-                        <p class="page-subtitle" v-if="!loading">
-                            {{ products.length }} item{{ products.length !== 1 ? 's' : '' }}
-                        </p>
-                    </div>
-                </div>
+        <div v-else-if="category" class="page-header" :style="headerStyle">
+            <div class="header-bg-overlay" />
+            <div class="header-inner">
+                <nav class="breadcrumb">
+                    <button @click="$router.back()" class="breadcrumb-link">
+                        <svg viewBox="0 0 20 20" fill="none" class="back-icon">
+                            <path d="M13 16l-5-6 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                        Back
+                    </button>
+                </nav>
+                <h1 class="page-title">{{ category?.name ?? 'Products' }}</h1>
+                <p class="page-subtitle">
+                    {{ products.length }} item{{ products.length !== 1 ? 's' : '' }}
+                </p>
             </div>
         </div>
 
@@ -256,12 +260,40 @@ watch(categoryId, loadData)
 
 /* ── Header ── */
 .page-header {
-    padding: 2.5rem 3.5rem 0;
+    background: #2C1A0E;
+    padding: 1.75rem 3.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    min-height: 140px;
 }
 
-.page-header-inner {
+.page-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--header-img, none);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.18;
+    pointer-events: none;
+}
+
+.header-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(44, 26, 14, 0.85) 0%, rgba(44, 26, 14, 0.5) 100%);
+    pointer-events: none;
+}
+
+.header-inner {
     max-width: 1400px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.breadcrumb {
+    margin-bottom: 0.75rem;
 }
 
 .breadcrumb-link {
@@ -271,30 +303,25 @@ watch(categoryId, loadData)
     font-size: 0.68rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #9a7a68;
+    color: #C9A96E;
     text-decoration: none;
     transition: color 0.15s;
-    margin-bottom: 1.25rem;
 }
 
 .breadcrumb-link:hover {
-    color: #C9A96E;
+    color: #F5F0E8;
 }
 
-.header-title-row {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    padding-bottom: 1.5rem;
+.back-icon {
+    width: 16px;
+    height: 16px;
 }
 
 .page-title {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 2.4rem;
     font-weight: 400;
-    color: #2C1A0E;
+    color: #F5F0E8;
     margin: 0 0 0.25rem;
     letter-spacing: 0.01em;
     min-height: 2.9rem;
@@ -302,10 +329,43 @@ watch(categoryId, loadData)
 
 .page-subtitle {
     font-size: 0.7rem;
-    color: #9a7a68;
+    color: rgba(245, 240, 232, 0.65);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     margin: 0;
+}
+
+/* skeleton içindeki header için */
+.skeleton-breadcrumb {
+    height: 12px;
+    width: 100px;
+    background: rgba(200, 169, 110, 0.25);
+    border-radius: 3px;
+    margin-bottom: 0.75rem;
+    animation: shimmer 1.4s infinite;
+}
+
+/* ── Responsive header padding ── */
+@media (max-width: 1024px) {
+    .page-header {
+        padding: 1.75rem 2.5rem 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 1.5rem 1.5rem 1.75rem;
+    }
+
+    .page-title {
+        font-size: 1.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header {
+        padding: 1.25rem 1rem 1.5rem;
+    }
 }
 
 /* ── Decorative divider ── */
@@ -313,11 +373,9 @@ watch(categoryId, loadData)
     display: flex;
     align-items: center;
     gap: 0.85rem;
-    padding: 0 3.5rem;
-    margin-bottom: 2.5rem;
+    padding: 1.25rem 3.5rem;
     max-width: 1400px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 }
 
 .divider-line {
@@ -424,6 +482,14 @@ watch(categoryId, loadData)
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+.breadcrumb-link {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    padding: 0;
 }
 
 .card-desc {
@@ -663,6 +729,7 @@ watch(categoryId, loadData)
     .header-divider {
         padding: 0 1.5rem;
         margin-bottom: 1.75rem;
+        margin-top: 1rem;
     }
 
     .products-grid {
@@ -720,6 +787,7 @@ watch(categoryId, loadData)
 
     .header-divider {
         padding: 0 1rem;
+        margin-top: 1.25rem;
     }
 
     .page-header {

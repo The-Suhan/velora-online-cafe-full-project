@@ -1,11 +1,24 @@
+// composables/useAuth.ts
+
+interface AuthUser {
+    id: number
+    name: string
+    email: string
+    role: string
+    is_verified?: boolean
+}
+
 export const useAuth = () => {
     const config = useRuntimeConfig()
     const router = useRouter()
+
     const token = useCookie('auth_token', {
         maxAge: 60 * 60 * 24 * 7,
         sameSite: 'lax',
     })
-    const user = useState('user', () => null)
+
+    // tip verildi → artık AuthUser | null, never değil
+    const user = useState<AuthUser | null>('user', () => null)
 
     const apiBase = config.public.apiBase
 
@@ -27,7 +40,7 @@ export const useAuth = () => {
     const verifyOtp = async (email: string, code: string, type: string = 'register') => {
         const data: any = await $fetch(`${apiBase}/verify-otp`, {
             method: 'POST',
-            body: { email, code, type },   
+            body: { email, code, type },
         })
         token.value = data.token
         user.value = data.user
@@ -67,8 +80,18 @@ export const useAuth = () => {
         user.value = data
     }
 
+    const deleteAccount = async () => {
+        await $fetch(`${apiBase}/me`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token.value}` },
+        })
+        token.value = null
+        user.value = null
+        router.push('/login')
+    }
+
     const isLoggedIn = computed(() => !!token.value)
-    const isAdmin = computed(() => (user.value as any)?.role === 'admin')
+    const isAdmin = computed(() => user.value?.role === 'admin')
 
     return {
         token,
@@ -80,5 +103,6 @@ export const useAuth = () => {
         login,
         logout,
         fetchMe,
+        deleteAccount
     }
 }

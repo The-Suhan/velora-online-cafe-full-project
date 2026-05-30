@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Suhan',
                 'email' => 'begenjov@velora.com',
-                'password' => Hash::make('suhanberdi'),
+                'password' => Hash::make('VeloraOps'),
                 'role' => 'admin',
                 'is_verified' => true,
                 'remember_token' => null,

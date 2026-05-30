@@ -172,9 +172,17 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Çıkış yapıldı.']);
+        return response()->json(['message' => 'Log out.']);
     }
 
+    public function deleteMe(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $user->currentAccessToken()->delete();
+        $user->delete();
+
+        return response()->json(['message' => 'Account deleted successfully.']);
+    }
     // ── ME ────────────────────────────────────────────────────
     // GET /api/me
     // Header: Authorization: Bearer {token}
@@ -188,6 +196,50 @@ class AuthController extends Controller
             'name' => $user->name,
             'email' => $user->email,
             'role' => $user->role,
+            'is_verified' => $user->is_verified,
+        ]);
+    }
+
+    public function updateMe(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $rules = [
+            'name' => 'sometimes|string|max:100',
+        ];
+
+        if ($request->filled('password')) {
+            $rules['current_password'] = [
+                'required',
+                function ($attribute, $value, $fail) use ($user) {
+                    if (! Hash::check($value, $user->password)) {
+                        $fail('Current password is incorrect.');
+                    }
+                },
+            ];
+            $rules['password'] = 'required|string|min:8|confirmed';
+        }
+
+        $validated = $request->validate($rules);
+
+        if (isset($validated['name'])) {
+            $user->name = $validated['name'];
+        }
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Profile updated successfully.',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ],
         ]);
     }
 

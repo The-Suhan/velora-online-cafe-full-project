@@ -30,7 +30,7 @@
 
                 <!-- Social icons -->
                 <div class="social-row">
-                    <a href="#" class="social-btn" aria-label="Instagram">
+                    <a class="social-btn" aria-label="Instagram">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
@@ -38,13 +38,13 @@
                             <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
                         </svg>
                     </a>
-                    <a href="#" class="social-btn" aria-label="TikTok">
+                    <a class="social-btn" aria-label="TikTok">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
                         </svg>
                     </a>
-                    <a href="#" class="social-btn" aria-label="Youtube">
+                    <a class="social-btn" aria-label="Youtube">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                             <path
                                 d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
@@ -106,7 +106,7 @@
                     <p class="app-desc">Order from anywhere. Download the Velora app.</p>
                     <div class="app-btns">
                         <!-- App Store -->
-                        <a href="" class="app-btn" aria-label="Download on the App Store">
+                        <a class="app-btn" aria-label="Download on the App Store">
                             <i class="bi bi-apple store-icon-bi"></i>
                             <div class="app-btn-text">
                                 <span class="app-btn-sub">Download on the</span>
@@ -114,7 +114,7 @@
                             </div>
                         </a>
                         <!-- Google Play -->
-                        <a href="" class="app-btn" aria-label="Get it on Google Play">
+                        <a class="app-btn" aria-label="Get it on Google Play">
                             <i class="bi bi-google-play store-icon-bi"></i>
                             <div class="app-btn-text">
                                 <span class="app-btn-sub">Get it on</span>

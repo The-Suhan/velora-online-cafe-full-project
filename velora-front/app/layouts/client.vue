@@ -1,22 +1,6 @@
 <template>
     <div class="client-layout">
         <ClientHeader :bag-count="totalCount" @open-search="searchOpen = true" @toggle-menu="menuOpen = !menuOpen" />
-
-        <!-- Mobile slide-down menu (tablet/mobile burger) -->
-        <Transition name="slide-down">
-            <div v-if="menuOpen" class="mobile-menu" @click.self="menuOpen = false">
-                <div class="mobile-menu-inner">
-                    <NuxtLink to="/" class="mobile-nav-link" @click="menuOpen = false"
-                        exact-active-class="mobile-nav-link--active">{{ $t('nav.home') }}</NuxtLink>
-                    <NuxtLink to="/categories" class="mobile-nav-link" @click="menuOpen = false"
-                        active-class="mobile-nav-link--active">{{ $t('nav.categories') }}</NuxtLink>
-                    <NuxtLink to="/profile" class="mobile-nav-link" @click="menuOpen = false"
-                        active-class="mobile-nav-link--active">{{ $t('nav.profile') }}</NuxtLink>
-                    <div class="mobile-menu-divider" />
-                </div>
-            </div>
-        </Transition>
-
         <!-- Page content -->
         <main class="client-main">
             <slot />
