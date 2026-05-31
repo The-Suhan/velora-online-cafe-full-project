@@ -89,11 +89,10 @@
                         </div>
 
                         <!-- Delivery info -->
-                        <div v-if="order.delivery_type === 'delivery' && (order.address || order.phone)"
-                            class="p-3 bg-[#FAFAF8] rounded-xl space-y-1">
-                            <p class="text-[10px] uppercase tracking-wider text-[#8a7060] mb-2">Delivery Info</p>
+                        <div class="p-3 bg-[#FAFAF8] rounded-xl space-y-1">
+                            <p class="text-[10px] uppercase tracking-wider text-[#8a7060] mb-2">Contact Info</p>
                             <p v-if="order.address" class="text-sm text-[#2C1A14]">📍 {{ order.address }}</p>
-                            <p v-if="order.phone" class="text-sm text-[#2C1A14]">📞 {{ order.phone }}</p>
+                            <p class="text-sm text-[#2C1A14]">📞 {{ order.phone }}</p>
                         </div>
                     </template>
                 </div>

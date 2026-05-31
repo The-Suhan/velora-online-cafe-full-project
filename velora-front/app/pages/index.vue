@@ -3,6 +3,11 @@ import { ref, watch, onMounted, defineComponent, h } from 'vue'
 import { useCart } from '~/composables/useCart'
 import { useSearch } from '~/composables/useSearch'
 
+const imageLoaded = ref({})
+function onImageLoad(productId) {
+    imageLoaded.value[productId] = true
+}
+
 const config = useRuntimeConfig()
 const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
 
@@ -11,6 +16,11 @@ const resolveUrl = (url) => {
     if (url.startsWith('http')) return url
     return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
 }
+const { locale } = useI18n()
+
+watch(locale, () => {
+    loadAll()
+})
 
 definePageMeta({ layout: 'client', middleware: 'auth' })
 
@@ -40,6 +50,7 @@ const { searchQuery } = useSearch()
 
 // ─── State ────────────────────────────────────────────────────
 const api = useApi()
+const loadingCats = ref(true)
 const loading = ref(true)
 
 const allCategoryRows = ref([])
@@ -230,10 +241,10 @@ onMounted(loadAll)
                 <div class="section-head">
                     <div class="section-head-left">
                         <h2 class="section-title">{{ cat.name }}</h2>
-                        <span class="section-count">{{ cat.products.length }} items</span>
+                        <span class="section-count">{{ $t('home.itemsCount', { n: cat.products.length }) }}</span>
                     </div>
                     <NuxtLink :to="`/categories/${cat.id}`" class="see-all-btn">
-                        See all
+                        {{ $t('home.seeAll') }}
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M5 12h14M12 5l7 7-7 7" />
@@ -245,7 +256,7 @@ onMounted(loadAll)
                 <div class="carousel-wrap">
                     <!-- Left arrow -->
                     <button class="carousel-arrow carousel-arrow--left" @click="scrollCarousel(cat.id, -1)"
-                        aria-label="Scroll left">
+                        :aria-label="$t('home.scrollLeft')">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M15 18l-6-6 6-6" />
@@ -260,8 +271,12 @@ onMounted(loadAll)
                             :style="{ '--card-delay': `${rowIdx * 60 + cardIdx * 30}ms` }">
                             <!-- Image -->
                             <div class="card-image" :style="{ background: cardGradient(product.id) }">
-                                <img v-if="product.image_url" :src="resolveUrl(product.image_url)" :alt="product.name"
-                                    class="card-img" draggable="false" />
+                                <div class="img-shimmer" :class="{ 'img-shimmer--hidden': imageLoaded[product.id] }" />
+                                <NuxtImg v-if="product.image_url" :src="resolveUrl(product.image_url)"
+                                    :alt="product.name" class="card-img"
+                                    :class="{ 'card-img--loaded': imageLoaded[product.id] }"
+                                    :loading="cardIdx < 3 && rowIdx === 0 ? 'eager' : 'lazy'"
+                                    sizes="260px md:230px sm:200px" draggable="false" @load="onImageLoad(product.id)" />
                                 <span v-if="product.category?.name" class="card-badge">
                                     {{ product.category.name }}
                                 </span>
@@ -284,16 +299,20 @@ onMounted(loadAll)
                                     <span class="card-price">${{ Number(product.price).toFixed(2) }}</span>
 
                                     <div class="card-actions">
-                                        <button class="detail-btn" @click.stop="openModal(product)">Detail</button>
+                                        <button class="detail-btn" @click.stop="openModal(product)">
+                                            {{ $t('home.detail') }}
+                                        </button>
 
                                         <button v-if="!cartItem(product.id)" @click.stop="addItem(product)"
                                             class="add-btn">
-                                            + Add
+                                            {{ $t('home.addToCart') }}
                                         </button>
                                         <div v-else class="qty-ctrl">
-                                            <button class="qty-btn" @click.stop="decreaseQty(product.id)">−</button>
+                                            <button class="qty-btn" @click.stop="decreaseQty(product.id)"
+                                                :aria-label="$t('home.decreaseQty')">−</button>
                                             <span class="qty-num">{{ cartItem(product.id).quantity }}</span>
-                                            <button class="qty-btn" @click.stop="increaseQty(product.id)">+</button>
+                                            <button class="qty-btn" @click.stop="increaseQty(product.id)"
+                                                :aria-label="$t('home.increaseQty')">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -303,7 +322,7 @@ onMounted(loadAll)
 
                     <!-- Right arrow -->
                     <button class="carousel-arrow carousel-arrow--right" @click="scrollCarousel(cat.id, 1)"
-                        aria-label="Scroll right">
+                        :aria-label="$t('home.scrollRight')">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 18l6-6-6-6" />
@@ -314,7 +333,7 @@ onMounted(loadAll)
 
             <!-- Empty state -->
             <div v-if="categoryRows.length === 0" class="empty-state">
-                <p>No products available.</p>
+                <p>{{ $t('home.noProducts') }}</p>
             </div>
         </template>
     </main>
@@ -505,6 +524,45 @@ onMounted(loadAll)
     height: 190px;
     overflow: hidden;
     flex-shrink: 0;
+}
+
+.img-shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            #2C1A14 0%,
+            #3d2518 30%,
+            #5c3820 50%,
+            #3d2518 70%,
+            #2C1A14 100%);
+    background-size: 200% 100%;
+    animation: imgShimmer 1.6s ease-in-out infinite;
+    transition: opacity 0.35s ease;
+    z-index: 1;
+}
+
+.img-shimmer--hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.card-img {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.card-img--loaded {
+    opacity: 1;
+}
+
+@keyframes imgShimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 .card-img {

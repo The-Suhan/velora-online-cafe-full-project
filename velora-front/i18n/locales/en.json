@@ -1,9 +1,54 @@
 {
+  "home": {
+    "itemsCount": "{n} items",
+    "seeAll": "See All",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right",
+    "detail": "Detail",
+    "addToCart": "Add to Cart",
+    "decreaseQty": "Decrease quantity",
+    "increaseQty": "Increase quantity",
+    "noProducts": "No products found."
+  },
+  "footer": {
+    "brandDesc": "A sanctuary of flavour and stillness. Every cup crafted with intention, every visit a quiet ritual.",
+    "exploreHeading": "Explore",
+    "visitHeading": "Visit",
+    "address": "Ashgabat",
+    "hours": "Every day 07:00–23:00",
+    "phone": "+993 63 846663",
+    "appHeading": "Get the App",
+    "appDesc": "Order from anywhere. Download the Velora app.",
+    "appStoreSub": "Download on the",
+    "appStoreName": "App Store",
+    "appStoreAriaLabel": "Download on the App Store",
+    "googlePlaySub": "Get it on",
+    "googlePlayName": "Google Play",
+    "googlePlayAriaLabel": "Get it on Google Play",
+    "copyright": "Velora Café. All rights reserved."
+  },
   "nav": {
     "home": "Home",
     "menu": "Menu",
     "categories": "Categories",
     "profile": "Profile"
+  },
+  "header": {
+    "searchPlaceholder": "Search coffee, menu items…",
+    "feedback": {
+      "sendTitle": "Send Feedback",
+      "sendSubtitle": "We'd love to hear from you",
+      "typeComplaint": "Complaint",
+      "typeRequest": "Request",
+      "typeQuestion": "Question",
+      "subjectPlaceholder": "Subject",
+      "messagePlaceholder": "Tell us more…",
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "sending": "Sending…",
+      "successTitle": "Thank you!",
+      "successDesc": "Your feedback has been received."
+    }
   },
   "auth": {
     "name": "Name",

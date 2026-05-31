@@ -116,7 +116,7 @@
                                 </button>
                             </div>
 
-                            <!-- Delivery fields -->
+                            <!-- Delivery-only address field -->
                             <Transition name="expand">
                                 <div v-if="deliveryType === 'delivery'" class="delivery-fields">
                                     <div class="field-group">
@@ -124,13 +124,24 @@
                                         <input v-model="address" class="field-input" type="text"
                                             placeholder="Enter delivery address" />
                                     </div>
-                                    <div class="field-group">
-                                        <label class="field-label">Phone</label>
-                                        <input v-model="phone" class="field-input" type="tel"
-                                            placeholder="+1 (555) 000-0000" />
-                                    </div>
                                 </div>
                             </Transition>
+
+                            <!-- Phone (both pickup & delivery) -->
+                            <div class="field-group">
+                                <label class="field-label">Phone</label>
+                                <div class="phone-input-wrap" :class="{ 'phone-input-wrap--error': phoneError }">
+                                    <span class="phone-prefix">+993</span>
+                                    <div class="phone-divider" />
+                                    <input ref="phoneInputRef" class="phone-input-inner" type="text" inputmode="numeric"
+                                        :placeholder="phonePlaceholder" :value="phoneDisplay" @input="handlePhoneInput"
+                                        @keydown="handlePhoneKeydown" maxlength="9" autocomplete="tel" />
+                                </div>
+                                <Transition name="fade">
+                                    <p v-if="phoneError" class="field-error">{{ phoneError }}</p>
+                                </Transition>
+                                <p class="field-hint">Operators: 71, 65, 64, 63, 62, 61</p>
+                            </div>
 
                             <!-- Note -->
                             <div class="field-group">
@@ -233,10 +244,137 @@ function resolveUrl(url) {
     return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
 }
 
+// ─── Phone validation ─────────────────────────────────────────
+// Allowed operator codes
+const VALID_OPERATORS = ['71', '65', '64', '63', '62', '61']
+
+// Raw digits only (no prefix, no spaces) — max 8 digits: 2 operator + 6 number
+const phoneRaw = ref('')
+const phoneError = ref('')
+const phoneInputRef = ref(null)
+
+// Display string shown in the input: "XX XXXXXX" formatted as user types
+const phoneDisplay = computed(() => {
+    const d = phoneRaw.value
+    if (d.length <= 2) return d
+    return d.slice(0, 2) + ' ' + d.slice(2)
+})
+
+// Hint placeholder showing expected format based on allowed operators
+const phonePlaceholder = computed(() => '65 XXXXXX')
+
+// Full formatted phone for POST payload: "+993 XX XXXXXX"
+const phoneFormatted = computed(() => {
+    if (phoneRaw.value.length !== 8) return ''
+    return `+993 ${phoneRaw.value.slice(0, 2)} ${phoneRaw.value.slice(2)}`
+})
+
+function validatePhone() {
+    const d = phoneRaw.value
+    if (d.length === 0) {
+        phoneError.value = 'Phone number is required.'
+        return false
+    }
+    if (d.length < 8) {
+        phoneError.value = 'Enter a complete phone number.'
+        return false
+    }
+    const op = d.slice(0, 2)
+    if (!VALID_OPERATORS.includes(op)) {
+        phoneError.value = `Operator must be one of: ${VALID_OPERATORS.join(', ')}.`
+        return false
+    }
+    phoneError.value = ''
+    return true
+}
+
+function handlePhoneInput(e) {
+    // Strip everything except digits
+    const onlyDigits = e.target.value.replace(/\D/g, '')
+
+    // Enforce max 8 digits
+    const trimmed = onlyDigits.slice(0, 8)
+
+    // If we have 2+ digits, validate operator on the fly
+    if (trimmed.length >= 2) {
+        const op = trimmed.slice(0, 2)
+        if (!VALID_OPERATORS.includes(op)) {
+            // If operator is being typed (length === 2), block invalid combos
+            // Allow first digit if it could still lead to valid operator
+            const firstDigit = trimmed[0]
+            const validFirstDigits = [...new Set(VALID_OPERATORS.map(o => o[0]))]
+            if (!validFirstDigits.includes(firstDigit)) {
+                phoneRaw.value = ''
+                e.target.value = ''
+                phoneError.value = `Operator must be one of: ${VALID_OPERATORS.join(', ')}.`
+                return
+            }
+            // First digit OK but second locks in invalid operator — revert second digit
+            if (trimmed.length >= 2) {
+                phoneRaw.value = trimmed.slice(0, 1)
+                e.target.value = trimmed.slice(0, 1)
+                phoneError.value = `Operator must be one of: ${VALID_OPERATORS.join(', ')}.`
+                return
+            }
+        } else {
+            phoneError.value = ''
+        }
+    } else {
+        phoneError.value = ''
+    }
+
+    phoneRaw.value = trimmed
+    // Restore formatted display value (cursor position will naturally move to end)
+    e.target.value = phoneDisplay.value
+}
+
+function handlePhoneKeydown(e) {
+    // Allow: backspace, delete, tab, arrow keys, home, end
+    const allowed = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End']
+    if (allowed.includes(e.key)) return
+
+    // Block non-digit keys
+    if (!/^\d$/.test(e.key)) {
+        e.preventDefault()
+        return
+    }
+
+    // Prevent exceeding 8 digits
+    if (phoneRaw.value.length >= 8) {
+        e.preventDefault()
+        return
+    }
+
+    // Validate operator digit by digit
+    const currentRaw = phoneRaw.value
+    const nextRaw = currentRaw + e.key
+
+    if (nextRaw.length === 1) {
+        // First digit: must be a valid leading digit (6 or 7)
+        const validFirstDigits = [...new Set(VALID_OPERATORS.map(o => o[0]))]
+        if (!validFirstDigits.includes(e.key)) {
+            e.preventDefault()
+            phoneError.value = `Operator must be one of: ${VALID_OPERATORS.join(', ')}.`
+            return
+        }
+    }
+
+    if (nextRaw.length === 2) {
+        // Second digit: must form a valid operator
+        const potentialOp = nextRaw.slice(0, 2)
+        if (!VALID_OPERATORS.includes(potentialOp)) {
+            e.preventDefault()
+            phoneError.value = `Operator must be one of: ${VALID_OPERATORS.join(', ')}.`
+            return
+        }
+    }
+
+    phoneError.value = ''
+}
+
 // ─── Order form state ─────────────────────────────────────────
 const deliveryType = ref('pickup')
 const address = ref('')
-const phone = ref('')
 const note = ref('')
 const ordering = ref(false)
 const orderError = ref('')
@@ -249,13 +387,17 @@ const grandTotal = computed(() => totalPrice.value + deliveryFee.value)
 
 const canOrder = computed(() => {
     if (items.value.length === 0) return false
+    if (phoneRaw.value.length !== 8) return false
+    const op = phoneRaw.value.slice(0, 2)
+    if (!VALID_OPERATORS.includes(op)) return false
     if (deliveryType.value === 'delivery') {
-        return address.value.trim().length > 0 && phone.value.trim().length > 0
+        return address.value.trim().length > 0
     }
     return true
 })
 
 async function placeOrder() {
+    if (!validatePhone()) return
     if (!canOrder.value || ordering.value) return
     ordering.value = true
     orderError.value = ''
@@ -269,7 +411,8 @@ async function placeOrder() {
             delivery_type: deliveryType.value,
             note: note.value.trim() || null,
             address: deliveryType.value === 'delivery' ? address.value.trim() : null,
-            phone: deliveryType.value === 'delivery' ? phone.value.trim() : null,
+            // Always send formatted phone: "+993 XX XXXXXX"
+            phone: phoneFormatted.value,
         }
 
         const res = await api('/orders', { method: 'POST', body: payload })
@@ -279,7 +422,8 @@ async function placeOrder() {
         // reset form
         note.value = ''
         address.value = ''
-        phone.value = ''
+        phoneRaw.value = ''
+        phoneError.value = ''
         deliveryType.value = 'pickup'
         orderSuccess.value = true
     } catch (e) {
@@ -656,6 +800,78 @@ function dismissSuccess() {
 
 .field-textarea {
     min-height: 60px;
+}
+
+/* ── Phone input ── */
+.phone-input-wrap {
+    display: flex;
+    align-items: center;
+    background: #F5EFEA;
+    border: 1px solid rgba(44, 26, 20, 0.12);
+    border-radius: 3px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+}
+
+.phone-input-wrap:focus-within {
+    border-color: #C8A96A;
+}
+
+.phone-input-wrap--error {
+    border-color: #c8574a;
+}
+
+.phone-prefix {
+    font-family: 'Georgia', serif;
+    font-size: 0.85rem;
+    color: #2C1A14;
+    font-weight: 600;
+    padding: 0.55rem 0.6rem 0.55rem 0.75rem;
+    white-space: nowrap;
+    user-select: none;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+}
+
+.phone-divider {
+    width: 1px;
+    height: 18px;
+    background: rgba(44, 26, 20, 0.15);
+    flex-shrink: 0;
+}
+
+.phone-input-inner {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    padding: 0.55rem 0.75rem 0.55rem 0.6rem;
+    font-family: 'Georgia', serif;
+    font-size: 0.85rem;
+    color: #2C1A14;
+    outline: none;
+    letter-spacing: 0.05em;
+}
+
+.phone-input-inner::placeholder {
+    color: #b0957a;
+    letter-spacing: 0.02em;
+}
+
+.field-error {
+    font-family: 'Georgia', serif;
+    font-size: 0.72rem;
+    color: #c8574a;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.field-hint {
+    font-family: 'Georgia', serif;
+    font-size: 0.68rem;
+    color: #b0957a;
+    margin: 0;
+    letter-spacing: 0.02em;
 }
 
 /* Price rows */

@@ -140,4 +140,38 @@ onMounted(() => {
     font-weight: 600;
     color: #7a5c30;
 }
+
+@media (max-width: 860px) {
+    .lang-label {
+        display: none;
+    }
+
+    .lang-chevron {
+        display: none;
+    }
+
+    .lang-selected {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border-radius: 50%;
+        justify-content: center;
+        border: none;
+        background: transparent;
+    }
+
+    .lang-selected:hover {
+        background: rgba(26, 10, 0, 0.07);
+    }
+
+    .lang-flag {
+        width: 22px;
+        height: 16px;
+    }
+
+    .lang-dropdown {
+        left: auto;
+        right: 0;
+    }
+}
 </style>

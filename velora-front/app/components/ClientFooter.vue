@@ -20,12 +20,11 @@
                     <img src="/logo.png" alt="Velora Café" class="brand-logo" />
                     <div class="brand-text">
                         <span class="brand-name">Velora</span>
-                        <span class="brand-tagline">Taste the calm</span>
+                        <span class="brand-tagline">{{ $t('auth.tagline') }}</span>
                     </div>
                 </NuxtLink>
                 <p class="brand-desc">
-                    A sanctuary of flavour and stillness. Every cup crafted with intention, every visit a quiet
-                    ritual.
+                    {{ $t('footer.brandDesc') }}
                 </p>
 
                 <!-- Social icons -->
@@ -56,22 +55,22 @@
             <!-- ── Nav columns ── -->
             <nav class="footer-nav-group">
 
-                <!-- Explore: Home, Menu, Categories only -->
+                <!-- Explore -->
                 <div class="footer-col">
-                    <h4 class="col-heading">Explore</h4>
+                    <h4 class="col-heading">{{ $t('footer.exploreHeading') }}</h4>
                     <ul class="col-links">
                         <li>
-                            <NuxtLink to="/" class="col-link">Home</NuxtLink>
+                            <NuxtLink to="/" class="col-link">{{ $t('nav.home') }}</NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="/categories" class="col-link">Categories</NuxtLink>
+                            <NuxtLink to="/categories" class="col-link">{{ $t('nav.categories') }}</NuxtLink>
                         </li>
                     </ul>
                 </div>
 
-                <!-- Visit: address, single work time, phone -->
+                <!-- Visit -->
                 <div class="footer-col">
-                    <h4 class="col-heading">Visit</h4>
+                    <h4 class="col-heading">{{ $t('footer.visitHeading') }}</h4>
                     <ul class="col-links">
                         <li class="col-info">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -79,7 +78,7 @@
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                                 <circle cx="12" cy="10" r="3" />
                             </svg>
-                            <span>Ashgabat</span>
+                            <span>{{ $t('footer.address') }}</span>
                         </li>
                         <li class="col-info">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -87,7 +86,7 @@
                                 <circle cx="12" cy="12" r="10" />
                                 <polyline points="12 6 12 12 16 14" />
                             </svg>
-                            <span>Every day 07:00–23:00</span>
+                            <span>{{ $t('footer.hours') }}</span>
                         </li>
                         <li class="col-info">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -95,30 +94,30 @@
                                 <path
                                     d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 5.59 5.59l.96-.96a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
                             </svg>
-                            <span>+993 63 846663</span>
+                            <span>{{ $t('footer.phone') }}</span>
                         </li>
                     </ul>
                 </div>
 
-                <!-- Get the App: App Store + Google Play -->
+                <!-- Get the App -->
                 <div class="footer-col">
-                    <h4 class="col-heading">Get the App</h4>
-                    <p class="app-desc">Order from anywhere. Download the Velora app.</p>
+                    <h4 class="col-heading">{{ $t('footer.appHeading') }}</h4>
+                    <p class="app-desc">{{ $t('footer.appDesc') }}</p>
                     <div class="app-btns">
                         <!-- App Store -->
-                        <a class="app-btn" aria-label="Download on the App Store">
+                        <a class="app-btn" :aria-label="$t('footer.appStoreAriaLabel')">
                             <i class="bi bi-apple store-icon-bi"></i>
                             <div class="app-btn-text">
-                                <span class="app-btn-sub">Download on the</span>
-                                <span class="app-btn-name">App Store</span>
+                                <span class="app-btn-sub">{{ $t('footer.appStoreSub') }}</span>
+                                <span class="app-btn-name">{{ $t('footer.appStoreName') }}</span>
                             </div>
                         </a>
                         <!-- Google Play -->
-                        <a class="app-btn" aria-label="Get it on Google Play">
+                        <a class="app-btn" :aria-label="$t('footer.googlePlayAriaLabel')">
                             <i class="bi bi-google-play store-icon-bi"></i>
                             <div class="app-btn-text">
-                                <span class="app-btn-sub">Get it on</span>
-                                <span class="app-btn-name">Google Play</span>
+                                <span class="app-btn-sub">{{ $t('footer.googlePlaySub') }}</span>
+                                <span class="app-btn-name">{{ $t('footer.googlePlayName') }}</span>
                             </div>
                         </a>
                     </div>
@@ -127,10 +126,10 @@
             </nav>
         </div>
 
-        <!-- ── Copyright bar: centered, white ── -->
+        <!-- ── Copyright bar ── -->
         <div class="footer-bottom">
             <p class="copyright">
-                &copy; {{ currentYear }} Velora Café. All rights reserved.
+                &copy; {{ currentYear }} {{ $t('footer.copyright') }}
             </p>
         </div>
 

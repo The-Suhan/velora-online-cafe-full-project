@@ -33,6 +33,9 @@
                     </svg>
                 </button>
 
+                <!-- Language Switcher -->
+                <LanguageSwitcher class="header-lang-switcher" />
+
                 <!-- Feedback button -->
                 <button class="icon-btn feedback-btn" aria-label="Feedback" @click="feedbackOpen = true"
                     v-if="isLoggedIn">
@@ -67,7 +70,7 @@
                         <path d="m21 21-4.35-4.35" />
                     </svg>
                     <input ref="searchInput" v-model="searchQuery" class="search-bar-input" type="text"
-                        placeholder="Search coffee, menu items…" @keydown.escape="searchOpen = false"
+                        :placeholder="$t('header.searchPlaceholder')" @keydown.escape="searchOpen = false"
                         @keydown.enter="handleSearch" />
                     <button class="search-close-btn" @click="searchOpen = false" aria-label="Close search">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -101,8 +104,9 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-[#2C1A14] font-semibold text-sm">Send Feedback</p>
-                                <p class="text-[#8a7060] text-[11px]">We'd love to hear from you</p>
+                                <p class="text-[#2C1A14] font-semibold text-sm">{{ $t('header.feedback.sendTitle') }}
+                                </p>
+                                <p class="text-[#8a7060] text-[11px]">{{ $t('header.feedback.sendSubtitle') }}</p>
                             </div>
                         </div>
                         <button @click="feedbackOpen = false"
@@ -122,8 +126,8 @@
                                 <polyline points="20 6 9 17 4 12" />
                             </svg>
                         </div>
-                        <p class="text-[#2C1A14] font-semibold">Thank you!</p>
-                        <p class="text-[#8a7060] text-sm mt-1">Your feedback has been received.</p>
+                        <p class="text-[#2C1A14] font-semibold">{{ $t('header.feedback.successTitle') }}</p>
+                        <p class="text-[#8a7060] text-sm mt-1">{{ $t('header.feedback.successDesc') }}</p>
                     </div>
 
                     <!-- Form -->
@@ -131,9 +135,9 @@
                         <!-- Type selector -->
                         <div class="flex gap-2">
                             <button v-for="t in [
-                                { key: 'complaint', label: 'Complaint' },
-                                { key: 'request', label: 'Request' },
-                                { key: 'question', label: 'Question' }
+                                { key: 'complaint', label: $t('header.feedback.typeComplaint') },
+                                { key: 'request', label: $t('header.feedback.typeRequest') },
+                                { key: 'question', label: $t('header.feedback.typeQuestion') }
                             ]" :key="t.key" @click="feedbackForm.type = t.key"
                                 :class="feedbackForm.type === t.key
                                     ? 'bg-[#2C1A14] text-[#C8A96A] border-[#2C1A14]'
@@ -144,23 +148,24 @@
                         </div>
 
                         <!-- Subject -->
-                        <input v-model="feedbackForm.subject" placeholder="Subject"
+                        <input v-model="feedbackForm.subject" :placeholder="$t('header.feedback.subjectPlaceholder')"
                             class="w-full px-3 py-2.5 text-sm border border-[#E0D5CC] rounded-xl outline-none focus:border-[#2C1A14] transition-colors" />
 
                         <!-- Message -->
-                        <textarea v-model="feedbackForm.message" placeholder="Tell us more…" rows="4"
+                        <textarea v-model="feedbackForm.message" :placeholder="$t('header.feedback.messagePlaceholder')"
+                            rows="4"
                             class="w-full px-3 py-2.5 text-sm border border-[#E0D5CC] rounded-xl outline-none focus:border-[#2C1A14] transition-colors resize-none" />
 
                         <!-- Footer -->
                         <div class="flex gap-2 pt-1">
                             <button @click="feedbackOpen = false"
                                 class="flex-1 py-2.5 border border-[#E0D5CC] text-[#7A6558] text-sm rounded-xl hover:bg-[#F5EFEA] transition-colors">
-                                Cancel
+                                {{ $t('header.feedback.cancel') }}
                             </button>
                             <button @click="handleFeedbackSubmit"
                                 :disabled="submitting || !feedbackForm.subject.trim() || !feedbackForm.message.trim()"
                                 class="flex-1 py-2.5 bg-[#2C1A14] text-[#C8A96A] text-sm rounded-xl hover:bg-[#3d2416] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                {{ submitting ? 'Sending…' : 'Submit' }}
+                                {{ submitting ? $t('header.feedback.sending') : $t('header.feedback.submit') }}
                             </button>
                         </div>
                     </div>

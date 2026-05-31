@@ -8,7 +8,13 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/i18n',
+    '@nuxt/image'
   ],
+
+  image: {
+    quality: 80,
+    format: ['webp', 'jpg'],
+  },
 
   hooks: {
     'pages:extend'(pages) {
@@ -19,7 +25,7 @@ export default defineNuxtConfig({
       })
     }
   },
-  
+
   experimental: {
     typedPages: true,
     scanPageMeta: 'after-resolve',
