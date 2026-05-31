@@ -11,7 +11,7 @@
 > A modern online café experience combining aesthetic design with a smooth user interface.
 
 🔗 Live Demo: *(coming soon!)*
-📸 Screenshots: *(coming soon!)*
+📸 Screenshots: (./screenshot.png)
 
 ---
 
