@@ -1,3 +1,6 @@
+<script setup>
+</script>
+
 <template>
   <NuxtRouteAnnouncer />
   <AppLoading />

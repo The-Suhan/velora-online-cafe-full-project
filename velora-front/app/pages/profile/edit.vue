@@ -9,7 +9,7 @@
                     <path d="M19 12H5M12 5l-7 7 7 7" />
                 </svg>
             </NuxtLink>
-            <h1 class="text-[#F5EFEA] text-lg font-medium">Edit Profile</h1>
+            <h1 class="text-[#F5EFEA] text-lg font-medium">{{ $t('profile.edit.title') }}</h1>
         </div>
 
         <div class="max-w-lg mx-auto px-4 py-6 flex flex-col gap-4">
@@ -26,18 +26,20 @@
 
             <!-- Personal Info -->
             <div class="bg-white rounded-2xl border border-[#E0D5CC] p-5">
-                <p class="text-[#2C1A14] font-medium text-sm mb-4">Personal information</p>
+                <p class="text-[#2C1A14] font-medium text-sm mb-4">{{ $t('profile.edit.personalInfo') }}</p>
                 <div class="flex flex-col gap-4">
                     <div>
-                        <label class="text-[#7A6558] text-xs uppercase tracking-wide block mb-1.5">Full name</label>
-                        <input v-model="form.name" type="text" placeholder="Your name"
+                        <label class="text-[#7A6558] text-xs uppercase tracking-wide block mb-1.5">{{
+                            $t('profile.edit.fullName') }}</label>
+                        <input v-model="form.name" type="text" :placeholder="$t('profile.edit.fullNamePlaceholder')"
                             class="w-full px-3.5 py-2.5 rounded-lg border border-[#E0D5CC] text-[#2C1A14] text-sm bg-white focus:outline-none focus:border-[#C8A96A] focus:ring-1 focus:ring-[#C8A96A] transition-colors placeholder:text-[#BFB5AD]" />
                     </div>
                     <div>
-                        <label class="text-[#7A6558] text-xs uppercase tracking-wide block mb-1.5">Email</label>
+                        <label class="text-[#7A6558] text-xs uppercase tracking-wide block mb-1.5">{{
+                            $t('profile.edit.email') }}</label>
                         <input :value="form.email" type="email" disabled
                             class="w-full px-3.5 py-2.5 rounded-lg border border-[#E0D5CC] text-[#BFB5AD] text-sm bg-[#F5EFEA] cursor-not-allowed" />
-                        <p class="text-[10px] text-[#7A6558] mt-1">Email cannot be changed</p>
+                        <p class="text-[10px] text-[#7A6558] mt-1">{{ $t('profile.edit.emailHint') }}</p>
                     </div>
                 </div>
             </div>
@@ -45,29 +47,29 @@
             <!-- Change Password -->
             <div class="bg-white rounded-2xl border border-[#E0D5CC] p-5">
                 <div class="flex items-center justify-between mb-3">
-                    <p class="text-[#2C1A14] font-medium text-sm">Password</p>
+                    <p class="text-[#2C1A14] font-medium text-sm">{{ $t('profile.edit.password') }}</p>
                     <button @click="showPassword = !showPassword" class="text-[#C8A96A] text-xs hover:underline">
-                        {{ showPassword ? 'Cancel' : 'Change' }}
+                        {{ showPassword ? $t('profile.edit.cancel') : $t('profile.edit.change') }}
                     </button>
                 </div>
 
                 <template v-if="showPassword">
                     <div class="flex flex-col gap-3">
                         <div>
-                            <label class="text-[#7A6558] text-xs uppercase tracking-wide block mb-1.5">Current
-                                password</label>
+                            <label class="text-[#7A6558] text-xs uppercase tracking-wide block mb-1.5">{{
+                                $t('profile.edit.currentPassword') }}</label>
                             <input v-model="passwordForm.current" type="password" placeholder="••••••••"
                                 class="w-full px-3.5 py-2.5 rounded-lg border border-[#E0D5CC] text-[#2C1A14] text-sm focus:outline-none focus:border-[#C8A96A] focus:ring-1 focus:ring-[#C8A96A] transition-colors placeholder:text-[#BFB5AD]" />
                         </div>
                         <div>
-                            <label class="text-[#7A6558] text-xs uppercase tracking-wide block mb-1.5">New
-                                password</label>
+                            <label class="text-[#7A6558] text-xs uppercase tracking-wide block mb-1.5">{{
+                                $t('profile.edit.newPassword') }}</label>
                             <input v-model="passwordForm.new" type="password" placeholder="••••••••"
                                 class="w-full px-3.5 py-2.5 rounded-lg border border-[#E0D5CC] text-[#2C1A14] text-sm focus:outline-none focus:border-[#C8A96A] focus:ring-1 focus:ring-[#C8A96A] transition-colors placeholder:text-[#BFB5AD]" />
                         </div>
                         <div>
-                            <label class="text-[#7A6558] text-xs uppercase tracking-wide block mb-1.5">Confirm new
-                                password</label>
+                            <label class="text-[#7A6558] text-xs uppercase tracking-wide block mb-1.5">{{
+                                $t('profile.edit.confirmNewPassword') }}</label>
                             <input v-model="passwordForm.confirm" type="password" placeholder="••••••••"
                                 class="w-full px-3.5 py-2.5 rounded-lg border border-[#E0D5CC] text-[#2C1A14] text-sm focus:outline-none focus:border-[#C8A96A] focus:ring-1 focus:ring-[#C8A96A] transition-colors placeholder:text-[#BFB5AD]" />
                         </div>
@@ -90,16 +92,16 @@
             <!-- Save button -->
             <button @click="handleSave" :disabled="saving"
                 class="w-full py-3.5 bg-[#2C1A14] text-[#F5EFEA] rounded-xl text-sm font-medium hover:bg-[#3d261d] active:scale-[0.98] transition-all disabled:opacity-50">
-                {{ saving ? 'Saving...' : 'Save changes' }}
+                {{ saving ? $t('profile.edit.saving') : $t('profile.edit.save') }}
             </button>
 
             <!-- Danger zone -->
             <div class="bg-white rounded-2xl border border-red-100 p-5">
-                <p class="text-[#2C1A14] font-medium text-sm mb-1">Danger zone</p>
-                <p class="text-[#7A6558] text-xs mb-3">This action is permanent and cannot be undone.</p>
+                <p class="text-[#2C1A14] font-medium text-sm mb-1">{{ $t('profile.edit.dangerZone') }}</p>
+                <p class="text-[#7A6558] text-xs mb-3">{{ $t('profile.edit.dangerDesc') }}</p>
                 <button @click="handleDeleteAccount"
                     class="text-red-500 text-sm border border-red-200 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors">
-                    Delete account
+                    {{ $t('profile.edit.deleteAccount') }}
                 </button>
             </div>
         </div>
@@ -108,6 +110,7 @@
 
 <script setup lang="ts">
 definePageMeta({ middleware: 'auth' })
+const { t } = useI18n()
 
 const { user: authUser, logout, deleteAccount } = useAuth()
 const { fetchMe, updateMe } = useProfile()
@@ -137,7 +140,7 @@ onMounted(async () => {
 })
 
 async function handleDeleteAccount() {
-    if (!confirm('Are you absolutely sure? This cannot be undone.')) return
+    if (!confirm(t('profile.edit.deleteConfirm'))) return
     try {
         await deleteAccount()
     } catch (e: any) {
@@ -152,15 +155,15 @@ async function handleSave() {
 
     if (showPassword.value) {
         if (!passwordForm.current) {
-            passwordError.value = 'Please enter your current password.'
+            passwordError.value = t('profile.edit.errorCurrentRequired')
             return
         }
         if (passwordForm.new.length < 8) {
-            passwordError.value = 'Password must be at least 8 characters.'
+            passwordError.value = t('profile.edit.errorPasswordMin')
             return
         }
         if (passwordForm.new !== passwordForm.confirm) {
-            passwordError.value = 'New passwords do not match.'
+            passwordError.value = t('profile.edit.errorPasswordMismatch')
             return
         }
     }
@@ -177,10 +180,10 @@ async function handleSave() {
         })
 
         if (authUser.value) {
-            authUser.value.name = res.user.name  
+            authUser.value.name = res.user.name
         }
 
-        success.value = res.message ?? 'Profile updated successfully.'
+        success.value = res.message ?? t('profile.edit.successMsg')
         showPassword.value = false
         passwordForm.current = passwordForm.new = passwordForm.confirm = ''
     } catch (e: any) {
@@ -189,7 +192,7 @@ async function handleSave() {
         if (errs) {
             error.value = Object.values(errs).flat().join(' ')
         } else {
-            error.value = msg ?? 'Something went wrong. Please try again.'
+            error.value = msg ?? t('profile.edit.errorGeneric')
         }
     } finally {
         saving.value = false

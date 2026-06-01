@@ -13,11 +13,12 @@
                 <!-- Header -->
                 <div class="flex items-start justify-between px-6 py-4 border-b border-[#F3F4F6]">
                     <div>
-                        <h2 class="text-[#2C1A14] font-semibold text-lg">Order Details</h2>
+                        <h2 class="text-[#2C1A14] font-semibold text-lg">{{ $t('profile.orderDetail.title') }}</h2>
                         <p v-if="order" class="text-[#8a7060] text-xs font-mono mt-0.5">#{{ order.order_no }}</p>
                     </div>
                     <button @click="$emit('update:modelValue', false)"
-                        class="w-7 h-7 bg-[#F3F4F6] rounded-lg flex items-center justify-center text-[#6b7280] hover:bg-[#E5E7EB] transition-colors">
+                        class="w-7 h-7 bg-[#F3F4F6] rounded-lg flex items-center justify-center text-[#6b7280] hover:bg-[#E5E7EB] transition-colors"
+                        :aria-label="$t('profile.orderDetail.close')">
                         <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
                             <path
                                 d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -41,7 +42,8 @@
                                 {{ statusLabel(order.status) }}
                             </span>
                             <span class="text-xs text-[#7A6558] uppercase tracking-wider">
-                                {{ order.delivery_type === 'delivery' ? 'Delivery' : 'Pickup' }}
+                                {{ order.delivery_type === 'delivery' ? $t('profile.orderDetail.delivery') :
+                                    $t('profile.orderDetail.pickup') }}
                             </span>
                             <span class="text-xs text-[#b0967a] ml-auto">
                                 {{ formatDay(order.created_at) }} {{ formatMonth(order.created_at) }}
@@ -50,23 +52,25 @@
 
                         <!-- Items -->
                         <div>
-                            <p class="text-[10px] font-bold text-[#8a7060] uppercase tracking-wider mb-3">Items</p>
+                            <p class="text-[10px] font-bold text-[#8a7060] uppercase tracking-wider mb-3">{{
+                                $t('profile.orderDetail.items') }}</p>
                             <div class="space-y-2">
                                 <div v-for="item in order.items" :key="item.product_id"
                                     class="flex items-center gap-3 p-3 bg-[#FAFAF8] rounded-xl">
                                     <div
                                         class="w-10 h-10 rounded-lg bg-[#F0EDE6] flex items-center justify-center overflow-hidden flex-shrink-0">
                                         <img v-if="item.image_url" :src="resolveUrl(item.image_url)"
-                                            :alt="item.product_name" class="w-full h-full object-cover" />
+                                            :alt="getProductName(item)" class="w-full h-full object-cover" />
                                         <svg v-else viewBox="0 0 24 24" fill="none" stroke="#b0967a" stroke-width="1.5"
                                             width="16" height="16">
                                             <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
                                         </svg>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-semibold text-[#2C1A14] truncate">{{ item.product_name }}
-                                        </p>
-                                        <p class="text-xs text-[#8a7060]">${{ item.price.toFixed(2) }} each</p>
+                                        <p class="text-sm font-semibold text-[#2C1A14] truncate">{{ getProductName(item)
+                                            }}</p>
+                                        <p class="text-xs text-[#8a7060]">${{ item.price.toFixed(2) }} {{
+                                            $t('profile.orderDetail.each') }}</p>
                                     </div>
                                     <div class="text-right flex-shrink-0">
                                         <p class="text-xs text-[#8a7060]">×{{ item.quantity }}</p>
@@ -78,19 +82,21 @@
 
                         <!-- Total -->
                         <div class="flex items-center justify-between bg-[#2C1A14] text-[#C8A96A] px-4 py-3 rounded-xl">
-                            <span class="text-sm font-bold">Total</span>
+                            <span class="text-sm font-bold">{{ $t('profile.orderDetail.total') }}</span>
                             <span class="text-lg font-semibold">${{ order.total_price.toFixed(2) }}</span>
                         </div>
 
                         <!-- Note -->
                         <div v-if="order.note" class="p-3 bg-[#FAFAF8] rounded-xl border-l-4 border-[#C8A96A]">
-                            <p class="text-[10px] uppercase tracking-wider text-[#8a7060] mb-1">Note</p>
+                            <p class="text-[10px] uppercase tracking-wider text-[#8a7060] mb-1">{{
+                                $t('profile.orderDetail.note') }}</p>
                             <p class="text-sm text-[#6b7280]">{{ order.note }}</p>
                         </div>
 
                         <!-- Delivery info -->
                         <div class="p-3 bg-[#FAFAF8] rounded-xl space-y-1">
-                            <p class="text-[10px] uppercase tracking-wider text-[#8a7060] mb-2">Contact Info</p>
+                            <p class="text-[10px] uppercase tracking-wider text-[#8a7060] mb-2">{{
+                                $t('profile.orderDetail.contactInfo') }}</p>
                             <p v-if="order.address" class="text-sm text-[#2C1A14]">📍 {{ order.address }}</p>
                             <p class="text-sm text-[#2C1A14]">📞 {{ order.phone }}</p>
                         </div>
@@ -101,12 +107,12 @@
                 <div class="px-6 py-4 border-t border-[#F3F4F6] flex justify-between items-center gap-3">
                     <button v-if="order?.status === 'pending'" @click="$emit('cancel', order.id)"
                         class="text-sm px-4 py-2 border border-red-200 text-red-500 rounded-xl hover:bg-red-50 transition-colors">
-                        Cancel Order
+                        {{ $t('profile.orderDetail.cancelOrder') }}
                     </button>
                     <div v-else />
                     <button @click="$emit('update:modelValue', false)"
                         class="text-sm px-5 py-2 bg-[#2C1A14] text-[#C8A96A] rounded-xl hover:bg-[#3d2416] transition-colors">
-                        Close
+                        {{ $t('profile.orderDetail.close') }}
                     </button>
                 </div>
             </div>
@@ -116,6 +122,16 @@
 
 <script setup lang="ts">
 import type { Order } from '~/composables/useProfile'
+const { locale, t } = useI18n()
+
+function getProductName(item: any): string {
+    const tr = item.product_translations
+    if (!tr) return item.product_name ?? ''
+    const entry = Array.isArray(tr)
+        ? tr.find((x: any) => x.locale === locale.value)
+        : tr[locale.value]
+    return entry?.name ?? item.product_name ?? ''
+}
 
 defineProps<{
     modelValue: boolean
@@ -153,8 +169,11 @@ function statusClass(status: string) {
 }
 function statusLabel(status: string) {
     return ({
-        pending: 'Pending', preparing: 'Preparing',
-        ready: 'Ready', delivered: 'Delivered', cancelled: 'Cancelled',
+        pending: t('admin.statuses.pending'),
+        preparing: t('admin.statuses.preparing'),
+        ready: t('admin.statuses.ready'),
+        delivered: t('admin.statuses.delivered'),
+        cancelled: t('admin.statuses.cancelled'),
     } as Record<string, string>)[status] ?? status
 }
 </script>

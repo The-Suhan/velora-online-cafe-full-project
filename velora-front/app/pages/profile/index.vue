@@ -4,7 +4,7 @@
         <!-- Top Header -->
         <div class="bg-[#2C1A14] px-6 pt-8 pb-14">
             <h1 class="text-[#c8b89a] text-3xl font-light leading-tight">
-                Welcome back,<br />
+                {{ $t('profile.welcome') }}<br />
                 <em class="text-[#C8A96A] not-italic font-normal text-4xl">
                     {{ firstName }}.
                 </em>
@@ -30,7 +30,8 @@
                         <div class="flex justify-around mt-4 pt-4 border-t border-[#E0D5CC]">
                             <div class="text-center">
                                 <p class="text-[#2C1A14] font-medium text-lg">{{ orders?.total ?? '–' }}</p>
-                                <p class="text-[#7A6558] text-[10px] uppercase tracking-wider mt-0.5">Orders</p>
+                                <p class="text-[#7A6558] text-[10px] uppercase tracking-wider mt-0.5">{{
+                                    $t('profile.orders') }}</p>
                             </div>
                         </div>
 
@@ -41,7 +42,7 @@
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                             </svg>
-                            Edit profile · preferences
+                            {{ $t('profile.editProfile') }}
                         </NuxtLink>
 
                         <button @click="handleLogout"
@@ -50,7 +51,7 @@
                                 stroke="currentColor" stroke-width="1.5">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
                             </svg>
-                            Sign out
+                            {{ $t('profile.signOut') }}
                         </button>
                     </div>
                 </div>
@@ -70,9 +71,11 @@
                     <!-- Orders tab -->
                     <div v-if="activeTab === 'orders'">
                         <div class="flex justify-between items-center px-5 py-3">
-                            <span class="text-sm font-medium text-[#2C1A14]">Recent orders</span>
+                            <span class="text-sm font-medium text-[#2C1A14]">{{ $t('profile.recentOrders') }}</span>
                             <span class="text-xs text-[#7A6558] uppercase tracking-wider">
-                                SHOWING {{ orders?.data?.length ?? 0 }} OF {{ orders?.total ?? 0 }}
+                                {{ $t('profile.showing', {
+                                    shown: orders?.data?.length ?? 0, total: orders?.total ?? 0
+                                }) }}
                             </span>
                         </div>
 
@@ -90,7 +93,7 @@
 
                         <!-- Empty -->
                         <div v-else-if="!orders?.data?.length" class="py-16 text-center">
-                            <p class="text-[#7A6558] text-sm">No orders yet.</p>
+                            <p class="text-[#7A6558] text-sm">{{ $t('profile.noOrders') }}</p>
                             <NuxtLink to="/menu"
                                 class="mt-3 inline-block text-[#C8A96A] text-sm underline underline-offset-2">
                                 Browse the menu
@@ -112,9 +115,9 @@
                                 <!-- Info -->
                                 <div class="flex-1 min-w-0">
                                     <p class="text-[#2C1A14] font-medium text-sm truncate">
-                                        {{ order.items[0]?.product_name }}
+                                        {{ getProductName(order.items[0]) }}
                                         <span v-if="order.items.length > 1" class="text-[#7A6558] font-normal text-xs">
-                                            +{{ order.items.length - 1 }} more
+                                            +{{ order.items.length - 1 }} {{ $t('profile.more') }}
                                         </span>
                                     </p>
                                     <div class="flex items-center gap-2 mt-1 flex-wrap">
@@ -123,7 +126,8 @@
                                             {{ statusLabel(order.status) }}
                                         </span>
                                         <span class="text-[#7A6558] text-[10px] uppercase">
-                                            {{ order.delivery_type === 'delivery' ? 'Delivery' : 'Pickup' }}
+                                            {{ order.delivery_type === 'delivery' ? $t('bag.delivery') :
+                                                $t('bag.pickup') }}
                                         </span>
                                     </div>
                                 </div>
@@ -136,11 +140,11 @@
                                         <button v-if="order.status === 'pending'" @click="handleCancel(order.id)"
                                             :disabled="cancellingId === order.id"
                                             class="text-[10px] px-2.5 py-1 border border-red-200 text-red-500 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50">
-                                            {{ cancellingId === order.id ? '...' : 'Cancel' }}
+                                            {{ cancellingId === order.id ? '...' : $t('profile.cancel') }}
                                         </button>
                                         <button @click="openDetail(order.id)"
                                             class="text-[10px] px-2.5 py-1 border border-[#E0D5CC] text-[#7A6558] rounded-md hover:border-[#2C1A14] hover:text-[#2C1A14] transition-colors">
-                                            Details
+                                            {{ $t('profile.details') }}
                                         </button>
                                     </div>
                                 </div>
@@ -163,9 +167,9 @@
                     <!-- Other tabs placeholder -->
                     <div v-else-if="activeTab === 'favorites'">
                         <div class="flex justify-between items-center px-5 py-3">
-                            <span class="text-sm font-medium text-[#2C1A14]">Rated products</span>
+                            <span class="text-sm font-medium text-[#2C1A14]">{{ $t('profile.ratedProducts') }}</span>
                             <span class="text-xs text-[#7A6558] uppercase tracking-wider">
-                                {{ favorites.length }} item{{ favorites.length !== 1 ? 's' : '' }}
+                                {{ $t('home.itemsCount', favorites.length, { named: { n: favorites.length } }) }}
                             </span>
                         </div>
 
@@ -183,10 +187,10 @@
 
                         <!-- Empty -->
                         <div v-else-if="!favorites.length" class="py-16 text-center">
-                            <p class="text-[#7A6558] text-sm">You haven't rated any products yet.</p>
+                            <p class="text-[#7A6558] text-sm">{{ $t('profile.noRatings') }}</p>
                             <NuxtLink to="/menu"
                                 class="mt-3 inline-block text-[#C8A96A] text-sm underline underline-offset-2">
-                                Browse the menu
+                                {{ $t('profile.browseMenu') }}
                             </NuxtLink>
                         </div>
 
@@ -235,10 +239,10 @@
 
                     <div v-else-if="activeTab === 'feedback'">
                         <div class="flex justify-between items-center px-5 py-3">
-                            <span class="text-sm font-medium text-[#2C1A14]">My Feedback</span>
+                            <span class="text-sm font-medium text-[#2C1A14]">{{ $t('profile.myFeedback') }}</span>
                             <button @click="showFeedbackForm = !showFeedbackForm"
                                 class="text-xs px-3 py-1.5 bg-[#2C1A14] text-[#C8A96A] rounded-lg hover:bg-[#3d2416] transition-colors">
-                                + New
+                                + {{ $t('profile.new') }}
                             </button>
                         </div>
 
@@ -246,26 +250,29 @@
                         <div v-if="showFeedbackForm"
                             class="mx-5 mb-4 p-4 bg-[#FAFAF8] rounded-xl border border-[#E0D5CC] space-y-3">
                             <div class="flex gap-2">
-                                <button v-for="t in ['complaint', 'request', 'question']" :key="t"
-                                    @click="feedbackForm.type = t" :class="feedbackForm.type === t
+                                <button v-for="type in feedbackTypes" :key="type.key"
+                                    @click="feedbackForm.type = type.key" :class="feedbackForm.type === type.key
                                         ? 'bg-[#2C1A14] text-[#C8A96A]'
                                         : 'border border-[#E0D5CC] text-[#7A6558] hover:border-[#2C1A14]'"
                                     class="px-3 py-1 rounded-lg text-xs capitalize transition-colors">
-                                    {{ t }}
+                                    {{ type.label }}
                                 </button>
                             </div>
-                            <input v-model="feedbackForm.subject" placeholder="Subject"
+                            <input v-model="feedbackForm.subject"
+                                :placeholder="$t('header.feedback.subjectPlaceholder')"
                                 class="w-full px-3 py-2 text-sm border border-[#E0D5CC] rounded-lg outline-none focus:border-[#2C1A14] bg-white" />
-                            <textarea v-model="feedbackForm.message" placeholder="Your message..." rows="3"
+                            <textarea v-model="feedbackForm.message"
+                                :placeholder="$t('header.feedback.messagePlaceholder')" rows="3"
                                 class="w-full px-3 py-2 text-sm border border-[#E0D5CC] rounded-lg outline-none focus:border-[#2C1A14] bg-white resize-none" />
                             <div class="flex gap-2 justify-end">
                                 <button @click="showFeedbackForm = false"
                                     class="text-xs px-3 py-1.5 border border-[#E0D5CC] text-[#7A6558] rounded-lg hover:bg-[#F5EFEA] transition-colors">
-                                    Cancel
+                                    {{ $t('header.feedback.cancel') }}
                                 </button>
                                 <button @click="handleSubmitFeedback" :disabled="submittingFeedback"
                                     class="text-xs px-3 py-1.5 bg-[#2C1A14] text-[#C8A96A] rounded-lg hover:bg-[#3d2416] transition-colors disabled:opacity-50">
-                                    {{ submittingFeedback ? 'Sending...' : 'Submit' }}
+                                    {{ submittingFeedback ? $t('header.feedback.sending') : $t('header.feedback.submit')
+                                    }}
                                 </button>
                             </div>
                         </div>
@@ -283,10 +290,10 @@
 
                         <!-- Empty -->
                         <div v-else-if="!feedbacks.length && !showFeedbackForm" class="py-16 text-center">
-                            <p class="text-[#7A6558] text-sm">No feedback submitted yet.</p>
+                            <p class="text-[#7A6558] text-sm">{{ $t('profile.noFeedback') }}</p>
                             <button @click="showFeedbackForm = true"
                                 class="mt-3 text-[#C8A96A] text-sm underline underline-offset-2">
-                                Send your first feedback
+                                {{ $t('profile.sendFirstFeedback') }}
                             </button>
                         </div>
 
@@ -301,7 +308,7 @@
                                                 'bg-blue-50 text-blue-600': fb.type === 'request',
                                                 'bg-amber-50 text-amber-700': fb.type === 'question',
                                             }" class="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize">
-                                                {{ fb.type }}
+                                                {{ $t(`header.feedback.type${fb.type.charAt(0).toUpperCase() + fb.type.slice(1)}`) }}
                                             </span>
                                             <span class="text-[#b0967a] text-[10px]">{{ fb.created_at }}</span>
                                         </div>
@@ -312,14 +319,14 @@
                                         ? 'bg-green-50 text-green-700'
                                         : 'bg-amber-50 text-amber-700'"
                                         class="text-[10px] font-semibold px-2 py-1 rounded-full flex-shrink-0 whitespace-nowrap">
-                                        {{ fb.is_done ? 'Resolved' : 'Pending' }}
+                                        {{ fb.is_done ? $t('profile.resolved') : $t('admin.statuses.pending') }}
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div v-else class="py-16 text-center text-[#7A6558] text-sm">Coming soon.</div>
+                    <div v-else class="py-16 text-center text-[#7A6558] text-sm">{{ $t('profile.comingSoon') }}</div>
                 </div>
             </div>
         </div>
@@ -348,11 +355,20 @@ const activeTab = ref('orders')
 const favorites = ref<any[]>([])
 const loadingFavorites = ref(false)
 
-const tabs = [
-    { key: 'orders', label: 'Orders' },
-    { key: 'favorites', label: 'Favorites' },
-    { key: 'feedback', label: 'Feedback' },
-]
+const { t, locale } = useI18n()
+
+function getProductName(item: any): string {
+    const tr = item.product_translations
+    if (!tr) return item.product_name ?? ''
+    const entry = Array.isArray(tr) ? tr.find((x: any) => x.locale === locale.value) : tr[locale.value]
+    return entry?.name ?? item.product_name ?? ''
+}
+
+const tabs = computed(() => [
+    { key: 'orders', label: t('profile.tabOrders') },
+    { key: 'favorites', label: t('profile.tabFavorites') },
+    { key: 'feedback', label: t('profile.tabFeedback') },
+])
 
 async function openDetail(orderId: number) {
     modalOpen.value = true
@@ -408,7 +424,7 @@ async function loadOrders(page = 1) {
 }
 
 async function handleCancel(id: number) {
-    if (!confirm('Are you sure you want to cancel this order?')) return
+    if (!confirm(t('profile.cancelConfirm'))) return
     cancellingId.value = id
     try {
         await cancelOrder(id)
@@ -438,16 +454,25 @@ function statusClass(status: string) {
     } as Record<string, string>)[status] ?? 'bg-gray-100 text-gray-600'
 }
 function statusLabel(status: string) {
-    return ({
-        pending: 'Pending', preparing: 'Preparing',
-        ready: 'Ready', delivered: 'Delivered', cancelled: 'Cancelled',
-    } as Record<string, string>)[status] ?? status
+    const map: Record<string, string> = {
+        pending: t('admin.statuses.pending'),
+        preparing: t('admin.statuses.preparing'),
+        ready: t('admin.statuses.ready'),
+        delivered: t('admin.statuses.delivered'),
+        cancelled: t('admin.statuses.cancelled'),
+    }
+    return map[status] ?? status
 }
 
 const feedbacks = ref<any[]>([])
 const loadingFeedback = ref(false)
 const showFeedbackForm = ref(false)
 const feedbackForm = ref({ type: 'complaint', subject: '', message: '' })
+const feedbackTypes = computed(() => [
+    { key: 'complaint', label: t('header.feedback.typeComplaint') },
+    { key: 'request', label: t('header.feedback.typeRequest') },
+    { key: 'question', label: t('header.feedback.typeQuestion') },
+])
 const submittingFeedback = ref(false)
 
 async function loadFeedback() {

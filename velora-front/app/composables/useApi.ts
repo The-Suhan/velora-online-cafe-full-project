@@ -13,7 +13,6 @@ export const useApi = () => {
             headers: {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 Accept: 'application/json',
-                'Accept-Language': localeCookie.value || 'en',
                 ...options.headers,
             },
         })

@@ -32,26 +32,23 @@
 </template>
 
 <script setup lang="ts">
-const visible = ref(true)
+const { visible } = useAppLoading()
+
 const status = ref('Preparing your experience')
+const messages = ['Preparing your experience', 'Brewing the details', 'Almost ready']
 
-const messages = [
-    'Preparing your experience',
-    'Brewing the details',
-    'Almost ready',
-]
+let interval: ReturnType<typeof setInterval>
 
-onMounted(() => {
-    let i = 0
-    const interval = setInterval(() => {
-        i = (i + 1) % messages.length
-        status.value = messages[i]
-    }, 900)
-
-    setTimeout(() => {
-        visible.value = false
+watch(visible, (val) => {
+    if (val) {
+        let i = 0
+        interval = setInterval(() => {
+            i = (i + 1) % messages.length
+            status.value = messages[i]
+        }, 900)
+    } else {
         clearInterval(interval)
-    }, 2200)
+    }
 })
 </script>
 

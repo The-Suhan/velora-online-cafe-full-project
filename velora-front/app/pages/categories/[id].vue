@@ -19,11 +19,11 @@
                             <path d="M13 16l-5-6 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
                                 stroke-linejoin="round" />
                         </svg>
-                        Tüm Kategoriler
+                        {{ $t('categoriesPage.allCategories') }}
                     </NuxtLink>
                 </nav>
-                <h1 class="page-title">{{ category.name }}</h1>
-                <p v-if="category.description" class="page-desc">{{ category.description }}</p>
+                <h1 class="page-title">{{ displayName(category) }}</h1>
+                <p v-if="category.description" class="page-desc">{{ displayDesc(category) }}</p>
             </div>
         </div>
 
@@ -36,8 +36,8 @@
                     <NuxtLink v-for="(sub, index) in subcategories" :key="sub.id" :to="`/categories/${sub.id}/products`"
                         class="sub-card" :style="{ '--delay': `${index * 55}ms` }">
                         <div class="sub-image-wrap">
-                            <img v-if="sub.image_url" :src="resolveUrl(sub.image_url)" :alt="sub.name" class="sub-image"
-                                loading="lazy" />
+                            <img v-if="sub.image_url" :src="resolveUrl(sub.image_url)" :alt="displayName(sub)"
+                                class="sub-image" loading="lazy" />
                             <div v-else class="sub-image-placeholder">
                                 <svg viewBox="0 0 40 40" fill="none" class="placeholder-icon">
                                     <path d="M8 28 Q20 12 32 28" stroke="#C8A96A" stroke-width="2"
@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <div class="sub-body">
-                            <span class="sub-name">{{ sub.name }}</span>
+                            <span class="sub-name">{{ displayName(sub) }}</span>
                             <svg class="sub-arrow" viewBox="0 0 20 20" fill="none">
                                 <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.8"
                                     stroke-linecap="round" stroke-linejoin="round" />
@@ -69,9 +69,9 @@
                         <path d="M33 54 Q40 48 47 54" stroke="#C8A96A" stroke-width="2.5" stroke-linecap="round"
                             fill="none" />
                     </svg>
-                    <p class="empty-title">Alt kategori bulunamadı</p>
+                    <p class="empty-title">{{ $t('categoriesPage.noSubTitle') }}</p>
                     <NuxtLink :to="`/categories/${categoryId}/products`" class="view-products-btn">
-                        Ürünleri Gör
+                        {{ $t('categoriesPage.viewProducts') }}
                         <svg viewBox="0 0 20 20" fill="none" style="width:14px;height:14px;display:inline">
                             <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.8"
                                 stroke-linecap="round" stroke-linejoin="round" />
@@ -109,6 +109,21 @@ const resolveUrl = (url) => {
     if (url.startsWith('http')) return url
     return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
 }
+const { locale, t } = useI18n()
+
+function getTranslation(item, loc, field) {
+    if (!item?.translations) return ''
+    const tr = item.translations
+    const entry = Array.isArray(tr) ? tr.find(x => x.locale === loc) : tr[loc]
+    return entry?.[field] ?? ''
+}
+function displayName(item) {
+    return getTranslation(item, locale.value, 'name') || getTranslation(item, 'en', 'name') || item?.name || ''
+}
+
+function displayDesc(item) {
+    return getTranslation(item, locale.value, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
+}
 
 const api = useApi()
 const loading = ref(true)
@@ -145,7 +160,7 @@ const headerStyle = computed(() => {
     return {}
 })
 
-useHead({ title: computed(() => category.value?.name ?? 'Kategori') })
+useHead({ title: computed(() => displayName(category.value) || t('categoriesPage.defaultTitle')) })
 
 onMounted(load)
 </script>

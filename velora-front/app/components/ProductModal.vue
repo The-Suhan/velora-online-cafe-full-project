@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch, defineComponent, h } from 'vue'
 import { useCart } from '~/composables/useCart'
+const { locale, t } = useI18n()
 
 const config = useRuntimeConfig()
 const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
@@ -57,7 +58,7 @@ watch(activeProduct, async (p) => {
         })
         relatedProducts.value = (data.data ?? []).filter(r => r.id !== p.id)
     } catch (e) {
-        console.error('[ProductModal] related fetch error', e)
+        console.error(t('productModal.loadRelatedError'), e)
     } finally {
         relatedLoading.value = false
     }
@@ -96,6 +97,25 @@ const StarRating = defineComponent({
     },
 })
 
+function getTranslation(item, loc, field) {
+    if (!item?.translations) return ''
+    const tr = item.translations
+    const entry = Array.isArray(tr) ? tr.find(x => x.locale === loc) : tr[loc]
+    return entry?.[field] ?? ''
+}
+
+function displayName(item) {
+    return getTranslation(item, locale.value, 'name')
+        || getTranslation(item, 'en', 'name')
+        || item?.name || ''
+}
+
+function displayDesc(item) {
+    return getTranslation(item, locale.value, 'description')
+        || getTranslation(item, 'en', 'description')
+        || item?.description || ''
+}
+
 // ─── Gradients fallback ───────────────────────────────────────
 const gradients = [
     'linear-gradient(135deg,#C9A96E 0%,#9B7B3E 100%)',
@@ -112,7 +132,9 @@ async function rateProduct(product, score) {
         const res = await api(`/products/${product.id}/rate`, { method: 'POST', body: { score } })
         userRatings.value[product.id] = res.score
         activeProduct.value = { ...activeProduct.value, avg_rating: res.avg_rating }
-    } catch (e) { console.error(e) }
+    } catch (e) {
+        console.error(t('productModal.rateError'), e)
+    }
 }
 </script>
 
@@ -120,12 +142,12 @@ async function rateProduct(product, score) {
     <Teleport to="body">
         <Transition name="pm-fade">
             <div v-if="modelValue && activeProduct" class="pm-overlay" @click="onOverlayClick" role="dialog"
-                aria-modal="true" :aria-label="activeProduct.name">
+                aria-modal="true" :aria-label="displayName(activeProduct)">
 
                 <div class="pm-modal">
 
                     <!-- Close -->
-                    <button class="pm-close" @click="close" aria-label="Close modal">&#215;</button>
+                    <button class="pm-close" @click="close" :aria-label="$t('productModal.closeModal')">&#215;</button>
 
                     <!-- ── Top: image + info ── -->
                     <div class="pm-top">
@@ -134,8 +156,8 @@ async function rateProduct(product, score) {
                         <div class="pm-img-col" :style="{ background: cardGradient(activeProduct.id) }"
                             @click="lightboxOpen = true">
                             <img v-if="activeProduct.image_url" :src="resolveUrl(activeProduct.image_url)"
-                                :alt="activeProduct.name" class="pm-img" draggable="false" />
-                            <div class="pm-zoom-hint">Click to zoom</div>
+                                :alt="displayName(activeProduct)" class="pm-img" draggable="false" />
+                            <div class="pm-zoom-hint">{{ $t('productModal.clickToZoom') }}</div>
                         </div>
 
                         <!-- Info column -->
@@ -145,9 +167,9 @@ async function rateProduct(product, score) {
                                 {{ activeProduct.category.name }}
                             </span>
 
-                            <h2 class="pm-name">{{ activeProduct.name }}</h2>
+                            <h2 class="pm-name">{{ displayName(activeProduct) }}</h2>
 
-                            <p class="pm-desc">{{ activeProduct.description }}</p>
+                            <p class="pm-desc">{{ displayDesc(activeProduct) }}</p>
 
                             <!-- Rating -->
                             <div class="pm-rating-row">
@@ -163,10 +185,11 @@ async function rateProduct(product, score) {
                             <!-- Meta -->
                             <div class="pm-meta-row">
                                 <span class="pm-meta-item">
-                                    ID: <strong>#{{ activeProduct.id }}</strong>
+                                    {{ $t('productModal.metaId') }}: <strong>#{{ activeProduct.id }}</strong>
                                 </span>
                                 <span v-if="activeProduct.category?.name" class="pm-meta-item">
-                                    Category: <strong>{{ activeProduct.category.name }}</strong>
+                                    {{ $t('productModal.metaCategory') }}: <strong>{{ activeProduct.category.name
+                                    }}</strong>
                                 </span>
                             </div>
 
@@ -176,12 +199,14 @@ async function rateProduct(product, score) {
 
                                 <button v-if="!cartItem(activeProduct.id)" @click="addItem(activeProduct)"
                                     class="pm-add-btn">
-                                    + Add to cart
+                                    {{ $t('productModal.addToCart') }}
                                 </button>
                                 <div v-else class="pm-qty-ctrl">
-                                    <button class="pm-qty-btn" @click="decreaseQty(activeProduct.id)">−</button>
+                                    <button class="pm-qty-btn" @click="decreaseQty(activeProduct.id)"
+                                        :aria-label="$t('home.decreaseQty')">−</button>
                                     <span class="pm-qty-num">{{ cartItem(activeProduct.id).quantity }}</span>
-                                    <button class="pm-qty-btn" @click="increaseQty(activeProduct.id)">+</button>
+                                    <button class="pm-qty-btn" @click="increaseQty(activeProduct.id)"
+                                        :aria-label="$t('home.increaseQty')">+</button>
                                 </div>
                             </div>
                         </div>
@@ -189,7 +214,7 @@ async function rateProduct(product, score) {
 
                     <!-- ── Related products ── -->
                     <div class="pm-related">
-                        <p class="pm-related-title">More from this category</p>
+                        <p class="pm-related-title">{{ $t('productModal.relatedTitle') }}</p>
 
                         <!-- Skeleton -->
                         <div v-if="relatedLoading" class="pm-rel-track">
@@ -207,24 +232,28 @@ async function rateProduct(product, score) {
                             <div v-for="rp in relatedProducts" :key="rp.id" class="pm-rel-card"
                                 @click="selectRelated(rp)">
                                 <div class="pm-rel-img" :style="{ background: cardGradient(rp.id) }">
-                                    <img v-if="rp.image_url" :src="resolveUrl(rp.image_url)" :alt="rp.name"
+                                    <img v-if="rp.image_url" :src="resolveUrl(rp.image_url)" :alt="displayName(rp)"
                                         class="pm-rel-img-el" draggable="false" loading="lazy" />
                                 </div>
                                 <div class="pm-rel-body">
-                                    <p class="pm-rel-name">{{ rp.name }}</p>
+                                    <p class="pm-rel-name">{{ displayName(rp) }}</p>
                                     <p class="pm-rel-price">${{ Number(rp.price).toFixed(2) }}</p>
-                                    <button v-if="!cartItem(rp.id)" @click.stop="addItem(rp)" class="pm-rel-add">+
-                                        Add</button>
+                                    <button v-if="!cartItem(rp.id)" @click.stop="addItem(rp)" class="pm-rel-add"
+                                        :aria-label="$t('productModal.relatedAdd') + ' ' + displayName(rp)">
+                                        {{ $t('productModal.relatedAdd') }}
+                                    </button>
                                     <div v-else class="pm-rel-qty">
-                                        <button @click.stop="decreaseQty(rp.id)" class="pm-rel-qty-btn">−</button>
+                                        <button @click.stop="decreaseQty(rp.id)" class="pm-rel-qty-btn"
+                                            :aria-label="$t('home.decreaseQty')">−</button>
                                         <span>{{ cartItem(rp.id).quantity }}</span>
-                                        <button @click.stop="increaseQty(rp.id)" class="pm-rel-qty-btn">+</button>
+                                        <button @click.stop="increaseQty(rp.id)" class="pm-rel-qty-btn"
+                                            :aria-label="$t('home.increaseQty')">+</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <p v-else class="pm-related-empty">No other products in this category.</p>
+                        <p v-else class="pm-related-empty">{{ $t('productModal.relatedEmpty') }}</p>
                     </div>
                 </div>
 
@@ -232,8 +261,8 @@ async function rateProduct(product, score) {
                 <Transition name="pm-fade">
                     <div v-if="lightboxOpen" class="pm-lightbox" @click="lightboxOpen = false">
                         <button class="pm-lightbox-close" @click="lightboxOpen = false"
-                            aria-label="Close lightbox">&#215;</button>
-                        <img :src="resolveUrl(activeProduct.image_url)" :alt="activeProduct.name"
+                            :aria-label="$t('productModal.closeLightbox')">&#215;</button>
+                        <img :src="resolveUrl(activeProduct.image_url)" :alt="displayName(activeProduct)"
                             class="pm-lightbox-img" />
                     </div>
                 </Transition>

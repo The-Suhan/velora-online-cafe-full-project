@@ -16,11 +16,32 @@ const resolveUrl = (url) => {
     if (url.startsWith('http')) return url
     return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
 }
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 
-watch(locale, () => {
-    loadAll()
-})
+function getTranslation(item, loc, field) {
+    if (!item?.translations) return ''
+    const tr = item.translations
+    const entry = Array.isArray(tr) ? tr.find(x => x.locale === loc) : tr[loc]
+    return entry?.[field] ?? ''
+}
+
+function displayName(item) {
+    return getTranslation(item, locale.value, 'name')
+        || getTranslation(item, 'en', 'name')
+        || item?.name || ''
+}
+
+function displayDesc(item) {
+    return getTranslation(item, locale.value, 'description')
+        || getTranslation(item, 'en', 'description')
+        || item?.description || ''
+}
+
+function displayCatName(cat) {
+    return getTranslation(cat, locale.value, 'name')
+        || getTranslation(cat, 'en', 'name')
+        || cat?.name || ''
+}
 
 definePageMeta({ layout: 'client', middleware: 'auth' })
 
@@ -51,10 +72,18 @@ const { searchQuery } = useSearch()
 // ─── State ────────────────────────────────────────────────────
 const api = useApi()
 const loadingCats = ref(true)
-const loading = ref(true)
+const { show: showLoading, hide: hideLoading } = useAppLoading()
 
-const allCategoryRows = ref([])
-const categoryRows = ref([])
+const allCategoryRows = useState('home-category-rows', () => [])
+const categoryRows = useState('home-category-rows-filtered', () => [])
+
+const loading = ref(allCategoryRows.value.length === 0)
+
+function refreshData() {
+    allCategoryRows.value = []
+    categoryRows.value = []
+    loadAll()
+}
 
 watch(searchQuery, (q) => {
     const term = q.trim().toLowerCase()
@@ -66,8 +95,8 @@ watch(searchQuery, (q) => {
         .map(cat => ({
             ...cat,
             products: cat.products.filter(p =>
-                p.name?.toLowerCase().includes(term) ||
-                p.description?.toLowerCase().includes(term)
+                displayName(p).toLowerCase().includes(term) ||
+                displayDesc(p).toLowerCase().includes(term)
             )
         }))
         .filter(cat => cat.products.length > 0)
@@ -178,9 +207,10 @@ async function loadAll() {
         allCategoryRows.value = filtered
         categoryRows.value = filtered
     } catch (e) {
-        console.error('[loadAll] error:', e)
+        console.error(t('home.loadError'), e)
     } finally {
         loading.value = false
+        hideLoading()
     }
 }
 
@@ -192,7 +222,9 @@ async function rateProduct(product, score) {
             const p = row.products.find(p => p.id === product.id)
             if (p) p.avg_rating = res.avg_rating
         }
-    } catch (e) { console.error(e) }
+    } catch (e) {
+        console.error(t('productModal.rateError'), e)
+    }
 }
 
 function cartItem(productId) { return getItem(productId) }
@@ -205,7 +237,14 @@ const gradients = [
 ]
 function cardGradient(id) { return gradients[id % gradients.length] }
 
-onMounted(loadAll)
+onMounted(() => {
+    if (allCategoryRows.value.length === 0) {
+        showLoading()
+        loadAll()
+    } else {
+        hideLoading()
+    }
+})
 </script>
 
 <template>
@@ -240,7 +279,7 @@ onMounted(loadAll)
                 <!-- Section header -->
                 <div class="section-head">
                     <div class="section-head-left">
-                        <h2 class="section-title">{{ cat.name }}</h2>
+                        <h2 class="section-title">{{ displayCatName(cat) }}</h2>
                         <span class="section-count">{{ $t('home.itemsCount', { n: cat.products.length }) }}</span>
                     </div>
                     <NuxtLink :to="`/categories/${cat.id}`" class="see-all-btn">
@@ -284,8 +323,8 @@ onMounted(loadAll)
 
                             <!-- Body -->
                             <div class="card-body">
-                                <h3 class="card-title">{{ product.name }}</h3>
-                                <p class="card-desc">{{ product.description }}</p>
+                                <h3 class="card-title">{{ displayName(product) }}</h3>
+                                <p class="card-desc">{{ displayDesc(product) }}</p>
 
                                 <div class="card-rating">
                                     <StarRating :score="userRatings[product.id] ?? product.avg_rating"
@@ -853,7 +892,6 @@ onMounted(loadAll)
     }
 }
 
-/* Mobile: arrows gizle */
 @media (max-width: 768px) {
     .carousel-arrow {
         display: none;
@@ -882,32 +920,31 @@ onMounted(loadAll)
     }
 
     .card-footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.4rem;
     }
 
     .card-actions {
-        width: 100%;
-        justify-content: space-between;
+        display: flex;
+        flex-direction: column;   
+        align-items: stretch;
+        gap: 4px;
     }
 
     .detail-btn,
     .add-btn {
-        flex: 1;
+        width: 100%;
         text-align: center;
-        padding: 0.45rem 0.5rem;
+        padding: 0.4rem 0.5rem;
         font-size: 0.62rem;
+        box-sizing: border-box;
     }
 
     .qty-ctrl {
-        flex: 1;
-        justify-content: space-between;
-    }
-
-    .qty-btn {
-        width: 32px;
-        height: 32px;
+        width: 100%;
     }
 }
 
@@ -929,15 +966,22 @@ onMounted(loadAll)
         font-size: 1.05rem;
     }
 
-    .add-btn {
-        padding: 0.35rem 0.75rem;
-        font-size: 0.64rem;
+    /* ↓ Bu blokları kaldır veya şununla değiştir: */
+    .card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
     }
 
-    .detail-btn,
-    .add-btn {
-        padding: 0.4rem 0.4rem;
-        font-size: 0.6rem;
+    .card-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .qty-ctrl {
+        flex: 1;
+        justify-content: space-between;
+        width: 100%;
     }
 
     .qty-btn {

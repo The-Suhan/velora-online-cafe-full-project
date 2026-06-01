@@ -4,7 +4,7 @@
 
             <!-- ── Page Title ── -->
             <div class="bag-header">
-                <h1 class="bag-title">My Bag</h1>
+                <h1 class="bag-title">{{ $t('bag.title') }}</h1>
                 <button v-if="items.length > 0" class="clear-btn" @click="clearCart">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -13,7 +13,7 @@
                         <path d="M10 11v6M14 11v6" />
                         <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
                     </svg>
-                    Clear bag
+                    {{ $t('bag.clearBag') }}
                 </button>
             </div>
 
@@ -28,9 +28,9 @@
                             <path d="M16 10a4 4 0 0 1-8 0" />
                         </svg>
                     </div>
-                    <p class="empty-title">Your bag is empty</p>
-                    <p class="empty-sub">Add something delicious from the menu.</p>
-                    <NuxtLink to="/" class="browse-btn">Browse Menu</NuxtLink>
+                    <p class="empty-title">{{ $t('bag.emptyTitle') }}</p>
+                    <p class="empty-sub">{{ $t('bag.emptySub') }}</p>
+                    <NuxtLink to="/" class="browse-btn">{{ $t('bag.browseMenu') }}</NuxtLink>
                 </div>
 
                 <!-- ── Layout: Items + Summary ── -->
@@ -44,7 +44,7 @@
                                 <!-- Thumbnail -->
                                 <div class="item-thumb">
                                     <img v-if="item.image_url" :src="resolveUrl(item.image_url)"
-                                        :alt="item.product_name" class="thumb-img" />
+                                        :alt="getProductName(item)" class="thumb-img" />
                                     <div v-else class="thumb-placeholder">
                                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C8A96A"
                                             stroke-width="1.4" stroke-linecap="round">
@@ -59,20 +59,23 @@
 
                                 <!-- Info -->
                                 <div class="item-info">
-                                    <p class="item-name">{{ item.product_name }}</p>
-                                    <p class="item-unit-price">${{ Number(item.price).toFixed(2) }} / item</p>
+                                    <p class="item-name">{{ getProductName(item) }}</p>
+                                    <p class="item-unit-price">${{ Number(item.price).toFixed(2) }} / {{
+                                        $t('bag.perItem') }}</p>
                                 </div>
 
                                 <!-- Qty controls -->
                                 <div class="item-qty">
-                                    <button class="qty-btn" @click="decreaseQty(item.product_id)" aria-label="Decrease">
+                                    <button class="qty-btn" @click="decreaseQty(item.product_id)"
+                                        :aria-label="$t('home.decreaseQty')">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                                             <line x1="5" y1="12" x2="19" y2="12" />
                                         </svg>
                                     </button>
                                     <span class="qty-num">{{ item.quantity }}</span>
-                                    <button class="qty-btn" @click="increaseQty(item.product_id)" aria-label="Increase">
+                                    <button class="qty-btn" @click="increaseQty(item.product_id)"
+                                        :aria-label="$t('home.increaseQty')">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                                             <line x1="12" y1="5" x2="12" y2="19" />
@@ -86,7 +89,8 @@
                                     <span class="item-subtotal">
                                         ${{ (Number(item.price) * item.quantity).toFixed(2) }}
                                     </span>
-                                    <button class="delete-btn" @click="removeItem(item.product_id)" aria-label="Remove">
+                                    <button class="delete-btn" @click="removeItem(item.product_id)"
+                                        :aria-label="$t('bag.removeItem')">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2" stroke-linecap="round">
                                             <line x1="18" y1="6" x2="6" y2="18" />
@@ -102,17 +106,17 @@
                     <!-- RIGHT: Order summary -->
                     <aside class="bag-summary">
                         <div class="summary-card">
-                            <h2 class="summary-title">Order Summary</h2>
+                            <h2 class="summary-title">{{ $t('bag.orderSummary') }}</h2>
 
                             <!-- Delivery toggle -->
                             <div class="delivery-toggle">
                                 <button :class="['toggle-btn', { 'toggle-btn--active': deliveryType === 'pickup' }]"
                                     @click="deliveryType = 'pickup'">
-                                    Pickup
+                                    {{ $t('bag.pickup') }}
                                 </button>
                                 <button :class="['toggle-btn', { 'toggle-btn--active': deliveryType === 'delivery' }]"
                                     @click="deliveryType = 'delivery'">
-                                    Delivery
+                                    {{ $t('bag.delivery') }}
                                 </button>
                             </div>
 
@@ -120,16 +124,16 @@
                             <Transition name="expand">
                                 <div v-if="deliveryType === 'delivery'" class="delivery-fields">
                                     <div class="field-group">
-                                        <label class="field-label">Address</label>
+                                        <label class="field-label">{{ $t('bag.address') }}</label>
                                         <input v-model="address" class="field-input" type="text"
-                                            placeholder="Enter delivery address" />
+                                            :placeholder="$t('bag.addressPlaceholder')" />
                                     </div>
                                 </div>
                             </Transition>
 
                             <!-- Phone (both pickup & delivery) -->
                             <div class="field-group">
-                                <label class="field-label">Phone</label>
+                                <label class="field-label">{{ $t('bag.phone') }}</label>
                                 <div class="phone-input-wrap" :class="{ 'phone-input-wrap--error': phoneError }">
                                     <span class="phone-prefix">+993</span>
                                     <div class="phone-divider" />
@@ -140,29 +144,31 @@
                                 <Transition name="fade">
                                     <p v-if="phoneError" class="field-error">{{ phoneError }}</p>
                                 </Transition>
-                                <p class="field-hint">Operators: 71, 65, 64, 63, 62, 61</p>
+                                <p class="field-hint">{{ $t('bag.phoneHint') }}</p>
                             </div>
 
                             <!-- Note -->
                             <div class="field-group">
-                                <label class="field-label">Note <span class="optional">(optional)</span></label>
+                                <label class="field-label">
+                                    {{ $t('bag.note') }} <span class="optional">({{ $t('bag.optional') }})</span>
+                                </label>
                                 <textarea v-model="note" class="field-input field-textarea" rows="2"
-                                    placeholder="Any special requests?" />
+                                    :placeholder="$t('bag.notePlaceholder')" />
                             </div>
 
                             <!-- Price breakdown -->
                             <div class="price-rows">
                                 <div class="price-row">
-                                    <span>Subtotal</span>
+                                    <span>{{ $t('bag.subtotal') }}</span>
                                     <span>${{ totalPrice.toFixed(2) }}</span>
                                 </div>
                                 <div v-if="deliveryType === 'delivery'" class="price-row">
-                                    <span>Delivery fee</span>
+                                    <span>{{ $t('bag.deliveryFee') }}</span>
                                     <span class="accent">${{ deliveryFee.toFixed(2) }}</span>
                                 </div>
                                 <div class="price-divider" />
                                 <div class="price-row price-row--total">
-                                    <span>Total</span>
+                                    <span>{{ $t('bag.total') }}</span>
                                     <span>${{ grandTotal.toFixed(2) }}</span>
                                 </div>
                             </div>
@@ -175,9 +181,9 @@
                                             stroke="currentColor" stroke-width="2.5">
                                             <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                                         </svg>
-                                        Placing order…
+                                        {{ $t('bag.placingOrder') }}
                                     </span>
-                                    <span v-else key="idle" class="btn-inner">Place Order</span>
+                                    <span v-else key="idle" class="btn-inner">{{ $t('bag.placeOrder') }}</span>
                                 </Transition>
                             </button>
 
@@ -204,13 +210,14 @@
                             <polyline points="22 4 12 14.01 9 11.01" />
                         </svg>
                     </div>
-                    <h3 class="success-title">Order Placed!</h3>
+                    <h3 class="success-title">{{ $t('bag.successTitle') }}</h3>
                     <p class="success-sub">
-                        Order <strong>{{ lastOrderNo }}</strong> has been received. We'll have it ready for you soon.
+                        {{ $t('bag.successSub', { order: lastOrderNo }) }}
                     </p>
                     <div class="success-actions">
-                        <NuxtLink to="/profile" class="success-btn success-btn--ghost">View Orders</NuxtLink>
-                        <NuxtLink to="/" class="success-btn success-btn--primary">Back to Menu</NuxtLink>
+                        <NuxtLink to="/profile" class="success-btn success-btn--ghost">{{ $t('bag.viewOrders') }}
+                        </NuxtLink>
+                        <NuxtLink to="/" class="success-btn success-btn--primary">{{ $t('bag.backToMenu') }}</NuxtLink>
                     </div>
                 </div>
             </div>
@@ -230,6 +237,17 @@ definePageMeta({
 
 useHead({ title: 'My Bag — Velaro' })
 
+const { locale, t } = useI18n()
+
+function getProductName(item) {
+    const tr = item.product_translations
+    if (!tr) return item.product_name ?? ''
+    const entry = Array.isArray(tr)
+        ? tr.find(x => x.locale === locale.value)
+        : tr[locale.value]
+    return entry?.name ?? item.product_name ?? ''
+}
+
 // ─── Cart ─────────────────────────────────────────────────────
 const { items, totalPrice, increaseQty, decreaseQty, removeItem, clearCart } = useCart()
 
@@ -245,25 +263,20 @@ function resolveUrl(url) {
 }
 
 // ─── Phone validation ─────────────────────────────────────────
-// Allowed operator codes
 const VALID_OPERATORS = ['71', '65', '64', '63', '62', '61']
 
-// Raw digits only (no prefix, no spaces) — max 8 digits: 2 operator + 6 number
 const phoneRaw = ref('')
 const phoneError = ref('')
 const phoneInputRef = ref(null)
 
-// Display string shown in the input: "XX XXXXXX" formatted as user types
 const phoneDisplay = computed(() => {
     const d = phoneRaw.value
     if (d.length <= 2) return d
     return d.slice(0, 2) + ' ' + d.slice(2)
 })
 
-// Hint placeholder showing expected format based on allowed operators
 const phonePlaceholder = computed(() => '65 XXXXXX')
 
-// Full formatted phone for POST payload: "+993 XX XXXXXX"
 const phoneFormatted = computed(() => {
     if (phoneRaw.value.length !== 8) return ''
     return `+993 ${phoneRaw.value.slice(0, 2)} ${phoneRaw.value.slice(2)}`
@@ -272,16 +285,16 @@ const phoneFormatted = computed(() => {
 function validatePhone() {
     const d = phoneRaw.value
     if (d.length === 0) {
-        phoneError.value = 'Phone number is required.'
+        phoneError.value = t('bag.phoneRequired')
         return false
     }
     if (d.length < 8) {
-        phoneError.value = 'Enter a complete phone number.'
+        phoneError.value = t('bag.phoneIncomplete')
         return false
     }
     const op = d.slice(0, 2)
     if (!VALID_OPERATORS.includes(op)) {
-        phoneError.value = `Operator must be one of: ${VALID_OPERATORS.join(', ')}.`
+        phoneError.value = t('bag.phoneInvalidOperator', { operators: VALID_OPERATORS.join(', ') })
         return false
     }
     phoneError.value = ''
@@ -289,31 +302,24 @@ function validatePhone() {
 }
 
 function handlePhoneInput(e) {
-    // Strip everything except digits
     const onlyDigits = e.target.value.replace(/\D/g, '')
-
-    // Enforce max 8 digits
     const trimmed = onlyDigits.slice(0, 8)
 
-    // If we have 2+ digits, validate operator on the fly
     if (trimmed.length >= 2) {
         const op = trimmed.slice(0, 2)
         if (!VALID_OPERATORS.includes(op)) {
-            // If operator is being typed (length === 2), block invalid combos
-            // Allow first digit if it could still lead to valid operator
             const firstDigit = trimmed[0]
             const validFirstDigits = [...new Set(VALID_OPERATORS.map(o => o[0]))]
             if (!validFirstDigits.includes(firstDigit)) {
                 phoneRaw.value = ''
                 e.target.value = ''
-                phoneError.value = `Operator must be one of: ${VALID_OPERATORS.join(', ')}.`
+                phoneError.value = t('bag.phoneInvalidOperator', { operators: VALID_OPERATORS.join(', ') })
                 return
             }
-            // First digit OK but second locks in invalid operator — revert second digit
             if (trimmed.length >= 2) {
                 phoneRaw.value = trimmed.slice(0, 1)
                 e.target.value = trimmed.slice(0, 1)
-                phoneError.value = `Operator must be one of: ${VALID_OPERATORS.join(', ')}.`
+                phoneError.value = t('bag.phoneInvalidOperator', { operators: VALID_OPERATORS.join(', ') })
                 return
             }
         } else {
@@ -324,47 +330,40 @@ function handlePhoneInput(e) {
     }
 
     phoneRaw.value = trimmed
-    // Restore formatted display value (cursor position will naturally move to end)
     e.target.value = phoneDisplay.value
 }
 
 function handlePhoneKeydown(e) {
-    // Allow: backspace, delete, tab, arrow keys, home, end
     const allowed = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End']
     if (allowed.includes(e.key)) return
 
-    // Block non-digit keys
     if (!/^\d$/.test(e.key)) {
         e.preventDefault()
         return
     }
 
-    // Prevent exceeding 8 digits
     if (phoneRaw.value.length >= 8) {
         e.preventDefault()
         return
     }
 
-    // Validate operator digit by digit
     const currentRaw = phoneRaw.value
     const nextRaw = currentRaw + e.key
 
     if (nextRaw.length === 1) {
-        // First digit: must be a valid leading digit (6 or 7)
         const validFirstDigits = [...new Set(VALID_OPERATORS.map(o => o[0]))]
         if (!validFirstDigits.includes(e.key)) {
             e.preventDefault()
-            phoneError.value = `Operator must be one of: ${VALID_OPERATORS.join(', ')}.`
+            phoneError.value = t('bag.phoneInvalidOperator', { operators: VALID_OPERATORS.join(', ') })
             return
         }
     }
 
     if (nextRaw.length === 2) {
-        // Second digit: must form a valid operator
         const potentialOp = nextRaw.slice(0, 2)
         if (!VALID_OPERATORS.includes(potentialOp)) {
             e.preventDefault()
-            phoneError.value = `Operator must be one of: ${VALID_OPERATORS.join(', ')}.`
+            phoneError.value = t('bag.phoneInvalidOperator', { operators: VALID_OPERATORS.join(', ') })
             return
         }
     }
@@ -411,7 +410,6 @@ async function placeOrder() {
             delivery_type: deliveryType.value,
             note: note.value.trim() || null,
             address: deliveryType.value === 'delivery' ? address.value.trim() : null,
-            // Always send formatted phone: "+993 XX XXXXXX"
             phone: phoneFormatted.value,
         }
 
@@ -419,7 +417,6 @@ async function placeOrder() {
 
         lastOrderNo.value = res.order?.order_no ?? '#ORD'
         clearCart()
-        // reset form
         note.value = ''
         address.value = ''
         phoneRaw.value = ''
@@ -427,7 +424,7 @@ async function placeOrder() {
         deliveryType.value = 'pickup'
         orderSuccess.value = true
     } catch (e) {
-        orderError.value = e?.data?.message ?? 'Something went wrong. Please try again.'
+        orderError.value = e?.data?.message ?? t('bag.orderError')
     } finally {
         ordering.value = false
     }

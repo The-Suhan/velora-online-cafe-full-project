@@ -133,6 +133,20 @@ async function loadData() {
         loading.value = false
     }
 }
+const { locale } = useI18n()
+
+function getTranslation(item, loc, field) {
+    if (!item?.translations) return ''
+    const tr = item.translations
+    const entry = Array.isArray(tr) ? tr.find(x => x.locale === loc) : tr[loc]
+    return entry?.[field] ?? ''
+}
+function displayName(item) {
+    return getTranslation(item, locale.value, 'name') || getTranslation(item, 'en', 'name') || item?.name || ''
+}
+function displayDesc(item) {
+    return getTranslation(item, locale.value, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
+}
 
 onMounted(loadData)
 watch(categoryId, loadData)
@@ -158,12 +172,12 @@ watch(categoryId, loadData)
                             <path d="M13 16l-5-6 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
                                 stroke-linejoin="round" />
                         </svg>
-                        Back
+                        {{ $t('categoriesPage.back') }}
                     </button>
                 </nav>
-                <h1 class="page-title">{{ category?.name ?? 'Products' }}</h1>
+                <h1 class="page-title">{{ displayName(category) ?? 'Products' }}</h1>
                 <p class="page-subtitle">
-                    {{ products.length }} item{{ products.length !== 1 ? 's' : '' }}
+                    {{ $t('home.ProductsitemsCount', products.length, { named: { n: products.length } }) }}
                 </p>
             </div>
         </div>
@@ -194,7 +208,7 @@ watch(categoryId, loadData)
 
                 <!-- Image -->
                 <div class="card-image" :style="{ background: cardGradient(product.id) }">
-                    <img v-if="product.image_url" :src="resolveUrl(product.image_url)" :alt="product.name"
+                    <img v-if="product.image_url" :src="resolveUrl(product.image_url)" :alt="displayName(product)"
                         class="card-img" draggable="false" loading="lazy" />
                     <span v-if="product.category?.name" class="card-badge">
                         {{ product.category.name }}
@@ -203,8 +217,8 @@ watch(categoryId, loadData)
 
                 <!-- Body -->
                 <div class="card-body">
-                    <h3 class="card-title">{{ product.name }}</h3>
-                    <p class="card-desc">{{ product.description }}</p>
+                    <h3 class="card-title">{{ displayName(product) }}</h3>
+                    <p class="card-desc">{{ displayDesc(product) }}</p>
 
                     <div class="card-rating">
                         <StarRating :score="userRatings[product.id] ?? product.avg_rating ?? 0" :interactive="true"
@@ -218,10 +232,10 @@ watch(categoryId, loadData)
                         <span class="card-price">${{ Number(product.price).toFixed(2) }}</span>
 
                         <div class="card-actions">
-                            <button class="detail-btn" @click.stop="openModal(product)">Detail</button>
+                            <button class="detail-btn" @click.stop="openModal(product)">{{ $t('home.detail') }}</button>
 
                             <button v-if="!cartItem(product.id)" @click.stop="addItem(product)" class="add-btn">
-                                + Add
+                                {{ $t('home.addToCart') }}
                             </button>
                             <div v-else class="qty-ctrl">
                                 <button class="qty-btn" @click.stop="decreaseQty(product.id)">−</button>
@@ -241,7 +255,7 @@ watch(categoryId, loadData)
                 <circle cx="11" cy="11" r="8" />
                 <path d="M21 21l-4.35-4.35" />
             </svg>
-            <p>No products found.</p>
+            <p>{{ $t('home.noProducts') }}</p>
         </div>
 
     </main>

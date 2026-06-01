@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="page-header">
       <div class="header-inner">
-        <h1 class="page-title">Kategoriler</h1>
+        <h1 class="page-title">{{ $t('admin.categories.title') }}</h1>
       </div>
     </div>
 
@@ -18,46 +18,37 @@
     <!-- Error / Empty State -->
     <div v-else-if="!categories || categories.length === 0" class="empty-state">
       <svg class="empty-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="40" cy="40" r="36" stroke="#C8A96A" stroke-width="2.5" stroke-dasharray="6 4"/>
-        <path d="M28 30 Q40 18 52 30" stroke="#C8A96A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <circle cx="33" cy="38" r="3" fill="#C8A96A"/>
-        <circle cx="47" cy="38" r="3" fill="#C8A96A"/>
-        <path d="M33 54 Q40 48 47 54" stroke="#C8A96A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <circle cx="40" cy="40" r="36" stroke="#C8A96A" stroke-width="2.5" stroke-dasharray="6 4" />
+        <path d="M28 30 Q40 18 52 30" stroke="#C8A96A" stroke-width="2.5" stroke-linecap="round" fill="none" />
+        <circle cx="33" cy="38" r="3" fill="#C8A96A" />
+        <circle cx="47" cy="38" r="3" fill="#C8A96A" />
+        <path d="M33 54 Q40 48 47 54" stroke="#C8A96A" stroke-width="2.5" stroke-linecap="round" fill="none" />
       </svg>
-      <p class="empty-title">Kategori bulunamadı</p>
-      <p class="empty-sub">Henüz aktif kategori yok.</p>
-      <button class="retry-btn" @click="load">Tekrar Dene</button>
+      <p class="empty-title">{{ $t('categories.emptyTitle') }}</p>
+      <p class="empty-sub">{{ $t('categories.emptySub') }}</p>
+      <button class="retry-btn" @click="load">{{ $t('categories.retry') }}</button>
     </div>
 
     <!-- Categories Grid -->
     <div v-else class="grid-container">
-      <NuxtLink
-        v-for="(category, index) in categories"
-        :key="category.id"
-        :to="`/categories/${category.id}`"
-        class="category-card"
-        :style="{ '--delay': `${index * 60}ms` }"
-      >
+      <NuxtLink v-for="(category, index) in categories" :key="category.id" :to="`/categories/${category.id}`"
+        class="category-card" :style="{ '--delay': `${index * 60}ms` }">
         <div class="card-image-wrap">
-          <img
-            v-if="category.image_url"
-            :src="resolveUrl(category.image_url)"
-            :alt="category.name"
-            class="card-image"
-            loading="lazy"
-          />
+          <img v-if="category.image_url" :src="resolveUrl(category.image_url)" :alt="displayName(category)"
+            class="card-image" loading="lazy" />
           <div v-else class="card-image-placeholder">
             <svg viewBox="0 0 40 40" fill="none" class="placeholder-icon">
-              <path d="M8 28 Q20 12 32 28" stroke="#C8A96A" stroke-width="2" stroke-linecap="round" fill="none"/>
-              <circle cx="20" cy="18" r="4" fill="#C8A96A" opacity="0.5"/>
+              <path d="M8 28 Q20 12 32 28" stroke="#C8A96A" stroke-width="2" stroke-linecap="round" fill="none" />
+              <circle cx="20" cy="18" r="4" fill="#C8A96A" opacity="0.5" />
             </svg>
           </div>
           <div class="card-overlay"></div>
         </div>
         <div class="card-body">
-          <h3 class="card-title">{{ category.name }}</h3>
+          <h3 class="card-title">{{ displayName(category) }}</h3>
           <svg class="card-arrow" viewBox="0 0 20 20" fill="none">
-            <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round" />
           </svg>
         </div>
       </NuxtLink>
@@ -75,6 +66,18 @@ const resolveUrl = (url) => {
   if (!url) return null
   if (url.startsWith('http')) return url
   return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
+const { locale } = useI18n()
+
+function getTranslation(item, loc, field) {
+  if (!item?.translations) return ''
+  const tr = item.translations
+  const entry = Array.isArray(tr) ? tr.find(x => x.locale === loc) : tr[loc]
+  return entry?.[field] ?? ''
+}
+function displayName(item) {
+  return getTranslation(item, locale.value, 'name') || getTranslation(item, 'en', 'name') || item?.name || ''
 }
 
 const api = useApi()
@@ -116,7 +119,7 @@ onMounted(load)
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(200,169,106,0.18) 0%, transparent 70%);
+  background: radial-gradient(ellipse at 80% 50%, rgba(200, 169, 106, 0.18) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -147,10 +150,16 @@ onMounted(load)
 }
 
 @media (min-width: 640px) {
-  .grid-container { grid-template-columns: repeat(3, 1fr); }
+  .grid-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
+
 @media (min-width: 1024px) {
-  .grid-container { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+  .grid-container {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
 }
 
 /* ── Card ── */
@@ -162,21 +171,28 @@ onMounted(load)
   color: inherit;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 8px rgba(44,26,20,0.07);
+  box-shadow: 0 2px 8px rgba(44, 26, 20, 0.07);
   transition: transform 0.22s ease, box-shadow 0.22s ease;
   animation: fadeUp 0.4s ease both;
   animation-delay: var(--delay, 0ms);
-  border: 1.5px solid rgba(44,26,20,0.06);
+  border: 1.5px solid rgba(44, 26, 20, 0.06);
 }
 
 .category-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(44,26,20,0.14);
+  box-shadow: 0 8px 24px rgba(44, 26, 20, 0.14);
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .card-image-wrap {
@@ -215,7 +231,7 @@ onMounted(load)
 .card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(44,26,20,0.08) 0%, transparent 60%);
+  background: linear-gradient(to top, rgba(44, 26, 20, 0.08) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -223,7 +239,7 @@ onMounted(load)
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(200,169,106,0.92);
+  background: rgba(200, 169, 106, 0.92);
   color: #2C1A14;
   font-size: 0.65rem;
   font-weight: 700;
@@ -263,7 +279,10 @@ onMounted(load)
 }
 
 /* ── Skeleton ── */
-.skeleton { pointer-events: none; animation: none; }
+.skeleton {
+  pointer-events: none;
+  animation: none;
+}
 
 .skeleton-img {
   aspect-ratio: 4 / 3;
@@ -282,8 +301,13 @@ onMounted(load)
 }
 
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* ── Empty State ── */

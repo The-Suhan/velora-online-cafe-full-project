@@ -187,6 +187,12 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
 
 const { t, locale } = useI18n()
 const { fetchDashboard, fetchOrdersChart } = useAdmin()
+const { show: showLoading, hide: hideLoading } = useAppLoading()
+
+onMounted(() => {
+    showLoading()
+    setTimeout(() => hideLoading(), 2200)
+})
 
 // ── State ──────────────────────────────────────────────────
 const loading = ref(true)

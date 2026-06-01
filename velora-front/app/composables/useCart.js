@@ -33,7 +33,8 @@ export function useCart() {
         } else {
             list.push({
                 product_id: product.id,
-                product_name: product.name,
+                product_name: product.name,           
+                product_translations: product.translations ?? null, 
                 image_url: product.image_url ?? null,
                 price: Number(product.price),
                 quantity: 1,
@@ -73,7 +74,7 @@ export function useCart() {
     function getItem(productId) {
         return items.value.find((i) => i.product_id === productId) ?? null
     }
-    
+
 
     return {
         items,

@@ -314,7 +314,7 @@ class CustomerController extends Controller
             return response()->json(['message' => 'Order could not be placed. Please try again.'], 500);
         }
 
-        $order->load('items.product:id,name,image_url');
+        $order->load('items.product:id,name,image_url', 'items.product.translations');
 
         return response()->json([
             'message' => 'Order placed successfully.',
@@ -328,7 +328,7 @@ class CustomerController extends Controller
      */
     public function myOrders(Request $request): JsonResponse
     {
-        $orders = Order::with('items.product:id,name,image_url')
+        $orders = Order::with('items.product:id,name,image_url', 'items.product.translations')
             ->where('user_id', auth()->id())
             ->orderByDesc('created_at')
             ->paginate((int) $request->query('per_page', 10))
@@ -347,7 +347,7 @@ class CustomerController extends Controller
             return response()->json(['message' => 'Order not found.'], 404);
         }
 
-        $order->load('items.product:id,name,image_url,price');
+        $order->load('items.product:id,name,image_url,price', 'items.product.translations');
 
         return response()->json($this->formatOrder($order, detail: true));
     }
@@ -382,15 +382,13 @@ class CustomerController extends Controller
 
     private function formatCategory(Category $c, bool $withChildren = false): array
     {
-        $locale = app()->getLocale(); // 'en', 'ru', 'tm'
-        $translation = $c->translations->firstWhere('locale', $locale);
-
         $data = [
             'id' => $c->id,
-            'name' => $translation?->name ?? $c->name,
-            'description' => $translation?->description ?? $c->description,
+            'name' => $c->name,
+            'description' => $c->description,
             'image_url' => $c->image_url,
             'is_active' => $c->is_active,
+            'translations' => $c->translations->keyBy('locale'),
         ];
 
         if ($withChildren) {
@@ -404,13 +402,10 @@ class CustomerController extends Controller
 
     private function formatProduct(Product $p, bool $detail = false): array
     {
-        $locale = app()->getLocale();
-        $translation = $p->translations->firstWhere('locale', $locale);
-
         $data = [
             'id' => $p->id,
-            'name' => $translation?->name ?? $p->name,
-            'description' => $translation?->description ?? $p->description,
+            'name' => $p->name,
+            'description' => $p->description,
             'price' => (float) $p->price,
             'image_url' => $p->image_url,
             'avg_rating' => (float) $p->avg_rating,
@@ -418,6 +413,7 @@ class CustomerController extends Controller
                 'id' => $p->category->id,
                 'name' => $p->category->name,
             ] : null,
+            'translations' => $p->translations->keyBy('locale'),
         ];
 
         if ($detail) {
@@ -440,6 +436,7 @@ class CustomerController extends Controller
             'items' => $o->items->map(fn ($item) => [
                 'product_id' => $item->product_id,
                 'product_name' => $item->product?->name,
+                'product_translations' => $item->product?->translations?->keyBy('locale'),
                 'image_url' => $item->product?->image_url,
                 'quantity' => $item->quantity,
                 'price' => (float) $item->price,
