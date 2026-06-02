@@ -774,7 +774,7 @@
 
 <script setup lang="ts">
 import { nextTick } from 'vue'
-useHead({ title: 'Velaro — Admin Products' })
+useHead({ title: 'Velora — Admin Products' })
 
 onMounted(async () => {
     const route = useRoute()

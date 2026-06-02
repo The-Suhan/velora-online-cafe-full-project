@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Velaro — Admin Orders Preparing' })
+useHead({ title: 'Velora — Admin Orders Preparing' })
 definePageMeta({ layout: 'admin' as any, middleware: 'admin' })
 const { t } = useI18n()
 const meta = computed(() => ({

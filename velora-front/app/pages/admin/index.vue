@@ -166,7 +166,7 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Velaro — Admin' })
+useHead({ title: 'Velora — Admin' })
 import {
     Chart,
     LineController,

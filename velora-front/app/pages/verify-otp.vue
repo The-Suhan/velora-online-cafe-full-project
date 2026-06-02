@@ -56,6 +56,7 @@
 
 <script setup lang="ts">
 definePageMeta({ layout: 'auth', middleware: 'guest' })
+useHead({ title: 'Velora — Verify Email' })
 
 const route = useRoute()
 const router = useRouter()

@@ -36,13 +36,13 @@
                         </div>
 
                         <NuxtLink to="/profile/edit"
-                            class="mt-4 flex items-center justify-center gap-2 w-full py-2.5 border border-[#2C1A14] rounded-lg text-[#2C1A14] text-sm hover:bg-[#F5EFEA] transition-colors">
+                            class="mt-4 w-full py-2.5 border border-[#2C1A14] rounded-lg text-[#2C1A14] text-sm hover:bg-[#F5EFEA] transition-colors grid grid-cols-[16px_1fr] items-center gap-2 px-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="1.5">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                             </svg>
-                            {{ $t('profile.editProfile') }}
+                            <span class="text-center leading-snug">{{ $t('profile.editProfile') }}</span>
                         </NuxtLink>
 
                         <button @click="handleLogout"
@@ -135,7 +135,7 @@
                                 <!-- Price + actions -->
                                 <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
                                     <span class="text-[#2C1A14] font-medium text-sm">${{ order.total_price.toFixed(2)
-                                    }}</span>
+                                        }}</span>
                                     <div class="flex gap-1.5">
                                         <button v-if="order.status === 'pending'" @click="handleCancel(order.id)"
                                             :disabled="cancellingId === order.id"
@@ -308,7 +308,8 @@
                                                 'bg-blue-50 text-blue-600': fb.type === 'request',
                                                 'bg-amber-50 text-amber-700': fb.type === 'question',
                                             }" class="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize">
-                                                {{ $t(`header.feedback.type${fb.type.charAt(0).toUpperCase() + fb.type.slice(1)}`) }}
+                                                {{ $t(`header.feedback.type${fb.type.charAt(0).toUpperCase() +
+                                                    fb.type.slice(1)}`) }}
                                             </span>
                                             <span class="text-[#b0967a] text-[10px]">{{ fb.created_at }}</span>
                                         </div>
@@ -338,6 +339,7 @@
 
 <script setup lang="ts">
 definePageMeta({ middleware: 'auth', layout: 'client' })
+useHead({ title: 'Velora — Profile' })
 
 const { user: authUser, logout, fetchMe } = useAuth()
 const { fetchMyOrders, cancelOrder, fetchOrder, fetchMyFavorites, fetchMyFeedback, submitFeedback } = useProfile()

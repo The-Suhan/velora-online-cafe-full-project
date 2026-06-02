@@ -94,6 +94,7 @@
 
 <script setup lang="ts">
 definePageMeta({ layout: 'auth', middleware: 'guest' })
+useHead({ title: 'Velora — Reset Password' })
 
 const route = useRoute()
 const router = useRouter()

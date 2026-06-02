@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Velaro — Admin Orders Pending' })
+useHead({ title: 'Velora — Admin Orders Pending' })
 definePageMeta({ layout: 'admin' as any, middleware: 'admin' })
 
 const { t } = useI18n()

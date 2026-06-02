@@ -98,6 +98,7 @@
 <script setup>
 definePageMeta({ layout: 'client', middleware: 'auth' })
 
+
 const route = useRoute()
 const config = useRuntimeConfig()
 const categoryId = route.params.id
@@ -164,7 +165,9 @@ const headerStyle = computed(() => {
     return {}
 })
 
-useHead({ title: computed(() => displayName(category.value) || t('categoriesPage.defaultTitle')) })
+useHead({ 
+  title: computed(() => `Velora — ${displayName(category.value) || t('categoriesPage.defaultTitle')}`) 
+})
 
 onMounted(load)
 </script>

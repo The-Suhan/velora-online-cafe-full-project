@@ -52,6 +52,7 @@ function displayCatName(cat) {
 definePageMeta({ layout: 'client', middleware: 'auth' })
 
 useHead({
+    title: 'Velora — Menu',
     link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         {
@@ -386,7 +387,8 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
                                     </span>
                                 </div>
 
-                                <div class="card-footer">
+                                <div class="card-footer"
+                                    :class="{ 'card-footer--stacked': $t('home.addToCart').length > 12 }">
                                     <span class="card-price">${{ Number(product.price).toFixed(2) }}</span>
 
                                     <div class="card-actions">
@@ -434,6 +436,29 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 </template>
 
 <style scoped>
+.card-footer--stacked {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.card-footer--stacked .card-actions {
+    align-items: stretch;
+    width: 100%;
+}
+
+.card-footer--stacked .add-btn {
+    flex: 1;
+    width: 100%;
+}
+
+.card-footer--stacked .qty-ctrl {
+    width: 100%;
+}
+
+.card-footer--stacked .card-price {
+    align-self: flex-start;
+}
+
 /* ── Page ── */
 .velora-page {
     min-height: 100vh;
@@ -563,6 +588,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     box-sizing: border-box;
+    align-items: stretch;
 }
 
 .carousel-track::after {
@@ -592,6 +618,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     transition: box-shadow 0.25s, transform 0.25s;
     animation: cardIn 0.4s ease both;
     animation-delay: var(--card-delay, 0ms);
+    align-self: stretch;
 }
 
 @keyframes cardIn {

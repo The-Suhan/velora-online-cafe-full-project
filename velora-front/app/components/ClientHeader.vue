@@ -4,7 +4,7 @@
 
             <!-- Logo -->
             <NuxtLink to="/" class="header-logo">
-                <img src="/logo-black.png" alt="Velaro Café" class="logo-img" />
+                <img src="/logo-black.png" alt="Velora Café" class="logo-img" />
                 <div class="logo-text">
                     <span class="logo-name">Velora</span>
                     <span class="logo-sub">Taste the calm</span>

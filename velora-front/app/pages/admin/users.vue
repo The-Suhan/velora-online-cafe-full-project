@@ -326,7 +326,7 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Velaro —  Admin Users' })
+useHead({ title: 'Velora —  Admin Users' })
 definePageMeta({
     layout: 'admin' as any,
     middleware: 'admin',

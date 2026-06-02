@@ -235,7 +235,7 @@ definePageMeta({
     middleware: 'auth',
 })
 
-useHead({ title: 'My Bag — Velaro' })
+useHead({ title: 'Velora — My Bag' })
 
 const { locale, t } = useI18n()
 

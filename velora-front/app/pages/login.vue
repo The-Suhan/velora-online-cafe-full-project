@@ -83,6 +83,7 @@
 
 <script setup lang="ts">
 definePageMeta({ layout: 'auth', middleware: 'guest' })
+useHead({ title: 'Velora — Login' })
 
 const { login } = useAuth()
 const router = useRouter()

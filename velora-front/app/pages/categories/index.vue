@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-useHead({ title: 'Velaro — Categories' })
+useHead({ title: 'Velora — Categories' })
 definePageMeta({ layout: 'client', middleware: 'auth' })
 
 const config = useRuntimeConfig()

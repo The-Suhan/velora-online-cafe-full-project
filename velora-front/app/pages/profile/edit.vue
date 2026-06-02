@@ -111,6 +111,7 @@
 <script setup lang="ts">
 definePageMeta({ middleware: 'auth' })
 const { t } = useI18n()
+useHead({ title: 'Velora — Profile Edit' })
 
 const { user: authUser, logout, deleteAccount } = useAuth()
 const { fetchMe, updateMe } = useProfile()

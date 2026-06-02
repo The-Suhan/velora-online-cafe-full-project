@@ -14,15 +14,6 @@ const resolveUrl = (url) => {
 
 definePageMeta({ layout: 'client', middleware: 'auth' })
 
-useHead({
-    link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        {
-            rel: 'stylesheet',
-            href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Lato:wght@300;400&display=swap',
-        },
-    ],
-})
 
 // ─── Route ────────────────────────────────────────────────────
 const route = useRoute()
@@ -215,6 +206,17 @@ function displayDesc(item) {
     return getTranslation(item, locale.value, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
 }
 
+useHead({
+    title: computed(() => `Velora — ${displayName(category.value) || 'Products'}`),
+    link: [
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        {
+            rel: 'stylesheet',
+            href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Lato:wght@300;400&display=swap',
+        },
+    ],
+})
+
 onMounted(() => {
     loadData()
     window.addEventListener('beforeunload', () => {
@@ -304,11 +306,11 @@ watch(categoryId, loadData)
                             :interactive="true" @rate="(s) => rateProduct(product, s)" />
                         <span class="rating-value">
                             {{ ((userRatings[product.id] !== undefined ? userRatings[product.id] : product.avg_rating)
-                            ?? 0).toFixed(1) }}
+                                ?? 0).toFixed(1) }}
                         </span>
                     </div>
 
-                    <div class="card-footer">
+                    <div class="card-footer" :class="{ 'card-footer--stacked': $t('home.addToCart').length > 12 }">
                         <span class="card-price">${{ Number(product.price).toFixed(2) }}</span>
 
                         <div class="card-actions">
@@ -344,6 +346,29 @@ watch(categoryId, loadData)
 </template>
 
 <style scoped>
+.card-footer--stacked {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.card-footer--stacked .card-actions {
+    width: 100%;
+    align-items: stretch;
+}
+
+.card-footer--stacked .add-btn {
+    flex: 1;
+    width: 100%;
+}
+
+.card-footer--stacked .qty-ctrl {
+    width: 100%;
+}
+
+.card-footer--stacked .card-price {
+    align-self: flex-start;
+}
+
 /* ── Page ── */
 .velora-cat-page {
     min-height: 100vh;
@@ -653,7 +678,6 @@ watch(categoryId, loadData)
     border-top: 1px solid #F0E8D8;
     margin-top: auto;
     gap: 0.4rem;
-    flex-wrap: wrap;
 }
 
 .card-price {
@@ -855,21 +879,23 @@ watch(categoryId, loadData)
 
     .card-actions {
         width: 100%;
-        justify-content: space-between;
+        align-items: stretch;
+        gap: 4px;
     }
 
     .detail-btn,
     .add-btn {
-        flex: 1;
+        width: 100%;
         text-align: center;
-        padding: 0.45rem 0.5rem;
+        padding: 0.4rem 0.5rem;
         font-size: 0.62rem;
+        box-sizing: border-box;
     }
 
     .qty-ctrl {
-        flex: 1;
-        justify-content: space-between;
+        width: 100%;
     }
+
 }
 
 @media (max-width: 480px) {

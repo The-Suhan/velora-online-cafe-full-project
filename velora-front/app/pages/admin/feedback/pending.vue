@@ -327,7 +327,7 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Velaro — Admin Feedback Pending' })
+useHead({ title: 'Velora — Admin Feedback Pending' })
 import type { FeedbackItem, PaginationMeta } from '~/composables/useFeedback'
 
 definePageMeta({ layout: 'admin', middleware: 'admin' })

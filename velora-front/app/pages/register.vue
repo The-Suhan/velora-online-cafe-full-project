@@ -124,6 +124,8 @@ definePageMeta({
   middleware: 'guest',
 })
 
+useHead({ title: 'Velora — Register' })
+
 const { register } = useAuth()
 const router = useRouter()
 const { t } = useI18n()         
