@@ -40,6 +40,15 @@
                                 <label><input v-model="filterActive" type="radio" value="false" @change="applyFilter" />
                                     {{ $t('admin.products.statusInactive') }}</label>
                             </div>
+                            <p class="filter-label mt">{{ $t('admin.products.sortByRating') }}</p>
+                            <div class="filter-radio">
+                                <label><input v-model="sortBy" type="radio" value="" @change="applyFilter" />
+                                    {{ $t('admin.products.sortDefault') }}</label>
+                                <label><input v-model="sortBy" type="radio" value="asc" @change="applyFilter" />
+                                    {{ $t('admin.products.sortRatingAsc') }}</label>
+                                <label><input v-model="sortBy" type="radio" value="desc" @change="applyFilter" />
+                                    {{ $t('admin.products.sortRatingDesc') }}</label>
+                            </div>
                             <button class="filter-reset" @click="resetFilter">{{ $t('admin.common.reset') }}</button>
                         </div>
                     </Transition>
@@ -765,6 +774,16 @@
 
 <script setup lang="ts">
 import { nextTick } from 'vue'
+useHead({ title: 'Velaro — Admin Products' })
+
+onMounted(async () => {
+    const route = useRoute()
+    if (route.query.sort_by === 'avg_rating') {
+        sortBy.value = (route.query.sort_dir as string) || 'desc'
+    }
+    await Promise.all([loadProducts(), loadStats(), loadCategories()])
+    document.addEventListener('click', () => { openDrop.value = null; showFilter.value = false })
+})
 
 definePageMeta({ layout: 'admin' as any, middleware: 'admin' })
 
@@ -822,6 +841,7 @@ const filterActive = ref('')
 const showFilter = ref(false)
 const currentPage = ref(1)
 const pagination = ref({ current_page: 1, last_page: 1, total: 0, from: 0, to: 0 })
+const sortBy = ref('')
 
 const activeModal = ref<string | null>(null)
 const selectedProd = ref<any>(null)
@@ -875,6 +895,10 @@ async function loadProducts(page = 1) {
         const params: any = { page, per_page: 8, search: search.value }
         if (filterCat.value) params.category_id = filterCat.value
         if (filterActive.value !== '') params.is_active = filterActive.value
+        if (sortBy.value) {
+            params.sort_by = 'avg_rating'
+            params.sort_dir = sortBy.value
+        }
         const data = await fetchProducts(params) as any
         products.value = data.data
         pagination.value = { current_page: data.current_page, last_page: data.last_page, total: data.total, from: data.from ?? 0, to: data.to ?? 0 }
@@ -899,7 +923,13 @@ function onSearch() {
 }
 
 function applyFilter() { showFilter.value = false; currentPage.value = 1; loadProducts(1) }
-function resetFilter() { filterCat.value = ''; filterActive.value = ''; showFilter.value = false; loadProducts(1) }
+function resetFilter() {
+    filterCat.value = ''
+    filterActive.value = ''
+    sortBy.value = ''
+    showFilter.value = false
+    loadProducts(1)
+}
 function goToPage(page: number) { currentPage.value = page; loadProducts(page) }
 
 function toggleDropdown(id: number, event: MouseEvent) {

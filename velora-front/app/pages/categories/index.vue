@@ -57,6 +57,7 @@
 </template>
 
 <script setup>
+useHead({ title: 'Velaro — Categories' })
 definePageMeta({ layout: 'client', middleware: 'auth' })
 
 const config = useRuntimeConfig()
@@ -81,10 +82,11 @@ function displayName(item) {
 }
 
 const api = useApi()
-const loading = ref(true)
-const categories = ref([])
+const loading = ref(false)
+const categories = useState('categories-list', () => [])
 
 async function load() {
+  if (categories.value.length > 0) return 
   loading.value = true
   try {
     const data = await api('/categories')

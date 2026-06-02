@@ -29,8 +29,14 @@ class ProductController extends Controller
 
         $perPage = (int) $request->query('per_page', 8);
 
+        if ($request->query('sort_by') === 'avg_rating') {
+            $dir = $request->query('sort_dir', 'desc') === 'asc' ? 'asc' : 'desc';
+            $query->orderBy('avg_rating', $dir);
+        } else {
+            $query->orderByDesc('created_at');
+        }
+
         $products = $query
-            ->orderByDesc('created_at')
             ->paginate($perPage)
             ->through(fn ($p) => $this->formatProduct($p));
 

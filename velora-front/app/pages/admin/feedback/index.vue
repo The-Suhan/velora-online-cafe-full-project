@@ -453,6 +453,7 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: 'Velaro — Admin Feedback' })
 import type { FeedbackItem, FeedbackStats, PaginationMeta } from '~/composables/useFeedback'
 
 definePageMeta({ layout: 'admin', middleware: 'admin' })

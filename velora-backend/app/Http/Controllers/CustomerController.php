@@ -160,11 +160,25 @@ class CustomerController extends Controller
         }
 
         $request->validate([
-            'score' => 'required|numeric|min:0.5|max:5.0',
+            'score' => 'nullable|numeric|min:0.5|max:5.0',
             'description' => 'nullable|string|max:1000',
         ]);
 
-        // 0.5 adımlarına yuvarlama (örn: 3.3 → 3.5)
+        // score null ise rating'i sil
+        if (is_null($request->score)) {
+            Rating::where('user_id', auth()->id())
+                ->where('product_id', $product->id)
+                ->delete();
+
+            $avg = Rating::where('product_id', $product->id)->avg('score') ?? 0;
+            $product->update(['avg_rating' => round($avg, 2)]);
+
+            return response()->json([
+                'message' => 'Rating removed.',
+                'avg_rating' => (float) $product->fresh()->avg_rating,
+            ]);
+        }
+
         $score = round((float) $request->score * 2) / 2;
 
         $rating = Rating::updateOrCreate(
@@ -178,7 +192,6 @@ class CustomerController extends Controller
             ]
         );
 
-        // avg_rating'i yeniden hesapla
         $avg = Rating::where('product_id', $product->id)->avg('score');
         $product->update(['avg_rating' => round($avg, 2)]);
 

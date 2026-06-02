@@ -1,7 +1,13 @@
 <script setup>
 import { ref, watch, onMounted, defineComponent, h } from 'vue'
 import { useCart } from '~/composables/useCart'
+import { onBeforeRouteLeave } from 'vue-router'
 import { useSearch } from '~/composables/useSearch'
+
+// ─── Ratings flush — route değişince API'ye gönder ────────────
+onBeforeRouteLeave(async () => {
+    await flushPendingRatings()
+})
 
 const imageLoaded = ref({})
 function onImageLoad(productId) {
@@ -58,7 +64,8 @@ useHead({
 const selectedProduct = ref(null)
 const modalOpen = ref(false)
 
-function openModal(product) {
+async function openModal(product) {
+    await flushPendingRatings()
     selectedProduct.value = product
     modalOpen.value = true
 }
@@ -71,7 +78,6 @@ const { searchQuery } = useSearch()
 
 // ─── State ────────────────────────────────────────────────────
 const api = useApi()
-const loadingCats = ref(true)
 const { show: showLoading, hide: hideLoading } = useAppLoading()
 
 const allCategoryRows = useState('home-category-rows', () => [])
@@ -180,8 +186,8 @@ function scrollCarousel(catId, dir) {
     track.scrollBy({ left: dir * (cardW * 3 + 24), behavior: 'smooth' })
 }
 
-// ─── API ──────────────────────────────────────────────────────
 const userRatings = ref({})
+const pendingRatings = ref({})
 
 async function loadAll() {
     loading.value = true
@@ -214,17 +220,42 @@ async function loadAll() {
     }
 }
 
-async function rateProduct(product, score) {
-    try {
-        const res = await api(`/products/${product.id}/rate`, { method: 'POST', body: { score } })
-        userRatings.value[product.id] = res.score
-        for (const row of categoryRows.value) {
-            const p = row.products.find(p => p.id === product.id)
-            if (p) p.avg_rating = res.avg_rating
-        }
-    } catch (e) {
-        console.error(t('productModal.rateError'), e)
-    }
+function rateProduct(product, score) {
+    const current = userRatings.value[product.id] !== undefined
+        ? userRatings.value[product.id]
+        : product.avg_rating ?? 0
+
+    const isSameStar = current !== null && Math.round(current) === score
+    const newScore = isSameStar ? null : score
+
+    userRatings.value[product.id] = newScore
+    pendingRatings.value[product.id] = { score: newScore, product }
+}
+
+async function flushPendingRatings() {
+    const entries = Object.entries(pendingRatings.value)
+    if (!entries.length) return
+
+    pendingRatings.value = {}
+
+    await Promise.allSettled(
+        entries.map(async ([productId, { score }]) => {
+            try {
+                const res = await api(`/products/${productId}/rate`, {
+                    method: 'POST',
+                    body: { score: score ?? null },
+                })
+                if (res?.avg_rating != null) {
+                    for (const row of allCategoryRows.value) {
+                        const p = row.products.find(p => p.id === Number(productId))
+                        if (p) p.avg_rating = res.avg_rating
+                    }
+                }
+            } catch (e) {
+                console.error(e)
+            }
+        })
+    )
 }
 
 function cartItem(productId) { return getItem(productId) }
@@ -244,7 +275,26 @@ onMounted(() => {
     } else {
         hideLoading()
     }
+
+    window.addEventListener('beforeunload', () => {
+        const entries = Object.entries(pendingRatings.value)
+        entries.forEach(([productId, { score }]) => {
+            navigator.sendBeacon(
+                `${config.public.apiBase}/products/${productId}/rate`,
+                new Blob([JSON.stringify({ score: score ?? null })], { type: 'application/json' })
+            )
+        })
+    })
 })
+function onRatingUpdated({ productId, avgRating, userScore }) {
+    if (avgRating != null) {
+        for (const row of allCategoryRows.value) {
+            const p = row.products.find(p => p.id === productId)
+            if (p) p.avg_rating = avgRating
+        }
+    }
+    userRatings.value[productId] = userScore ?? null
+}
 </script>
 
 <template>
@@ -327,10 +377,12 @@ onMounted(() => {
                                 <p class="card-desc">{{ displayDesc(product) }}</p>
 
                                 <div class="card-rating">
-                                    <StarRating :score="userRatings[product.id] ?? product.avg_rating"
+                                    <StarRating
+                                        :score="(userRatings[product.id] !== undefined ? userRatings[product.id] : product.avg_rating) ?? 0"
                                         :interactive="true" @rate="(s) => rateProduct(product, s)" />
                                     <span class="rating-value">
-                                        {{ (userRatings[product.id] ?? product.avg_rating).toFixed(1) }}
+                                        {{ ((userRatings[product.id] !== undefined ? userRatings[product.id] :
+                                            product.avg_rating) ?? 0).toFixed(1) }}
                                     </span>
                                 </div>
 
@@ -376,7 +428,9 @@ onMounted(() => {
             </div>
         </template>
     </main>
-    <ProductModal v-model="modalOpen" :product="selectedProduct" />
+    <ProductModal v-model="modalOpen" :product="selectedProduct"
+        :initial-user-rating="selectedProduct ? (userRatings[selectedProduct.id] !== undefined ? userRatings[selectedProduct.id] : null) : null"
+        @rating-updated="onRatingUpdated" />
 </template>
 
 <style scoped>
@@ -929,7 +983,7 @@ onMounted(() => {
 
     .card-actions {
         display: flex;
-        flex-direction: column;   
+        flex-direction: column;
         align-items: stretch;
         gap: 4px;
     }

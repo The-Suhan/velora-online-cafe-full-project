@@ -379,6 +379,7 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: 'Velaro — Admin Orders' })
 import { useOrders, STATUS_META, type OrderStatus } from '~/composables/useOrders'
 
 definePageMeta({ layout: 'admin' as any, middleware: 'admin' })

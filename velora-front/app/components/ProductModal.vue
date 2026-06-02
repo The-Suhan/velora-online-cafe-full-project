@@ -6,6 +6,7 @@ const { locale, t } = useI18n()
 const config = useRuntimeConfig()
 const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
 
+
 const resolveUrl = (url) => {
     if (!url) return null
     if (url.startsWith('http')) return url
@@ -16,18 +17,62 @@ const resolveUrl = (url) => {
 const props = defineProps({
     product: { type: Object, default: null },
     modelValue: { type: Boolean, default: false },
+    initialUserRating: { type: Number, default: null },
 })
-const emit = defineEmits(['update:modelValue'])
+
+const emit = defineEmits(['update:modelValue', 'rating-updated'])
 
 function close() { emit('update:modelValue', false) }
 function onOverlayClick(e) { if (e.target === e.currentTarget) close() }
 
-// ─── Internal active product (switches when related card clicked) ──
+// ─── API & state — watch'lardan ÖNCE tanımla ─────────────────
+const api = useApi()
+const userRatings = ref({})
+const pendingRatings = ref({})
 const activeProduct = ref(null)
+const lightboxOpen = ref(false)
+const relatedProducts = ref([])
+const relatedLoading = ref(false)
 
-watch(() => props.product, (p) => {
+
+// ─── Internal active product (switches when related card clicked) ──
+
+watch(() => props.product, async (p) => {
     activeProduct.value = p
+    if (!p || !props.modelValue) return
+    try {
+        const fresh = await api(`/products/${p.id}`)
+        activeProduct.value = { ...p, ...fresh }
+        userRatings.value[p.id] = fresh.user_rating?.score ?? null
+    } catch (e) {
+        console.error(e)
+    }
 }, { immediate: true })
+
+
+async function flushPendingRatings() {
+    const entries = Object.entries(pendingRatings.value)
+    if (!entries.length) return
+
+    pendingRatings.value = {}
+
+    await Promise.allSettled(
+        entries.map(async ([productId, { score }]) => {
+            try {
+                const res = await api(`/products/${productId}/rate`, {
+                    method: 'POST',
+                    body: { score: score ?? null },
+                })
+                if (res?.avg_rating != null && activeProduct.value?.id === Number(productId)) {
+                    activeProduct.value = { ...activeProduct.value, avg_rating: res.avg_rating }
+                }
+                emit('rating-updated', { productId: Number(productId), avgRating: res?.avg_rating ?? null, userScore: score })
+            } catch (e) {
+                console.error(e)
+            }
+        })
+    )
+}
 
 function selectRelated(rp) {
     activeProduct.value = rp
@@ -38,15 +83,12 @@ function selectRelated(rp) {
 const { addItem, increaseQty, decreaseQty, getItem } = useCart()
 function cartItem(id) { return getItem(id) }
 
-// ─── Lightbox ─────────────────────────────────────────────────
-const lightboxOpen = ref(false)
 
-// ─── Related products ─────────────────────────────────────────
-const api = useApi()
-const relatedProducts = ref([])
-const relatedLoading = ref(false)
+watch(activeProduct, async (p, prevP) => {
+    if (prevP) {
+        await flushPendingRatings()
+    }
 
-watch(activeProduct, async (p) => {
     if (!p) return
     relatedLoading.value = true
     relatedProducts.value = []
@@ -125,17 +167,30 @@ const gradients = [
 ]
 function cardGradient(id) { return gradients[id % gradients.length] }
 
-const userRatings = ref({})
+function rateProduct(product, score) {
+    const current = userRatings.value[product.id] !== undefined
+        ? userRatings.value[product.id]
+        : product.avg_rating ?? 0
 
-async function rateProduct(product, score) {
-    try {
-        const res = await api(`/products/${product.id}/rate`, { method: 'POST', body: { score } })
-        userRatings.value[product.id] = res.score
-        activeProduct.value = { ...activeProduct.value, avg_rating: res.avg_rating }
-    } catch (e) {
-        console.error(t('productModal.rateError'), e)
-    }
+    const isSameStar = current !== null && Math.round(current) === score
+    const newScore = isSameStar ? null : score
+
+    userRatings.value[product.id] = newScore
+    pendingRatings.value[product.id] = { score: newScore, product }
 }
+watch(() => props.modelValue, async (isOpen) => {
+    if (isOpen && activeProduct.value) {
+        try {
+            const fresh = await api(`/products/${activeProduct.value.id}`)
+            activeProduct.value = { ...activeProduct.value, ...fresh }
+            userRatings.value[activeProduct.value.id] = fresh.user_rating?.score ?? null
+        } catch (e) {
+            console.error(e)
+        }
+    } else if (!isOpen) {
+        await flushPendingRatings()
+    }
+})
 </script>
 
 <template>
@@ -173,10 +228,12 @@ async function rateProduct(product, score) {
 
                             <!-- Rating -->
                             <div class="pm-rating-row">
-                                <StarRating :score="userRatings[activeProduct.id] ?? activeProduct.avg_rating"
+                                <StarRating
+                                    :score="(userRatings[activeProduct.id] !== undefined ? userRatings[activeProduct.id] : activeProduct.avg_rating) ?? 0"
                                     :interactive="true" @rate="(s) => rateProduct(activeProduct, s)" />
                                 <span class="pm-rating-val">
-                                    {{ (userRatings[activeProduct.id] ?? activeProduct.avg_rating).toFixed(1) }}
+                                    {{ ((userRatings[activeProduct.id] !== undefined ? userRatings[activeProduct.id] :
+                                        activeProduct.avg_rating) ?? 0).toFixed(1) }}
                                 </span>
                             </div>
 
@@ -189,7 +246,7 @@ async function rateProduct(product, score) {
                                 </span>
                                 <span v-if="activeProduct.category?.name" class="pm-meta-item">
                                     {{ $t('productModal.metaCategory') }}: <strong>{{ activeProduct.category.name
-                                    }}</strong>
+                                        }}</strong>
                                 </span>
                             </div>
 

@@ -414,7 +414,11 @@
       "updateFailed": "Failed to update",
       "deleteFailed": "Failed to delete",
       "showingOf": "Showing {from} to {to} of {total} products",
-      "productsTotal": "products"
+      "productsTotal": "products",
+      "sortByRating": "Sort by rating",
+      "sortDefault": "Default",
+      "sortRatingAsc": "Lowest rating (↑)",
+      "sortRatingDesc": "Highest rating (↓)"
     },
     "orders": {
       "title": "Orders",

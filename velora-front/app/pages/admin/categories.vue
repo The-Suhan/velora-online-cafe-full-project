@@ -824,6 +824,7 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: 'Velaro — Admin Categories' })
 import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 
 definePageMeta({ layout: 'admin' })

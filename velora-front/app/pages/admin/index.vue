@@ -114,7 +114,9 @@
             <div class="bottom-card">
                 <div class="card-header">
                     <span class="card-title">{{ $t('admin.dashboard.topRatedProducts') }}</span>
-                    <NuxtLink to="/admin/products" class="view-all">{{ $t('admin.common.viewAll') }}</NuxtLink>
+                    <NuxtLink to="/admin/products?sort_by=avg_rating&sort_dir=desc" class="view-all">
+                        {{ $t('admin.common.viewAll') }}
+                    </NuxtLink>
                 </div>
                 <div class="products-list">
                     <div v-for="(product, idx) in topProducts" :key="product.id" class="product-row">
@@ -164,6 +166,7 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: 'Velaro — Admin' })
 import {
     Chart,
     LineController,
@@ -187,12 +190,6 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
 
 const { t, locale } = useI18n()
 const { fetchDashboard, fetchOrdersChart } = useAdmin()
-const { show: showLoading, hide: hideLoading } = useAppLoading()
-
-onMounted(() => {
-    showLoading()
-    setTimeout(() => hideLoading(), 2200)
-})
 
 // ── State ──────────────────────────────────────────────────
 const loading = ref(true)

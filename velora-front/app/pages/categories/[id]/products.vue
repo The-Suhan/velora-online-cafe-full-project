@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, defineComponent, h } from 'vue'
 import { useCart } from '~/composables/useCart'
+import { onBeforeRouteLeave } from 'vue-router'
 
 const config = useRuntimeConfig()
 const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
@@ -39,18 +40,25 @@ function cartItem(productId) { return getItem(productId) }
 
 // ─── State ────────────────────────────────────────────────────
 const api = useApi()
-const loading = ref(true)
-const category = ref(null)
-const products = ref([])
+const loading = ref(false)
+const allCategories = useState('categories-list', () => [])
+
+function findInCache(id) {
+    for (const c of allCategories.value) {
+        if (String(c.id) === String(id)) return c
+        const child = c.children?.find(x => String(x.id) === String(id))
+        if (child) return child
+    }
+    return null
+}
+
+const category = ref(findInCache(categoryId.value))
+const productsCache = useState('category-products', () => ({}))
+const products = computed(() => productsCache.value[categoryId.value] ?? [])
 
 // ─── Modal ────────────────────────────────────────────────────
 const selectedProduct = ref(null)
 const modalOpen = ref(false)
-
-function openModal(product) {
-    selectedProduct.value = product
-    modalOpen.value = true
-}
 
 // ─── StarRating ───────────────────────────────────────────────
 const StarRating = defineComponent({
@@ -105,28 +113,87 @@ function cardGradient(id) { return gradients[id % gradients.length] }
 
 // ─── User ratings ─────────────────────────────────────────────
 const userRatings = ref({})
+const pendingRatings = ref({})
 
-async function rateProduct(product, score) {
-    try {
-        const res = await api(`/products/${product.id}/rate`, { method: 'POST', body: { score } })
-        userRatings.value[product.id] = res.score
-        const p = products.value.find(p => p.id === product.id)
-        if (p) p.avg_rating = res.avg_rating
-    } catch (e) { console.error(e) }
+onBeforeRouteLeave(async () => {
+    await flushPendingRatings()
+})
+
+function rateProduct(product, score) {
+    const current = userRatings.value[product.id] !== undefined
+        ? userRatings.value[product.id]
+        : product.avg_rating ?? 0
+
+    const isSameStar = current !== null && Math.round(current) === score
+    const newScore = isSameStar ? null : score
+
+    userRatings.value[product.id] = newScore
+    pendingRatings.value[product.id] = { score: newScore, product }
+}
+
+async function flushPendingRatings() {
+    const entries = Object.entries(pendingRatings.value)
+    if (!entries.length) return
+
+    pendingRatings.value = {}
+
+    await Promise.allSettled(
+        entries.map(async ([productId, { score }]) => {
+            try {
+                const res = await api(`/products/${productId}/rate`, {
+                    method: 'POST',
+                    body: { score: score ?? null },
+                })
+                if (res?.avg_rating != null) {
+                    const p = products.value.find(p => p.id === Number(productId))
+                    if (p) p.avg_rating = res.avg_rating
+                }
+            } catch (e) {
+                console.error(e)
+            }
+        })
+    )
+}
+
+async function openModal(product) {
+    await flushPendingRatings()
+    selectedProduct.value = product
+    modalOpen.value = true
+}
+
+function onRatingUpdated({ productId, avgRating, userScore }) {
+    if (avgRating != null) {
+        const p = products.value.find(p => p.id === productId)
+        if (p) p.avg_rating = avgRating
+    }
+    userRatings.value[productId] = userScore ?? null
 }
 
 // ─── Load ─────────────────────────────────────────────────────
 async function loadData() {
+    const id = categoryId.value
+    const cachedProducts = productsCache.value[id]
+    const cachedCategory = findInCache(id)
+
+    if (cachedProducts && cachedCategory) {
+        category.value = cachedCategory
+        loading.value = false
+        return
+    }
+
     loading.value = true
     try {
         const [catData, productsData] = await Promise.all([
-            api(`/categories/${categoryId.value}`).catch(() => null),
-            api(`/categories/${categoryId.value}/products`, {
+            cachedCategory ? Promise.resolve(cachedCategory) : api(`/categories/${id}`).catch(() => null),
+            cachedProducts ? Promise.resolve({ data: cachedProducts }) : api(`/categories/${id}/products`, {
                 params: { per_page: 100, sort: 'newest' },
             }),
         ])
         category.value = catData
-        products.value = productsData.data ?? []
+        productsCache.value = {
+            ...productsCache.value,
+            [id]: productsData.data ?? [],
+        }
     } catch (e) {
         console.error('[products page] load error:', e)
     } finally {
@@ -148,7 +215,18 @@ function displayDesc(item) {
     return getTranslation(item, locale.value, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
 }
 
-onMounted(loadData)
+onMounted(() => {
+    loadData()
+    window.addEventListener('beforeunload', () => {
+        const entries = Object.entries(pendingRatings.value)
+        entries.forEach(([productId, { score }]) => {
+            navigator.sendBeacon(
+                `${config.public.apiBase}/products/${productId}/rate`,
+                new Blob([JSON.stringify({ score: score ?? null })], { type: 'application/json' })
+            )
+        })
+    })
+})
 watch(categoryId, loadData)
 </script>
 
@@ -177,7 +255,7 @@ watch(categoryId, loadData)
                 </nav>
                 <h1 class="page-title">{{ displayName(category) ?? 'Products' }}</h1>
                 <p class="page-subtitle">
-                    {{ $t('home.ProductsitemsCount', products.length, { named: { n: products.length } }) }}
+                    {{ $t('home.ProductitemsCount', products.length, { named: { n: products.length } }) }}
                 </p>
             </div>
         </div>
@@ -221,10 +299,12 @@ watch(categoryId, loadData)
                     <p class="card-desc">{{ displayDesc(product) }}</p>
 
                     <div class="card-rating">
-                        <StarRating :score="userRatings[product.id] ?? product.avg_rating ?? 0" :interactive="true"
-                            @rate="(s) => rateProduct(product, s)" />
+                        <StarRating
+                            :score="(userRatings[product.id] !== undefined ? userRatings[product.id] : product.avg_rating) ?? 0"
+                            :interactive="true" @rate="(s) => rateProduct(product, s)" />
                         <span class="rating-value">
-                            {{ (userRatings[product.id] ?? product.avg_rating ?? 0).toFixed(1) }}
+                            {{ ((userRatings[product.id] !== undefined ? userRatings[product.id] : product.avg_rating)
+                            ?? 0).toFixed(1) }}
                         </span>
                     </div>
 
@@ -260,7 +340,7 @@ watch(categoryId, loadData)
 
     </main>
 
-    <ProductModal v-model="modalOpen" :product="selectedProduct" />
+    <ProductModal v-model="modalOpen" :product="selectedProduct" @rating-updated="onRatingUpdated" />
 </template>
 
 <style scoped>

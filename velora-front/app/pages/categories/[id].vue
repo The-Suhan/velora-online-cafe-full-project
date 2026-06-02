@@ -127,9 +127,13 @@ function displayDesc(item) {
 
 const api = useApi()
 const loading = ref(true)
-const allCategories = ref([])
+const allCategories = useState('categories-list', () => [])
 
 async function load() {
+    if (allCategories.value.length > 0) {
+        loading.value = false
+        return
+    }
     loading.value = true
     try {
         allCategories.value = await api('/categories') ?? []
