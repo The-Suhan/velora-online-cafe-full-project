@@ -6,43 +6,46 @@ use App\Models\OtpCode;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
     // ── REGISTER ──────────────────────────────────────────────
-    // POST /api/register
-    // Body: { name, email, password, password_confirmation }
-
     public function register(Request $request): JsonResponse
     {
         $request->validate([
             'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
+        // DB'de zaten kayıtlı ve doğrulanmış biri var mı?
+        $existingUser = User::where('email', $request->email)->first();
+        if ($existingUser && $existingUser->is_verified) {
+            return response()->json(['message' => 'This email is already registered.'], 422);
+        }
+
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        // DB'ye yazmıyoruz — Cache'e 15 dk saklıyoruz
+        Cache::put("pending_register:{$request->email}", [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'customer',
-            'is_verified' => false,
-        ]);
+            'code' => $code,
+        ], now()->addMinutes(15));
 
-        $this->sendOtp($user, 'register');
+        $this->sendOtpToEmail($request->email, $request->name, $code);
 
         return response()->json([
-            'message' => 'Register succesful, check your email.',
-            'email' => $user->email,
+            'message' => 'Register successful, check your email.',
+            'email' => $request->email,
         ], 201);
     }
 
     // ── VERIFY OTP ────────────────────────────────────────────
-    // POST /api/verify-otp
-    // Body: { email, code }
-
     public function verifyOtp(Request $request): JsonResponse
     {
         $request->validate([
@@ -50,31 +53,61 @@ class AuthController extends Controller
             'code' => 'required|string',
         ]);
 
+        // DB'de kullanıcı var mı? (login sonrası verify veya re-verify)
         $user = User::where('email', $request->email)->first();
 
-        if (! $user) {
-            return response()->json(['message' => 'User not found.'], 404);
+        if ($user) {
+            $otp = OtpCode::where('user_id', $user->id)
+                ->where('code', $request->code)
+                ->where('is_used', false)
+                ->latest()
+                ->first();
+
+            if (! $otp || $otp->isExpired()) {
+                return response()->json(['message' => 'Invalid or expired OTP.'], 422);
+            }
+
+            $otp->update(['is_used' => true]);
+            $user->update(['is_verified' => true]);
+
+            $token = $user->generateAuthToken();
+
+            return response()->json([
+                'message' => 'Verification successful.',
+                'token' => $token->plainTextToken,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                ],
+            ]);
         }
 
-        $otp = OtpCode::where('user_id', $user->id)
-            ->where('code', $request->code)
-            ->where('is_used', false)
-            ->latest()
-            ->first();
+        // Yeni kayıt — Cache'ten al
+        $pending = Cache::get("pending_register:{$request->email}");
 
-        if (! $otp) {
+        if (! $pending) {
+            return response()->json([
+                'message' => 'Registration session expired. Please register again.',
+            ], 422);
+        }
+
+        if ($pending['code'] !== $request->code) {
             return response()->json(['message' => 'Invalid OTP code.'], 422);
         }
 
-        if ($otp->isExpired()) {
-            return response()->json(['message' => 'OTP code has expired. Please request a new code.'], 422);
-        }
+        // ✅ Kod doğru — şimdi DB'ye yaz
+        $user = User::create([
+            'name' => $pending['name'],
+            'email' => $pending['email'],
+            'password' => $pending['password'],
+            'role' => 'customer',
+            'is_verified' => true,
+        ]);
 
-        // OTP geçerli — kullanıcıyı doğrula
-        $otp->update(['is_used' => true]);
-        $user->update(['is_verified' => true]);
+        Cache::forget("pending_register:{$request->email}");
 
-        // Bearer token oluştur
         $token = $user->generateAuthToken();
 
         return response()->json([
@@ -90,9 +123,6 @@ class AuthController extends Controller
     }
 
     // ── LOGIN ─────────────────────────────────────────────────
-    // POST /api/login
-    // Body: { email, password }
-
     public function login(Request $request): JsonResponse
     {
         $request->validate([
@@ -106,7 +136,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid email or password.'], 401);
         }
 
-        // Hesap doğrulanmamışsa yeni OTP gönder
         if (! $user->is_verified) {
             $this->sendOtp($user, 'login');
 
@@ -120,7 +149,7 @@ class AuthController extends Controller
         $token = $user->generateAuthToken();
 
         return response()->json([
-            'message' => 'Giriş başarılı.',
+            'message' => 'Login successful.',
             'token' => $token->plainTextToken,
             'user' => [
                 'id' => $user->id,
@@ -132,49 +161,58 @@ class AuthController extends Controller
     }
 
     // ── RESEND OTP ────────────────────────────────────────────
-    // POST /api/resend-otp
-    // Body: { email }
-
     public function resendOtp(Request $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
+        $request->validate(['email' => 'required|email']);
 
+        // DB'de var mı? (login verify akışı)
         $user = User::where('email', $request->email)->first();
 
-        if (! $user) {
-            return response()->json(['message' => 'User not found.'], 404);
+        if ($user) {
+            if ($user->is_verified) {
+                return response()->json(['message' => 'Account is already verified.'], 400);
+            }
+
+            OtpCode::where('user_id', $user->id)
+                ->where('is_used', false)
+                ->update(['is_used' => true]);
+
+            $this->sendOtp($user, 'register');
+
+            return response()->json([
+                'message' => 'New OTP sent.',
+                'email' => $user->email,
+            ]);
         }
 
-        if ($user->is_verified) {
-            return response()->json(['message' => 'Account is already verified.'], 400);
+        // Cache'te pending register var mı? (register akışı)
+        $pending = Cache::get("pending_register:{$request->email}");
+
+        if (! $pending) {
+            return response()->json(['message' => 'User not found. Please register again.'], 404);
         }
 
-        // Önceki kullanılmamış OTP'leri iptal et
-        OtpCode::where('user_id', $user->id)
-            ->where('is_used', false)
-            ->update(['is_used' => true]);
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $pending['code'] = $code;
+        Cache::put("pending_register:{$request->email}", $pending, now()->addMinutes(15));
 
-        $this->sendOtp($user, 'register');
+        $this->sendOtpToEmail($pending['email'], $pending['name'], $code);
 
         return response()->json([
-            'message' => 'Your new OTP code has been sent.',
-            'email' => $user->email,
+            'message' => 'New OTP sent.',
+            'email' => $request->email,
         ]);
     }
 
     // ── LOGOUT ───────────────────────────────────────────────
-    // POST /api/logout
-    // Header: Authorization: Bearer {token}
-
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Log out.']);
+        return response()->json(['message' => 'Logged out.']);
     }
 
+    // ── DELETE ME ────────────────────────────────────────────
     public function deleteMe(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -183,10 +221,8 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Account deleted successfully.']);
     }
-    // ── ME ────────────────────────────────────────────────────
-    // GET /api/me
-    // Header: Authorization: Bearer {token}
 
+    // ── ME ────────────────────────────────────────────────────
     public function me(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -200,13 +236,12 @@ class AuthController extends Controller
         ]);
     }
 
+    // ── UPDATE ME ─────────────────────────────────────────────
     public function updateMe(Request $request): JsonResponse
     {
         $user = $request->user();
 
-        $rules = [
-            'name' => 'sometimes|string|max:100',
-        ];
+        $rules = ['name' => 'sometimes|string|max:100'];
 
         if ($request->filled('password')) {
             $rules['current_password'] = [
@@ -243,8 +278,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // ── PRIVATE: OTP üret ve gönder ───────────────────────────
-
+    // ── PRIVATE: User objesiyle OTP (login/resend için) ───────
     private function sendOtp(User $user, string $type): void
     {
         $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
@@ -257,26 +291,96 @@ class AuthController extends Controller
             'is_used' => false,
         ]);
 
-        Mail::send([], [], function ($message) use ($user, $code) {
+        $this->sendOtpToEmail($user->email, $user->name, $code);
+    }
+
+    // ── PRIVATE: Sadece email/name ile mail gönder (register için) ──
+    private function sendOtpToEmail(string $email, string $name, string $code): void
+    {
+        $spaced = implode(' ', str_split($code));
+
+        Mail::send([], [], function ($message) use ($email, $name, $spaced) {
             $message
-                ->to($user->email, $user->name)
+                ->to($email, $name)
                 ->subject('Velora Café — Your Verification Code')
                 ->html("
-                    <div style='font-family:sans-serif;max-width:480px;margin:auto;padding:32px;'>
-                        <h2 style='color:#2C1810;'>Velora Café</h2>
-                        <p>Hello  <strong>{$user->name}</strong>,</p>
-                        <p>Your verification code is:</p>
-                        <div style='font-size:2.5rem;font-weight:bold;letter-spacing:0.4em;
-                                    color:#2C1810;background:#F5F0E8;padding:20px;
-                                    text-align:center;border-radius:12px;margin:24px 0;'>
-                            {$code}
-                        </div>
-                        <p style='color:#888;font-size:0.85rem;'>
-                            This code is valid for <strong>10 minutes</strong>.<br>
-                            If you did not request this action, please ignore this email.
-                        </p>
-                    </div>
-                ");
+            <!DOCTYPE html>
+            <html lang='en'>
+            <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Velora Café — Verification Code</title>
+            </head>
+            <body style='margin:0;padding:0;background:#E8E0D4;font-family:Arial,Helvetica,sans-serif;'>
+            
+              <table width='100%' cellpadding='0' cellspacing='0' style='padding:24px 16px;'>
+                <tr>
+                  <td align='center'>
+                    <table width='100%' style='max-width:480px;background:#F5F0E8;border-radius:16px;overflow:hidden;'>
+            
+                      <!-- Header -->
+                      <tr>
+                        <td style='background:#2C1810;padding:28px 20px;text-align:center;'>
+                          <p style='margin:0;font-size:13px;letter-spacing:0.35em;color:#C8A96E;font-weight:700;'>VELORA</p>
+                          <p style='margin:5px 0 0;font-size:9px;letter-spacing:0.25em;color:#8a6a4a;'>C A F É</p>
+                        </td>
+                      </tr>
+            
+                      <!-- Body -->
+                      <tr>
+                        <td style='padding:32px 28px 28px;'>
+            
+                          <p style='margin:0 0 6px;font-size:15px;color:#2C1810;'>Hello, <strong>{$name}</strong></p>
+                          <p style='margin:0 0 24px;font-size:13px;color:#8a7060;line-height:1.6;'>
+                            Your verification code for Velora Café is below.<br>
+                            Enter it to complete your registration.
+                          </p>
+            
+                          <!-- OTP Box -->
+                          <table width='100%' cellpadding='0' cellspacing='0' style='margin-bottom:24px;'>
+                            <tr>
+                              <td style='background:#2C1810;border-radius:12px;padding:20px 12px;text-align:center;'>
+                                <span style='font-size:32px;font-weight:700;letter-spacing:0.4em;color:#C8A96E;'>{$spaced}</span>
+                              </td>
+                            </tr>
+                          </table>
+            
+                          <!-- Validity -->
+                          <table width='100%' cellpadding='0' cellspacing='0' style='margin-bottom:24px;'>
+                            <tr>
+                              <td style='background:#EDE5D8;border-radius:8px;padding:12px 16px;text-align:center;'>
+                                <span style='font-size:12px;color:#8a7060;'>
+                                  ⏱ This code expires in <strong style='color:#2C1810;'>15 minutes</strong>
+                                </span>
+                              </td>
+                            </tr>
+                          </table>
+            
+                          <!-- Footer note -->
+                          <p style='margin:0;font-size:11px;color:#b0967a;line-height:1.7;text-align:center;border-top:1px solid #D9CFC0;padding-top:20px;'>
+                            If you didn't create an account with Velora Café,<br>
+                            you can safely ignore this email.
+                          </p>
+            
+                        </td>
+                      </tr>
+            
+                      <!-- Bottom bar -->
+                      <tr>
+                        <td style='background:#EDE5D8;padding:14px 20px;text-align:center;'>
+                          <p style='margin:0;font-size:10px;color:#b0967a;letter-spacing:0.1em;'>
+                            © Velora Café — All rights reserved
+                          </p>
+                        </td>
+                      </tr>
+            
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            
+            </body>
+            </html>");
         });
     }
 }

@@ -271,11 +271,6 @@
                                 <span class="detail-label">{{ $t('admin.users.totalOrders') }}</span>
                                 <span class="detail-value">{{ previewData.order_count ?? 0 }}</span>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">{{ $t('admin.users.verified') }}</span>
-                                <span class="detail-value">{{ previewData.is_verified ? $t('admin.users.verifiedYes') :
-                                    $t('admin.users.verifiedNo') }}</span>
-                            </div>
                         </div>
                         <div class="modal-actions">
                             <button class="btn-secondary" @click="previewModal = null">{{ $t('admin.common.close')

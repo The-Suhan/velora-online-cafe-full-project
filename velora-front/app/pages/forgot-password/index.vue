@@ -23,7 +23,13 @@
             <p class="head-desc">{{ $t('auth.forgotDesc') }}</p>
         </div>
 
-        <div v-if="errorMsg" class="error-box">{{ errorMsg }}</div>
+        <div v-if="errorMsg" class="error-box">
+            {{ errorMsg }}
+            <br>
+            <NuxtLink to="/register" style="color:#8b1a1a; font-weight:600;">
+                {{ $t('auth.register') }} → 
+            </NuxtLink>
+        </div>
         <div v-if="successMsg" class="success-box">{{ successMsg }}</div>
 
         <div class="form">
