@@ -35,7 +35,7 @@ class ProductSeeder extends Seeder
                 'name'        => $product['en']['name'],
                 'description' => $product['en']['description'],
                 'price'       => $product['price'],
-                'image_url'   => '/storage/products/' . $product['image'] . '.png',
+                'image_url'   => '/storage/products/test.png',
                 'is_active'   => true,
                 'avg_rating'  => 0.00,
                 'created_at'  => $now,
