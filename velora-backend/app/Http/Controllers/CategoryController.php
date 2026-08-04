@@ -13,7 +13,9 @@ class CategoryController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Category::withCount('products')->with('translations');
+        // `parent` is eager loaded because formatCategory() reads parent_name —
+        // without it every row triggered its own lookup.
+        $query = Category::withCount('products')->with(['translations', 'parent:id,name']);
 
         if ($search = $request->query('search')) {
             $query->where('name', 'ilike', "%{$search}%");
@@ -31,29 +33,33 @@ class CategoryController extends Controller
 
     public function stats(): JsonResponse
     {
-        $total = Category::count();
+        // Total + week-over-week in one pass instead of three COUNTs.
+        $agg = Category::selectRaw(
+            'COUNT(*) as total,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as this_week,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as last_week',
+            [
+                now()->startOfWeek(), now()->endOfWeek(),
+                now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek(),
+            ]
+        )->first();
 
-        $thisWeek = Category::whereBetween('created_at', [
-            now()->startOfWeek(), now()->endOfWeek(),
-        ])->count();
-
-        $lastWeek = Category::whereBetween('created_at', [
-            now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek(),
-        ])->count();
+        $thisWeek = (int) $agg->this_week;
+        $lastWeek = (int) $agg->last_week;
 
         $growth = $lastWeek === 0
             ? ($thisWeek > 0 ? 100 : 0)
             : round((($thisWeek - $lastWeek) / $lastWeek) * 100, 1);
 
         return response()->json([
-            'total' => $total,
+            'total' => (int) $agg->total,
             'growth' => $growth,
         ]);
     }
 
     public function show(Category $category): JsonResponse
     {
-        $category->loadCount('products')->load('translations');
+        $category->loadCount('products')->load(['translations', 'parent:id,name']);
 
         return response()->json($this->formatCategory($category, detail: true));
     }
@@ -101,7 +107,7 @@ class CategoryController extends Controller
             }
         }
 
-        $category->loadCount('products')->load('translations');
+        $category->loadCount('products')->load(['translations', 'parent:id,name']);
 
         return response()->json($this->formatCategory($category), 201);
     }
@@ -154,7 +160,7 @@ class CategoryController extends Controller
             }
         }
 
-        $category->loadCount('products')->load('translations');
+        $category->loadCount('products')->load(['translations', 'parent:id,name']);
 
         return response()->json($this->formatCategory($category));
     }

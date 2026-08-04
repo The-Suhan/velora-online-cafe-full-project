@@ -13,10 +13,10 @@ class OrderController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = Order::with([
-            'user:id,name,email',
-            'orderItems.product:id,name,image_url',
-        ]);
+        // The list only renders a quantity total, so aggregate it in SQL instead
+        // of hydrating every order item and its product.
+        $query = Order::with('user:id,name,email')
+            ->withSum('orderItems as items_count', 'quantity');
 
         // Search by customer name or email or order id
         if ($search = $request->query('search')) {
@@ -63,33 +63,38 @@ class OrderController extends Controller
 
     public function stats(): JsonResponse
     {
-        $total = Order::count();
+        // Totals, week-over-week and the status breakdown in a single pass.
+        $agg = Order::selectRaw(
+            'COUNT(*) as total,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as this_week,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as last_week,'
+            .' SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as pending,'
+            .' SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as preparing,'
+            .' SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as ready,'
+            .' SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as delivered,'
+            .' SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as cancelled',
+            [
+                now()->startOfWeek(), now()->endOfWeek(),
+                now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek(),
+                'pending', 'preparing', 'ready', 'delivered', 'cancelled',
+            ]
+        )->first();
 
-        $thisWeek = Order::whereBetween('created_at', [
-            now()->startOfWeek(), now()->endOfWeek(),
-        ])->count();
-
-        $lastWeek = Order::whereBetween('created_at', [
-            now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek(),
-        ])->count();
+        $thisWeek = (int) $agg->this_week;
+        $lastWeek = (int) $agg->last_week;
 
         $growth = $lastWeek === 0
             ? ($thisWeek > 0 ? 100 : 0)
             : round((($thisWeek - $lastWeek) / $lastWeek) * 100, 1);
 
-        // Status breakdown counts
-        $statusCounts = Order::selectRaw('status, count(*) as count')
-            ->groupBy('status')
-            ->pluck('count', 'status');
-
         return response()->json([
-            'total' => $total,
+            'total' => (int) $agg->total,
             'growth' => $growth,
-            'pending' => (int) ($statusCounts['pending'] ?? 0),
-            'preparing' => (int) ($statusCounts['preparing'] ?? 0),
-            'ready' => (int) ($statusCounts['ready'] ?? 0),
-            'delivered' => (int) ($statusCounts['delivered'] ?? 0),
-            'cancelled' => (int) ($statusCounts['cancelled'] ?? 0),
+            'pending' => (int) $agg->pending,
+            'preparing' => (int) $agg->preparing,
+            'ready' => (int) $agg->ready,
+            'delivered' => (int) $agg->delivered,
+            'cancelled' => (int) $agg->cancelled,
         ]);
     }
 
@@ -219,7 +224,10 @@ class OrderController extends Controller
 
     public function export(Request $request): JsonResponse
     {
-        $query = Order::with(['user:id,name,email', 'orderItems']);
+        // Count items in SQL — this used to hydrate every order_item row of every
+        // exported order just to call ->count() on the collection.
+        $query = Order::with('user:id,name,email')
+            ->withCount('orderItems');
 
         if ($status = $request->query('status')) {
             $query->where('status', $status);
@@ -242,7 +250,7 @@ class OrderController extends Controller
                 'email' => $o->user?->email,
                 'status' => $o->status,
                 'total_price' => (float) $o->total_price,
-                'items' => $o->orderItems->count(),
+                'items' => (int) $o->order_items_count,
                 'note' => $o->note,
                 'created_at' => $o->created_at?->format('M d, Y H:i'),
             ]);
@@ -265,6 +273,24 @@ class OrderController extends Controller
         };
     }
 
+    /**
+     * Total quantity across the order's items.
+     *
+     * Prefers the `items_count` aggregate added by withSum() on the list query,
+     * then an already-loaded relation, and only falls back to a query as a last
+     * resort so this can never silently become an N+1.
+     */
+    private function itemsCount(Order $o): int
+    {
+        if (array_key_exists('items_count', $o->getAttributes())) {
+            return (int) $o->getAttributes()['items_count'];
+        }
+
+        return (int) ($o->relationLoaded('orderItems')
+            ? $o->orderItems->sum('quantity')
+            : $o->orderItems()->sum('quantity'));
+    }
+
     private function formatOrder(Order $o, bool $detail = false): array
     {
         $base = [
@@ -274,7 +300,7 @@ class OrderController extends Controller
             'allowed_next' => $this->allowedTransitions($o->status),
             'total_price' => (float) $o->total_price,
             'note' => $o->note,
-            'items_count' => $o->orderItems ? $o->orderItems->sum('quantity') : $o->orderItems()->sum('quantity'),
+            'items_count' => $this->itemsCount($o),
             'customer' => $o->user ? [
                 'id' => $o->user->id,
                 'name' => $o->user->name,

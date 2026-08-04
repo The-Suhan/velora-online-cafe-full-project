@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
+    /** Products shown per carousel row on the menu home page. */
+    private const HOME_PRODUCTS_PER_ROW = 20;
+
     public function showCategory(Category $category): JsonResponse
     {
         $category->load([
@@ -43,6 +46,75 @@ class CustomerController extends Controller
             ->map(fn ($c) => $this->formatCategory($c, withChildren: true));
 
         return response()->json($categories);
+    }
+
+    /**
+     * GET /api/home
+     *
+     * The menu home page renders one product carousel per category. It used to
+     * build that by calling /categories and then /categories/{id}/products once
+     * per category — 1 + N HTTP round trips. This returns the same rows in two
+     * queries.
+     *
+     * Row shape matches the client's existing structure: each category object
+     * plus a `products` array, categories with no products omitted.
+     */
+    public function home(): JsonResponse
+    {
+        $roots = Category::with([
+            'translations',
+            'children' => fn ($q) => $q->where('is_active', true)->with('translations'),
+        ])
+            ->whereNull('parent_id')
+            ->where('is_active', true)
+            ->orderBy('id')
+            ->get();
+
+        // Prefer subcategories as the carousel rows; fall back to roots when
+        // there are none — same rule the page applied client-side.
+        $subCategories = $roots->flatMap(fn ($c) => $c->children);
+        $targets = $subCategories->isNotEmpty() ? $subCategories : $roots;
+
+        if ($targets->isEmpty()) {
+            return response()->json([]);
+        }
+
+        // A category row also shows its children's products (matching
+        // categoryProducts()), so map each target to the ids it covers.
+        $childIds = Category::whereIn('parent_id', $targets->pluck('id'))
+            ->get(['id', 'parent_id'])
+            ->groupBy('parent_id')
+            ->map(fn ($rows) => $rows->pluck('id')->all());
+
+        $idsByTarget = $targets->mapWithKeys(fn ($c) => [
+            $c->id => array_merge([$c->id], $childIds[$c->id] ?? []),
+        ]);
+
+        $allIds = collect($idsByTarget->values())->flatten()->unique()->values();
+
+        $productsByCategory = Product::with(['category:id,name', 'translations'])
+            ->whereIn('category_id', $allIds)
+            ->where('is_active', true)
+            ->orderByDesc('created_at')
+            ->get()
+            ->groupBy('category_id');
+
+        $rows = $targets->map(function ($category) use ($idsByTarget, $productsByCategory) {
+            $products = collect($idsByTarget[$category->id])
+                ->flatMap(fn ($id) => $productsByCategory[$id] ?? collect())
+                // Re-sort after merging child buckets, then apply the same
+                // per_page=20 cap the client used to request.
+                ->sortByDesc('created_at')
+                ->take(self::HOME_PRODUCTS_PER_ROW)
+                ->map(fn ($p) => $this->formatProduct($p))
+                ->values();
+
+            return $this->formatCategory($category) + ['products' => $products];
+        })
+            ->filter(fn ($row) => $row['products']->isNotEmpty())
+            ->values();
+
+        return response()->json($rows);
     }
 
     /**
@@ -170,12 +242,10 @@ class CustomerController extends Controller
                 ->where('product_id', $product->id)
                 ->delete();
 
-            $avg = Rating::where('product_id', $product->id)->avg('score') ?? 0;
-            $product->update(['avg_rating' => round($avg, 2)]);
-
+            // Mass delete skips model events, so sync explicitly.
             return response()->json([
                 'message' => 'Rating removed.',
-                'avg_rating' => (float) $product->fresh()->avg_rating,
+                'avg_rating' => Product::syncAvgRating($product->id),
             ]);
         }
 
@@ -192,13 +262,12 @@ class CustomerController extends Controller
             ]
         );
 
-        $avg = Rating::where('product_id', $product->id)->avg('score');
-        $product->update(['avg_rating' => round($avg, 2)]);
-
+        // The Rating created/updated event already recomputed avg_rating; just
+        // read the stored value back instead of recomputing and refetching.
         return response()->json([
             'message' => 'Rating saved successfully.',
             'score' => (float) $rating->score,
-            'avg_rating' => (float) $product->fresh()->avg_rating,
+            'avg_rating' => (float) Product::whereKey($product->id)->value('avg_rating'),
         ]);
     }
 
@@ -216,9 +285,8 @@ class CustomerController extends Controller
             return response()->json(['message' => 'No rating found to delete.'], 404);
         }
 
-        // avg_rating'i yeniden hesapla
-        $avg = Rating::where('product_id', $product->id)->avg('score') ?? 0;
-        $product->update(['avg_rating' => round($avg, 2)]);
+        // Mass delete skips model events, so sync explicitly.
+        Product::syncAvgRating($product->id);
 
         return response()->json(['message' => 'Rating deleted successfully.']);
     }
@@ -272,11 +340,11 @@ class CustomerController extends Controller
             'phone' => 'required|string|max:20',
         ]);
 
-        // Ürünleri tek sorguda çek
+        // Ürünleri tek sorguda çek — only the columns the order needs
         $productIds = collect($request->items)->pluck('product_id')->unique();
         $products = Product::whereIn('id', $productIds)
             ->where('is_active', true)
-            ->get()
+            ->get(['id', 'price'])
             ->keyBy('id');
 
         // Pasif/silinmiş ürün kontrolü
@@ -316,9 +384,11 @@ class CustomerController extends Controller
                 'phone' => $request->phone,
             ]);
 
-            foreach ($orderItems as $item) {
-                $order->items()->create($item);
-            }
+            // Single bulk insert instead of one INSERT per line item.
+            $order->items()->insert(array_map(
+                fn (array $item) => $item + ['order_id' => $order->id],
+                $orderItems
+            ));
 
             DB::commit();
         } catch (\Throwable $e) {

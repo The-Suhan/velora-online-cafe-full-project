@@ -46,7 +46,6 @@ const handleError = () => clearError({ redirect: '/' })
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Cormorant+Garamond:wght@300;400;500&display=swap');
 
 .error-root {
     min-height: 100dvh;

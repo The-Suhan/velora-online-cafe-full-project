@@ -206,15 +206,9 @@ function displayDesc(item) {
     return getTranslation(item, locale.value, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
 }
 
+// Fonts are loaded once from nuxt.config, not per page.
 useHead({
     title: computed(() => `Velora — ${displayName(category.value) || 'Products'}`),
-    link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        {
-            rel: 'stylesheet',
-            href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Lato:wght@300;400&display=swap',
-        },
-    ],
 })
 
 onMounted(() => {

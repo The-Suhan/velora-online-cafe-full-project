@@ -17,6 +17,14 @@ export function useCart() {
         set: (val) => { cookie.value = val },
     })
 
+    // Product-id lookup index. Templates call getItem() once per rendered
+    // product on every re-render, so keep that O(1) instead of a linear scan.
+    const itemsById = computed(() => {
+        const map = new Map()
+        for (const item of items.value) map.set(item.product_id, item)
+        return map
+    })
+
     const totalCount = computed(() =>
         items.value.reduce((sum, i) => sum + (i.quantity ?? 0), 0)
     )
@@ -72,12 +80,13 @@ export function useCart() {
     }
 
     function getItem(productId) {
-        return items.value.find((i) => i.product_id === productId) ?? null
+        return itemsById.value.get(productId) ?? null
     }
 
 
     return {
         items,
+        itemsById,
         totalCount,
         totalPrice,
         addItem,
