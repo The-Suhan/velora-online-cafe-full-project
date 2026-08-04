@@ -790,30 +790,13 @@ definePageMeta({ layout: 'admin' as any, middleware: 'admin' })
 const { t, locale } = useI18n()
 const config = useRuntimeConfig()
 const API = config.public.apiBase
-const BACKEND_BASE = API.replace(/\/api\/?$/, '')
 
-const resolveUrl = (url: string | null | undefined): string | null => {
-    if (!url) return null
-    if (url.startsWith('http')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
+const { resolveUrl } = useMediaUrl()
+const { displayName, displayDesc: fullDesc, getTranslation } = useLocalized()
 
-// ── Translation helpers ───────────────────────────────────
-function getTranslation(item: any, loc: string, field: 'name' | 'description'): string {
-    if (!item?.translations) return ''
-    const tr = item.translations
-    const entry = Array.isArray(tr) ? tr.find((x: any) => x.locale === loc) : tr[loc]
-    return entry?.[field] ?? ''
-}
-
-function displayName(item: any): string {
-    const loc = locale.value
-    return getTranslation(item, loc, 'name') || getTranslation(item, 'en', 'name') || item?.name || ''
-}
-
+/** Table cells show a truncated description; the full text is in the preview modal. */
 function displayDesc(item: any): string {
-    const loc = locale.value
-    const full = getTranslation(item, loc, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
+    const full = fullDesc(item)
     if (!full) return ''
     return full.length > 40 ? full.slice(0, 40) + '…' : full
 }

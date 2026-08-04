@@ -60,26 +60,8 @@
 useHead({ title: 'Velora — Categories' })
 definePageMeta({ layout: 'client', middleware: 'auth' })
 
-const config = useRuntimeConfig()
-const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
-
-const resolveUrl = (url) => {
-  if (!url) return null
-  if (url.startsWith('http')) return url
-  return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
-
-const { locale } = useI18n()
-
-function getTranslation(item, loc, field) {
-  if (!item?.translations) return ''
-  const tr = item.translations
-  const entry = Array.isArray(tr) ? tr.find(x => x.locale === loc) : tr[loc]
-  return entry?.[field] ?? ''
-}
-function displayName(item) {
-  return getTranslation(item, locale.value, 'name') || getTranslation(item, 'en', 'name') || item?.name || ''
-}
+const { resolveUrl } = useMediaUrl()
+const { displayName } = useLocalized()
 
 const api = useApi()
 const loading = ref(false)

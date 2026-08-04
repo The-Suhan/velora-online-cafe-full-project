@@ -111,8 +111,8 @@ export const STATUS_ORDER: OrderStatus[] = ['pending', 'preparing', 'ready', 'de
 export function useOrders(fixedStatus?: OrderStatus) {
     const config = useRuntimeConfig()
     const API = config.public.apiBase as string
-    const BACKEND_BASE = API.replace(/\/api\/?$/, '')
 
+    const { resolveUrl } = useMediaUrl()
     const { token } = useAuth()
     const authHeaders = computed(() => ({ Authorization: `Bearer ${token.value}` }))
     const DELIVERY_FEE = 15
@@ -474,12 +474,6 @@ export function useOrders(fixedStatus?: OrderStatus) {
     const initials = (name?: string | null) => {
         if (!name) return '?'
         return name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
-    }
-
-    const resolveUrl = (url: string | null | undefined): string | null => {
-        if (!url) return null
-        if (url.startsWith('http')) return url
-        return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
     }
 
     const canCancel = (status: OrderStatus) => !['delivered', 'cancelled'].includes(status)

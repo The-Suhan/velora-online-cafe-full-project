@@ -100,31 +100,11 @@ definePageMeta({ layout: 'client', middleware: 'auth' })
 
 
 const route = useRoute()
-const config = useRuntimeConfig()
 const categoryId = route.params.id
 
-const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
-
-const resolveUrl = (url) => {
-    if (!url) return null
-    if (url.startsWith('http')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
-const { locale, t } = useI18n()
-
-function getTranslation(item, loc, field) {
-    if (!item?.translations) return ''
-    const tr = item.translations
-    const entry = Array.isArray(tr) ? tr.find(x => x.locale === loc) : tr[loc]
-    return entry?.[field] ?? ''
-}
-function displayName(item) {
-    return getTranslation(item, locale.value, 'name') || getTranslation(item, 'en', 'name') || item?.name || ''
-}
-
-function displayDesc(item) {
-    return getTranslation(item, locale.value, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
-}
+const { resolveUrl } = useMediaUrl()
+const { displayName, displayDesc } = useLocalized()
+const { t } = useI18n()
 
 const api = useApi()
 const loading = ref(true)

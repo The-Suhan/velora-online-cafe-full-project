@@ -1,17 +1,10 @@
 <script setup>
-import { ref, watch, defineComponent, h } from 'vue'
+import { ref, watch } from 'vue'
 import { useCart } from '~/composables/useCart'
-const { locale, t } = useI18n()
+const { t } = useI18n()
 
-const config = useRuntimeConfig()
-const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
-
-
-const resolveUrl = (url) => {
-    if (!url) return null
-    if (url.startsWith('http')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
+const { resolveUrl } = useMediaUrl()
+const { displayName, displayDesc } = useLocalized()
 
 // ─── Props & emits ────────────────────────────────────────────
 const props = defineProps({
@@ -106,58 +99,6 @@ watch(activeProduct, async (p, prevP) => {
     }
 }, { immediate: true })
 
-// ─── StarRating component ─────────────────────────────────────
-const StarRating = defineComponent({
-    props: { score: { type: Number, default: 0 }, interactive: { type: Boolean, default: false } },
-    emits: ['rate'],
-    setup(props, { emit }) {
-        const hovered = ref(null)
-        function stars() {
-            return Array.from({ length: 5 }, (_, i) => {
-                const fill = Math.min(Math.max((props.score - i), 0), 1) * 100
-                return h('button', {
-                    class: 'star-wrap',
-                    onClick: () => props.interactive && emit('rate', i + 1),
-                    onMouseenter: () => { if (props.interactive) hovered.value = i + 1 },
-                    onMouseleave: () => { if (props.interactive) hovered.value = null },
-                }, [
-                    h('svg', { class: 'star-svg', viewBox: '0 0 24 24' }, [
-                        h('polygon', { points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26', fill: '#E8DDD0', stroke: 'none' }),
-                    ]),
-                    h('div', {
-                        class: 'star-fill',
-                        style: { width: `${hovered.value !== null && props.interactive ? (i < hovered.value ? 100 : 0) : fill}%` },
-                    }, [
-                        h('svg', { class: 'star-svg', viewBox: '0 0 24 24' }, [
-                            h('polygon', { points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26', fill: '#C9A96E', stroke: 'none' }),
-                        ]),
-                    ]),
-                ])
-            })
-        }
-        return () => h('div', { class: 'pm-stars' }, stars())
-    },
-})
-
-function getTranslation(item, loc, field) {
-    if (!item?.translations) return ''
-    const tr = item.translations
-    const entry = Array.isArray(tr) ? tr.find(x => x.locale === loc) : tr[loc]
-    return entry?.[field] ?? ''
-}
-
-function displayName(item) {
-    return getTranslation(item, locale.value, 'name')
-        || getTranslation(item, 'en', 'name')
-        || item?.name || ''
-}
-
-function displayDesc(item) {
-    return getTranslation(item, locale.value, 'description')
-        || getTranslation(item, 'en', 'description')
-        || item?.description || ''
-}
-
 // ─── Gradients fallback ───────────────────────────────────────
 const gradients = [
     'linear-gradient(135deg,#C9A96E 0%,#9B7B3E 100%)',
@@ -228,7 +169,7 @@ watch(() => props.modelValue, async (isOpen) => {
 
                             <!-- Rating -->
                             <div class="pm-rating-row">
-                                <StarRating
+                                <StarRating root-class="pm-stars"
                                     :score="(userRatings[activeProduct.id] !== undefined ? userRatings[activeProduct.id] : activeProduct.avg_rating) ?? 0"
                                     :interactive="true" @rate="(s) => rateProduct(activeProduct, s)" />
                                 <span class="pm-rating-val">

@@ -504,13 +504,7 @@ async function handleSubmitFeedback() {
 }
 
 
-const config = useRuntimeConfig()
-const BACKEND_BASE = (config.public.apiBase as string).replace(/\/api\/?$/, '')
-function resolveImageUrl(url: string | null) {
-    if (!url) return null
-    if (url.startsWith('http')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
+const { resolveUrl: resolveImageUrl } = useMediaUrl()
 
 onMounted(async () => {
     await fetchMe()

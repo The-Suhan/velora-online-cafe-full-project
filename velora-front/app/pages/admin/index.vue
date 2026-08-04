@@ -200,41 +200,12 @@ const topProducts = ref<any[]>([])
 const categories = ref<any[]>([])
 const config = useRuntimeConfig()
 const API = config.public.apiBase
-const BACKEND_BASE = API.replace(/\/api\/?$/, '')
 
-const resolveUrl = (url: string | null | undefined): string | null => {
-    if (!url) return null
-    if (url.startsWith('http')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
-
-// ── Translation helpers ────────────────────────────────────
-// Returns translated name from translations object/array, falls back to .name
-function getTranslatedField(item: any, field: 'name' | 'description'): string {
-    if (!item) return ''
-    const tr = item.translations
-    if (tr) {
-        const loc = locale.value
-        const entry = Array.isArray(tr)
-            ? tr.find((x: any) => x.locale === loc)
-            : tr[loc]
-        if (entry?.[field]) return entry[field]
-        // fallback to EN
-        const enEntry = Array.isArray(tr)
-            ? tr.find((x: any) => x.locale === 'en')
-            : tr['en']
-        if (enEntry?.[field]) return enEntry[field]
-    }
-    return item[field] ?? item.name ?? ''
-}
-
-function getCategoryName(cat: any): string {
-    return getTranslatedField(cat, 'name')
-}
-
-function getProductName(product: any): string {
-    return getTranslatedField(product, 'name')
-}
+const { resolveUrl } = useMediaUrl()
+// Both call sites only ever resolved the 'name' field, so displayName covers
+// them with the same locale → EN → raw-column fallback chain.
+const { displayName: getCategoryName } = useLocalized()
+const getProductName = getCategoryName
 
 // ── Stat cards ─────────────────────────────────────────────
 const statCards = computed(() => [

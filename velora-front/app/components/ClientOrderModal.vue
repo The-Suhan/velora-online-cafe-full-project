@@ -144,13 +144,7 @@ defineEmits<{
     'cancel': [id: number]
 }>()
 
-const config = useRuntimeConfig()
-const BACKEND_BASE = (config.public.apiBase as string).replace(/\/api\/?$/, '')
-function resolveUrl(url: string | null | undefined) {
-    if (!url) return null
-    if (url.startsWith('http')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
+const { resolveUrl } = useMediaUrl()
 
 function formatDay(dateStr: string) {
     return new Date(dateStr).getDate().toString().padStart(2, '0')
