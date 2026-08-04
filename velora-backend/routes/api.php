@@ -86,6 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Client api
+    Route::get('/home', [CustomerController::class, 'home']);
     Route::get('/categories', [CustomerController::class, 'categories']);
     Route::get('/categories/{category}/products', [CustomerController::class, 'categoryProducts']);
     Route::get('/categories/{category}', [CustomerController::class, 'showCategory']);

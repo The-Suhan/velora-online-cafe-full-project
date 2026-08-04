@@ -53,7 +53,6 @@ watch(visible, (val) => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Cormorant+Garamond:wght@300;400&display=swap');
 
 .loader-overlay {
     position: fixed;

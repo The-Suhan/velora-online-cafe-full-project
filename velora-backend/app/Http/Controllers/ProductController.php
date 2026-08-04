@@ -45,22 +45,26 @@ class ProductController extends Controller
 
     public function stats(): JsonResponse
     {
-        $total = Product::count();
+        // Total + week-over-week in one pass instead of three COUNTs.
+        $agg = Product::selectRaw(
+            'COUNT(*) as total,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as this_week,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as last_week',
+            [
+                now()->startOfWeek(), now()->endOfWeek(),
+                now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek(),
+            ]
+        )->first();
 
-        $thisWeek = Product::whereBetween('created_at', [
-            now()->startOfWeek(), now()->endOfWeek(),
-        ])->count();
-
-        $lastWeek = Product::whereBetween('created_at', [
-            now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek(),
-        ])->count();
+        $thisWeek = (int) $agg->this_week;
+        $lastWeek = (int) $agg->last_week;
 
         $growth = $lastWeek === 0
             ? ($thisWeek > 0 ? 100 : 0)
             : round((($thisWeek - $lastWeek) / $lastWeek) * 100, 1);
 
         return response()->json([
-            'total' => $total,
+            'total' => (int) $agg->total,
             'growth' => $growth,
         ]);
     }
@@ -244,7 +248,7 @@ class ProductController extends Controller
 
         if ($detail) {
             $base['ratings_count'] = $p->ratings()->count();
-            'order_count' && $base['order_count'] = $p->orderItems()->sum('quantity');
+            $base['order_count'] = (int) $p->orderItems()->sum('quantity');
         }
 
         return $base;

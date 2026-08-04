@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, defineComponent, h } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useCart } from '~/composables/useCart'
 import { onBeforeRouteLeave } from 'vue-router'
 import { useSearch } from '~/composables/useSearch'
@@ -15,52 +15,15 @@ function onImageLoad(productId) {
 }
 
 const config = useRuntimeConfig()
-const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
-
-const resolveUrl = (url) => {
-    if (!url) return null
-    if (url.startsWith('http')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
-const { locale, t } = useI18n()
-
-function getTranslation(item, loc, field) {
-    if (!item?.translations) return ''
-    const tr = item.translations
-    const entry = Array.isArray(tr) ? tr.find(x => x.locale === loc) : tr[loc]
-    return entry?.[field] ?? ''
-}
-
-function displayName(item) {
-    return getTranslation(item, locale.value, 'name')
-        || getTranslation(item, 'en', 'name')
-        || item?.name || ''
-}
-
-function displayDesc(item) {
-    return getTranslation(item, locale.value, 'description')
-        || getTranslation(item, 'en', 'description')
-        || item?.description || ''
-}
-
-function displayCatName(cat) {
-    return getTranslation(cat, locale.value, 'name')
-        || getTranslation(cat, 'en', 'name')
-        || cat?.name || ''
-}
+const { resolveUrl } = useMediaUrl()
+const { displayName, displayDesc } = useLocalized()
+const { t } = useI18n()
 
 definePageMeta({ layout: 'client', middleware: 'auth' })
 
-useHead({
-    title: 'Velora — Menu',
-    link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        {
-            rel: 'stylesheet',
-            href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Lato:wght@300;400&display=swap',
-        },
-    ],
-})
+// Font families are declared once in nuxt.config so the browser fetches a
+// single stylesheet instead of a second render-blocking one per page.
+useHead({ title: 'Velora — Menu' })
 
 const selectedProduct = ref(null)
 const modalOpen = ref(false)
@@ -86,12 +49,6 @@ const categoryRows = useState('home-category-rows-filtered', () => [])
 
 const loading = ref(allCategoryRows.value.length === 0)
 
-function refreshData() {
-    allCategoryRows.value = []
-    categoryRows.value = []
-    loadAll()
-}
-
 watch(searchQuery, (q) => {
     const term = q.trim().toLowerCase()
     if (!term) {
@@ -107,36 +64,6 @@ watch(searchQuery, (q) => {
             )
         }))
         .filter(cat => cat.products.length > 0)
-})
-
-// ─── StarRating ───────────────────────────────────────────────
-const StarRating = defineComponent({
-    props: { score: { type: Number, default: 0 }, interactive: { type: Boolean, default: false } },
-    emits: ['rate'],
-    setup(props, { emit }) {
-        const hovered = ref(null)
-        function stars() {
-            return Array.from({ length: 5 }, (_, i) => {
-                const fill = Math.min(Math.max((props.score - i), 0), 1) * 100
-                return h('button', {
-                    class: 'star-wrap',
-                    onClick: () => props.interactive && emit('rate', i + 1),
-                    onMouseenter: () => { if (props.interactive) hovered.value = i + 1 },
-                    onMouseleave: () => { if (props.interactive) hovered.value = null },
-                }, [
-                    h('svg', { class: 'star-svg', viewBox: '0 0 24 24' }, [
-                        h('polygon', { points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26', fill: '#E8DDD0', stroke: 'none' }),
-                    ]),
-                    h('div', { class: 'star-fill', style: { width: `${hovered.value !== null && props.interactive ? (i < hovered.value ? 100 : 0) : fill}%` } }, [
-                        h('svg', { class: 'star-svg', viewBox: '0 0 24 24' }, [
-                            h('polygon', { points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26', fill: '#C9A96E', stroke: 'none' }),
-                        ]),
-                    ]),
-                ])
-            })
-        }
-        return () => h('div', { class: 'stars' }, stars())
-    },
 })
 
 // ─── Carousel refs ────────────────────────────────────────────
@@ -193,26 +120,11 @@ const pendingRatings = ref({})
 async function loadAll() {
     loading.value = true
     try {
-        const mainCats = await api('/categories')
-        const subCats = mainCats.flatMap(c => Array.isArray(c.children) ? c.children : [])
-        const targetCats = subCats.length > 0 ? subCats : mainCats
-
-        const rows = await Promise.all(
-            targetCats.map(async (cat) => {
-                try {
-                    const data = await api(`/categories/${cat.id}/products`, {
-                        params: { per_page: 20, sort: 'newest' },
-                    })
-                    return { ...cat, products: data.data ?? [] }
-                } catch {
-                    return { ...cat, products: [] }
-                }
-            })
-        )
-
-        const filtered = rows.filter(r => r.products.length > 0)
-        allCategoryRows.value = filtered
-        categoryRows.value = filtered
+        // One request for every carousel row. This previously fetched
+        // /categories and then /categories/{id}/products once per category.
+        const rows = await api('/home')
+        allCategoryRows.value = rows
+        categoryRows.value = rows
     } catch (e) {
         console.error(t('home.loadError'), e)
     } finally {
@@ -259,8 +171,6 @@ async function flushPendingRatings() {
     )
 }
 
-function cartItem(productId) { return getItem(productId) }
-
 const gradients = [
     'linear-gradient(135deg,#C9A96E 0%,#9B7B3E 100%)',
     'linear-gradient(135deg,#D4C5A9 0%,#A8916B 100%)',
@@ -268,6 +178,16 @@ const gradients = [
     'linear-gradient(135deg,#B8924F 0%,#D4A853 100%)',
 ]
 function cardGradient(id) { return gradients[id % gradients.length] }
+
+// Best-effort flush of un-sent ratings when the tab closes.
+function beaconPendingRatings() {
+    for (const [productId, { score }] of Object.entries(pendingRatings.value)) {
+        navigator.sendBeacon(
+            `${config.public.apiBase}/products/${productId}/rate`,
+            new Blob([JSON.stringify({ score: score ?? null })], { type: 'application/json' })
+        )
+    }
+}
 
 onMounted(() => {
     if (allCategoryRows.value.length === 0) {
@@ -277,15 +197,13 @@ onMounted(() => {
         hideLoading()
     }
 
-    window.addEventListener('beforeunload', () => {
-        const entries = Object.entries(pendingRatings.value)
-        entries.forEach(([productId, { score }]) => {
-            navigator.sendBeacon(
-                `${config.public.apiBase}/products/${productId}/rate`,
-                new Blob([JSON.stringify({ score: score ?? null })], { type: 'application/json' })
-            )
-        })
-    })
+    window.addEventListener('beforeunload', beaconPendingRatings)
+})
+
+// The listener used to be added on every mount and never removed, so revisiting
+// the page stacked up duplicates that each fired their own beacon.
+onBeforeUnmount(() => {
+    window.removeEventListener('beforeunload', beaconPendingRatings)
 })
 function onRatingUpdated({ productId, avgRating, userScore }) {
     if (avgRating != null) {
@@ -330,7 +248,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
                 <!-- Section header -->
                 <div class="section-head">
                     <div class="section-head-left">
-                        <h2 class="section-title">{{ displayCatName(cat) }}</h2>
+                        <h2 class="section-title">{{ displayName(cat) }}</h2>
                         <span class="section-count">{{ $t('home.itemsCount', { n: cat.products.length }) }}</span>
                     </div>
                     <NuxtLink :to="`/categories/${cat.id}`" class="see-all-btn">
@@ -396,14 +314,14 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
                                             {{ $t('home.detail') }}
                                         </button>
 
-                                        <button v-if="!cartItem(product.id)" @click.stop="addItem(product)"
+                                        <button v-if="!getItem(product.id)" @click.stop="addItem(product)"
                                             class="add-btn">
                                             {{ $t('home.addToCart') }}
                                         </button>
                                         <div v-else class="qty-ctrl">
                                             <button class="qty-btn" @click.stop="decreaseQty(product.id)"
                                                 :aria-label="$t('home.decreaseQty')">−</button>
-                                            <span class="qty-num">{{ cartItem(product.id).quantity }}</span>
+                                            <span class="qty-num">{{ getItem(product.id).quantity }}</span>
                                             <button class="qty-btn" @click.stop="increaseQty(product.id)"
                                                 :aria-label="$t('home.increaseQty')">+</button>
                                         </div>

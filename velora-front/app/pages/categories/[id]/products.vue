@@ -1,16 +1,10 @@
 <script setup>
-import { ref, computed, watch, onMounted, defineComponent, h } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useCart } from '~/composables/useCart'
 import { onBeforeRouteLeave } from 'vue-router'
 
 const config = useRuntimeConfig()
-const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
-
-const resolveUrl = (url) => {
-    if (!url) return null
-    if (url.startsWith('http')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
+const { resolveUrl } = useMediaUrl()
 
 definePageMeta({ layout: 'client', middleware: 'auth' })
 
@@ -50,48 +44,6 @@ const products = computed(() => productsCache.value[categoryId.value] ?? [])
 // ─── Modal ────────────────────────────────────────────────────
 const selectedProduct = ref(null)
 const modalOpen = ref(false)
-
-// ─── StarRating ───────────────────────────────────────────────
-const StarRating = defineComponent({
-    props: {
-        score: { type: Number, default: 0 },
-        interactive: { type: Boolean, default: false },
-    },
-    emits: ['rate'],
-    setup(props, { emit }) {
-        const hovered = ref(null)
-        function stars() {
-            return Array.from({ length: 5 }, (_, i) => {
-                const fill = Math.min(Math.max((props.score - i), 0), 1) * 100
-                return h('button', {
-                    class: 'star-wrap',
-                    onClick: () => props.interactive && emit('rate', i + 1),
-                    onMouseenter: () => { if (props.interactive) hovered.value = i + 1 },
-                    onMouseleave: () => { if (props.interactive) hovered.value = null },
-                }, [
-                    h('svg', { class: 'star-svg', viewBox: '0 0 24 24' }, [
-                        h('polygon', {
-                            points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26',
-                            fill: '#E8DDD0', stroke: 'none',
-                        }),
-                    ]),
-                    h('div', {
-                        class: 'star-fill',
-                        style: { width: `${hovered.value !== null && props.interactive ? (i < hovered.value ? 100 : 0) : fill}%` },
-                    }, [
-                        h('svg', { class: 'star-svg', viewBox: '0 0 24 24' }, [
-                            h('polygon', {
-                                points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26',
-                                fill: '#C9A96E', stroke: 'none',
-                            }),
-                        ]),
-                    ]),
-                ])
-            })
-        }
-        return () => h('div', { class: 'stars' }, stars())
-    },
-})
 
 // ─── Gradients fallback ───────────────────────────────────────
 const gradients = [
@@ -191,30 +143,11 @@ async function loadData() {
         loading.value = false
     }
 }
-const { locale } = useI18n()
+const { displayName, displayDesc } = useLocalized()
 
-function getTranslation(item, loc, field) {
-    if (!item?.translations) return ''
-    const tr = item.translations
-    const entry = Array.isArray(tr) ? tr.find(x => x.locale === loc) : tr[loc]
-    return entry?.[field] ?? ''
-}
-function displayName(item) {
-    return getTranslation(item, locale.value, 'name') || getTranslation(item, 'en', 'name') || item?.name || ''
-}
-function displayDesc(item) {
-    return getTranslation(item, locale.value, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
-}
-
+// Fonts are loaded once from nuxt.config, not per page.
 useHead({
     title: computed(() => `Velora — ${displayName(category.value) || 'Products'}`),
-    link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        {
-            rel: 'stylesheet',
-            href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Lato:wght@300;400&display=swap',
-        },
-    ],
 })
 
 onMounted(() => {

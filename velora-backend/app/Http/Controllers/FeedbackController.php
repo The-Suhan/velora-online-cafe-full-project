@@ -14,22 +14,29 @@ class FeedbackController extends Controller
 
     public function stats(): JsonResponse
     {
-        $total = Feedback::count();
-        $pending = Feedback::where('is_done', false)->count();
-        $resolved = Feedback::where('is_done', true)->count();
+        // All five figures in one pass instead of five separate COUNTs.
+        $agg = Feedback::selectRaw(
+            'COUNT(*) as total,'
+            .' SUM(CASE WHEN is_done = ? THEN 1 ELSE 0 END) as pending,'
+            .' SUM(CASE WHEN is_done = ? THEN 1 ELSE 0 END) as resolved,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as this_month,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as last_month',
+            [
+                false, true,
+                now()->startOfMonth(), now()->endOfMonth(),
+                now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth(),
+            ]
+        )->first();
+
+        $total = (int) $agg->total;
+        $pending = (int) $agg->pending;
+        $resolved = (int) $agg->resolved;
+        $thisMonth = (int) $agg->this_month;
+        $lastMonth = (int) $agg->last_month;
 
         $resolutionRate = $total > 0
             ? round(($resolved / $total) * 100, 1)
             : 0;
-
-        // Bu ay / geçen ay karşılaştırması (Total Feedback growth)
-        $thisMonth = Feedback::whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->count();
-
-        $lastMonth = Feedback::whereMonth('created_at', now()->subMonth()->month)
-            ->whereYear('created_at', now()->subMonth()->year)
-            ->count();
 
         $growth = $lastMonth === 0
             ? ($thisMonth > 0 ? 100 : 0)

@@ -36,20 +36,18 @@ class Rating extends Model
     }
 
     // ── Model Events ──────────────────────────────────────────
-    // Rating oluşturulunca / silinince ürünün avg_rating'ini güncelle
+    // Rating oluşturulunca / silinince ürünün avg_rating'ini güncelle.
+    //
+    // NOTE: these only fire for single-model operations. Mass deletes
+    // (Rating::where(...)->delete()) bypass them, so those call sites must call
+    // Product::syncAvgRating() themselves.
 
     protected static function booted(): void
     {
-        static::created(function (Rating $rating) {
-            $rating->product->recalculateAvgRating();
-        });
+        $sync = fn (Rating $rating) => Product::syncAvgRating($rating->product_id);
 
-        static::updated(function (Rating $rating) {
-            $rating->product->recalculateAvgRating();
-        });
-
-        static::deleted(function (Rating $rating) {
-            $rating->product->recalculateAvgRating();
-        });
+        static::created($sync);
+        static::updated($sync);
+        static::deleted($sync);
     }
 }

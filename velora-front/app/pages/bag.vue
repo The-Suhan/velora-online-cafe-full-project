@@ -239,6 +239,9 @@ useHead({ title: 'Velora — My Bag' })
 
 const { locale, t } = useI18n()
 
+// Deliberately not useLocalized(): cart items come from the cookie with
+// `product_translations`/`product_name` fields and no EN fallback step, so the
+// shared helper would resolve a different name than what was added to the bag.
 function getProductName(item) {
     const tr = item.product_translations
     if (!tr) return item.product_name ?? ''
@@ -252,15 +255,8 @@ function getProductName(item) {
 const { items, totalPrice, increaseQty, decreaseQty, removeItem, clearCart } = useCart()
 
 // ─── Config / API ─────────────────────────────────────────────
-const config = useRuntimeConfig()
-const BACKEND_BASE = config.public.apiBase.replace(/\/api\/?$/, '')
 const api = useApi()
-
-function resolveUrl(url) {
-    if (!url) return null
-    if (url.startsWith('http')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
+const { resolveUrl } = useMediaUrl()
 
 // ─── Phone validation ─────────────────────────────────────────
 const VALID_OPERATORS = ['71', '65', '64', '63', '62', '61']

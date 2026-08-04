@@ -73,14 +73,26 @@ class Product extends Model
      * Ratings tablosundan avg_rating'i yeniden hesaplar ve kaydeder.
      * Trigger yerine model event ile kullanılabilir.
      */
-    public function recalculateAvgRating(): void
+    public function recalculateAvgRating(): float
     {
-        $avg = $this->ratings()->avg('score') ?? 0;
-        $this->update(['avg_rating' => round($avg, 2)]);
+        $avg = static::syncAvgRating($this->id);
+        $this->avg_rating = $avg;
+
+        return $avg;
     }
 
-    public function isInStock(): bool
+    /**
+     * Recomputes and persists avg_rating for a product id, returning the new value.
+     *
+     * Works off the id alone so callers (model events in particular) never have to
+     * hydrate the Product just to update one column.
+     */
+    public static function syncAvgRating(int $productId): float
     {
-        return $this->stock > 0;
+        $avg = round((float) (Rating::where('product_id', $productId)->avg('score') ?? 0), 2);
+
+        static::whereKey($productId)->update(['avg_rating' => $avg]);
+
+        return $avg;
     }
 }

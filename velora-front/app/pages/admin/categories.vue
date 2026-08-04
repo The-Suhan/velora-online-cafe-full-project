@@ -832,31 +832,9 @@ definePageMeta({ layout: 'admin' })
 const { t, locale } = useI18n()
 const config = useRuntimeConfig()
 const API = config.public.apiBase
-const BACKEND_BASE = API.replace(/\/api\/?$/, '')
 
-function resolveImageUrl(url: string | null | undefined): string | null {
-    if (!url) return null
-    if (url.startsWith('http://') || url.startsWith('https://')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
-
-// ── Translation helpers ───────────────────────────────────
-function getTranslation(item: any, loc: string, field: 'name' | 'description'): string {
-    if (!item?.translations) return ''
-    const tr = item.translations
-    const entry = Array.isArray(tr) ? tr.find((x: any) => x.locale === loc) : tr[loc]
-    return entry?.[field] ?? ''
-}
-
-function displayName(item: any): string {
-    const loc = locale.value
-    return getTranslation(item, loc, 'name') || getTranslation(item, 'en', 'name') || item?.name || ''
-}
-
-function displayDesc(item: any): string {
-    const loc = locale.value
-    return getTranslation(item, loc, 'description') || getTranslation(item, 'en', 'description') || item?.description || ''
-}
+const { resolveUrl: resolveImageUrl } = useMediaUrl()
+const { displayName, displayDesc, getTranslation } = useLocalized()
 
 function localeFlag(loc: string): string {
     return { en: '🇬🇧', ru: '🇷🇺', tm: '🇹🇲' }[loc] ?? ''

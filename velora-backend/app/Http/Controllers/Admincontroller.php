@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AdminController extends Controller
 {
@@ -18,43 +19,70 @@ class AdminController extends Controller
 
     public function dashboard(): JsonResponse
     {
-        $totalUsers = User::count();
-        $totalOrders = Order::count();
+        $weekStart = now()->startOfWeek();
+        $weekEnd = now()->endOfWeek();
+        $prevWeekStart = now()->subWeek()->startOfWeek();
+        $prevWeekEnd = now()->subWeek()->endOfWeek();
+        $yearStart = now()->startOfYear();
+        $yearEnd = now()->endOfYear();
+
+        // One aggregate pass over users instead of three separate COUNTs.
+        $userAgg = User::selectRaw(
+            'COUNT(*) as total,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as this_week,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as last_week',
+            [$weekStart, $weekEnd, $prevWeekStart, $prevWeekEnd]
+        )->first();
+
+        // One aggregate pass over orders instead of seven separate COUNT/SUMs.
+        $orderAgg = Order::selectRaw(
+            'COUNT(*) as total,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as this_week,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as last_week,'
+            .' SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as pending,'
+            ." SUM(CASE WHEN status = ? AND created_at BETWEEN ? AND ? THEN total_price ELSE 0 END) as week_revenue,"
+            ." SUM(CASE WHEN status = ? AND created_at BETWEEN ? AND ? THEN total_price ELSE 0 END) as last_week_revenue,"
+            ." SUM(CASE WHEN status = ? AND created_at BETWEEN ? AND ? THEN total_price ELSE 0 END) as year_revenue",
+            [
+                $weekStart, $weekEnd,
+                $prevWeekStart, $prevWeekEnd,
+                'pending',
+                'delivered', $weekStart, $weekEnd,
+                'delivered', $prevWeekStart, $prevWeekEnd,
+                'delivered', $yearStart, $yearEnd,
+            ]
+        )->first();
+
+        $totalUsers = (int) $userAgg->total;
+        $thisWeekUsers = (int) $userAgg->this_week;
+        $lastWeekUsers = (int) $userAgg->last_week;
+
+        $totalOrders = (int) $orderAgg->total;
+        $thisWeekOrders = (int) $orderAgg->this_week;
+        $lastWeekOrders = (int) $orderAgg->last_week;
+        $pendingOrders = (int) $orderAgg->pending;
+        $thisWeekRevenue = (float) $orderAgg->week_revenue;
+        $lastWeekRevenue = (float) $orderAgg->last_week_revenue;
+        $yearlyRevenue = (float) $orderAgg->year_revenue;
+
         $totalProducts = Product::count();
         $totalCategories = Category::count();
-
-        $thisWeekUsers = User::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
-        $lastWeekUsers = User::whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count();
-
-        $thisWeekOrders = Order::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
-        $lastWeekOrders = Order::whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count();
-
-        $pendingOrders = Order::where('status', 'pending')->count();
         $unreadFeedbacks = Feedback::where('is_done', false)->count();
 
-        // Weekly revenue
-        $thisWeekRevenue = Order::where('status', 'delivered')
-            ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
-            ->sum('total_price');
-
-        $lastWeekRevenue = Order::where('status', 'delivered')
-            ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
-            ->sum('total_price');
-
-        // Yearly revenue
-        $yearlyRevenue = Order::where('status', 'delivered')
-            ->whereYear('created_at', now()->year)
-            ->sum('total_price');
-
-        // Top rated products
-        $topProducts = Product::with('ratings')
-            ->where('avg_rating', '>', 0)
+        // Top rated products — the `ratings` relation was eager loaded but never
+        // used by the dashboard, pulling every rating row for each product.
+        $topProducts = Product::where('avg_rating', '>', 0)
             ->orderByDesc('avg_rating')
             ->take(4)
             ->get();
 
-        // Recent delivered orders
-        $recentOrders = Order::with(['user', 'items.product'])
+        // Recent delivered orders — only the first item's product is rendered,
+        // so select just the columns the payload needs.
+        $recentOrders = Order::with([
+            'user:id,name',
+            'items:id,order_id,product_id',
+            'items.product:id,name,image_url',
+        ])
             ->where('status', 'delivered')
             ->latest()
             ->take(4)
@@ -144,13 +172,18 @@ class AdminController extends Controller
 
     private function chartDaily(): array
     {
+        // Single grouped query — this used to fire one COUNT per hour (24 queries).
+        $results = Order::selectRaw('EXTRACT(HOUR FROM created_at) as hour, COUNT(*) as count')
+            ->whereDate('created_at', today())
+            ->groupByRaw('EXTRACT(HOUR FROM created_at)')
+            ->pluck('count', 'hour')
+            ->toArray();
+
         $labels = [];
         $data = [];
         for ($h = 0; $h < 24; $h++) {
             $labels[] = sprintf('%02d:00', $h);
-            $data[] = Order::whereDate('created_at', today())
-                ->whereRaw('EXTRACT(HOUR FROM created_at) = ?', [$h])
-                ->count();
+            $data[] = (int) ($results[$h] ?? 0);
         }
 
         return ['labels' => $labels, 'data' => $data];
@@ -159,13 +192,23 @@ class AdminController extends Controller
     private function chartMonthly(): array
     {
         $weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-        $data = [];
         $start = now()->startOfMonth();
+        $end = $start->copy()->addWeeks(4)->subSecond();
 
-        for ($w = 0; $w < 4; $w++) {
-            $from = $start->copy()->addWeeks($w);
-            $to = $from->copy()->addWeek()->subSecond();
-            $data[] = Order::whereBetween('created_at', [$from, $to])->count();
+        // Single grouped query over the whole 4-week window, bucketed in PHP.
+        // Week boundaries fall on midnight, so day-level grouping is exact.
+        $byDay = Order::selectRaw('DATE(created_at) as day, COUNT(*) as count')
+            ->whereBetween('created_at', [$start, $end])
+            ->groupBy('day')
+            ->pluck('count', 'day')
+            ->toArray();
+
+        $data = array_fill(0, 4, 0);
+        foreach ($byDay as $day => $count) {
+            $offset = (int) floor($start->diffInDays(Carbon::parse($day)) / 7);
+            if ($offset >= 0 && $offset < 4) {
+                $data[$offset] += (int) $count;
+            }
         }
 
         return ['labels' => $weeks, 'data' => $data];
@@ -260,11 +303,38 @@ class AdminController extends Controller
 
         $perPage = (int) $request->query('per_page', 10);
 
-        $users = $query->orderByDesc('created_at')
-            ->paginate($perPage)
-            ->through(fn ($u) => $this->formatUser($u));
+        $users = $query->orderByDesc('created_at')->paginate($perPage);
+
+        // Resolve last-activity for the whole page in one query instead of one
+        // token lookup per user inside formatUser().
+        $lastActivity = $this->lastActivityMap($users->pluck('id')->all());
+
+        $users->through(fn ($u) => $this->formatUser($u, $lastActivity[$u->id] ?? null));
 
         return response()->json($users);
+    }
+
+    /**
+     * Latest token usage per user id, keyed by user id.
+     *
+     * @param  array<int>  $userIds
+     * @return array<int, \Illuminate\Support\Carbon>
+     */
+    private function lastActivityMap(array $userIds): array
+    {
+        if (empty($userIds)) {
+            return [];
+        }
+
+        return PersonalAccessToken::query()
+            ->where('tokenable_type', (new User)->getMorphClass())
+            ->whereIn('tokenable_id', $userIds)
+            ->whereNotNull('last_used_at')
+            ->groupBy('tokenable_id')
+            ->selectRaw('tokenable_id, MAX(last_used_at) as last_used_at')
+            ->pluck('last_used_at', 'tokenable_id')
+            ->map(fn ($ts) => Carbon::parse($ts))
+            ->all();
     }
 
     // ── USER STATS ────────────────────────────────────────────
@@ -272,19 +342,20 @@ class AdminController extends Controller
 
     public function userStats(): JsonResponse
     {
-        $total = User::count();
-
-        $thisMonth = User::whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->count();
-
-        $lastMonth = User::whereMonth('created_at', now()->subMonth()->month)
-            ->whereYear('created_at', now()->subMonth()->year)
-            ->count();
+        // Total + month-over-month in one pass instead of three COUNTs.
+        $agg = User::selectRaw(
+            'COUNT(*) as total,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as this_month,'
+            .' SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as last_month',
+            [
+                now()->startOfMonth(), now()->endOfMonth(),
+                now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth(),
+            ]
+        )->first();
 
         return response()->json([
-            'total' => $total,
-            'growth' => $this->calcGrowth($lastMonth, $thisMonth),
+            'total' => (int) $agg->total,
+            'growth' => $this->calcGrowth((int) $agg->last_month, (int) $agg->this_month),
         ]);
     }
 
@@ -293,7 +364,9 @@ class AdminController extends Controller
 
     public function showUser(User $user): JsonResponse
     {
-        return response()->json($this->formatUser($user, detail: true));
+        $lastUsed = $this->lastActivityMap([$user->id])[$user->id] ?? null;
+
+        return response()->json($this->formatUser($user, $lastUsed, detail: true));
     }
 
     // ── USER DELETE ───────────────────────────────────────────
@@ -312,10 +385,11 @@ class AdminController extends Controller
 
     // ── PRIVATE HELPER ────────────────────────────────────────
 
-    private function formatUser(User $u, bool $detail = false): array
+    /**
+     * @param  \Illuminate\Support\Carbon|null  $lastUsed  Pre-resolved to avoid a per-user token query.
+     */
+    private function formatUser(User $u, $lastUsed = null, bool $detail = false): array
     {
-        $lastUsed = $u->tokens()->latest('last_used_at')->value('last_used_at');
-
         $base = [
             'id' => $u->id,
             'name' => $u->name,

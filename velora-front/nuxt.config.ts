@@ -56,9 +56,22 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
+        // Preconnect so the font CSS and the font files themselves don't each
+        // pay for a fresh DNS + TLS handshake.
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         {
+          // Single request covering every family/weight the app uses. These
+          // were previously spread across this file, two per-page useHead()
+          // calls and two render-blocking CSS @imports, which meant up to four
+          // serialized stylesheet fetches before first paint.
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap'
+          href: 'https://fonts.googleapis.com/css2'
+            + '?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300'
+            + '&family=Jost:wght@300;400;500'
+            + '&family=Lato:wght@300;400'
+            + '&family=Playfair+Display:ital,wght@0,600;1,400;1,600'
+            + '&display=swap'
         }
       ]
     }

@@ -450,13 +450,7 @@ const initials = (name?: string | null) => {
     return name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
 }
 
-const config = useRuntimeConfig()
-const BACKEND_BASE = (config.public.apiBase as string).replace(/\/api\/?$/, '')
-const resolveUrl = (url: string | null | undefined) => {
-    if (!url) return null
-    if (url.startsWith('http')) return url
-    return `${BACKEND_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
+const { resolveUrl } = useMediaUrl()
 
 const isStepDone = (stepKey: OrderStatus, currentStatus: OrderStatus) => {
     if (currentStatus === 'cancelled') return false
