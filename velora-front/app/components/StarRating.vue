@@ -51,11 +51,11 @@ function onClick(index) {
         <button v-for="(fill, i) in fills" :key="i" class="star-wrap" @click="onClick(i)" @mouseenter="onEnter(i)"
             @mouseleave="onLeave">
             <svg class="star-svg" viewBox="0 0 24 24">
-                <polygon :points="STAR_POINTS" fill="#E8DDD0" stroke="none" />
+                <polygon :points="STAR_POINTS" fill="var(--color-brown-86)" stroke="none" />
             </svg>
             <div class="star-fill" :style="{ width: `${fill}%` }">
                 <svg class="star-svg" viewBox="0 0 24 24">
-                    <polygon :points="STAR_POINTS" fill="#C9A96E" stroke="none" />
+                    <polygon :points="STAR_POINTS" fill="var(--color-accent-soft)" stroke="none" />
                 </svg>
             </div>
         </button>

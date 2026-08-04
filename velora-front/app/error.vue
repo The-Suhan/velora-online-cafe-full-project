@@ -10,22 +10,22 @@
         <div class="cup-wrap">
             <svg width="80" height="90" viewBox="0 0 80 90" fill="none">
                 <g class="steam s1">
-                    <path d="M32 18 C32 14 36 12 36 8" stroke="#C8A96A" stroke-width="1.2" stroke-linecap="round"
+                    <path d="M32 18 C32 14 36 12 36 8" stroke="var(--color-accent-warm)" stroke-width="1.2" stroke-linecap="round"
                         opacity="0.6" />
                 </g>
                 <g class="steam s2">
-                    <path d="M40 16 C40 12 44 10 44 6" stroke="#C8A96A" stroke-width="1.2" stroke-linecap="round"
+                    <path d="M40 16 C40 12 44 10 44 6" stroke="var(--color-accent-warm)" stroke-width="1.2" stroke-linecap="round"
                         opacity="0.5" />
                 </g>
                 <g class="steam s3">
-                    <path d="M48 18 C48 14 52 12 52 8" stroke="#C8A96A" stroke-width="1.2" stroke-linecap="round"
+                    <path d="M48 18 C48 14 52 12 52 8" stroke="var(--color-accent-warm)" stroke-width="1.2" stroke-linecap="round"
                         opacity="0.4" />
                 </g>
-                <path d="M14 28h52l-6 34a4 4 0 01-4 3H24a4 4 0 01-4-3L14 28z" stroke="#C8A96A" stroke-width="1.4"
-                    stroke-linejoin="round" fill="rgba(200,169,106,0.06)" />
-                <path d="M58 36h8a6 6 0 010 12h-8" stroke="#C8A96A" stroke-width="1.4" stroke-linecap="round" />
-                <path d="M20 72h40" stroke="#C8A96A" stroke-width="1" stroke-linecap="round" opacity="0.4" />
-                <ellipse cx="40" cy="38" rx="8" ry="4" stroke="#C8A96A" stroke-width="1" opacity="0.3" />
+                <path d="M14 28h52l-6 34a4 4 0 01-4 3H24a4 4 0 01-4-3L14 28z" stroke="var(--color-accent-warm)" stroke-width="1.4"
+                    stroke-linejoin="round" fill="rgb(var(--rgb-accent-warm) / 0.06)" />
+                <path d="M58 36h8a6 6 0 010 12h-8" stroke="var(--color-accent-warm)" stroke-width="1.4" stroke-linecap="round" />
+                <path d="M20 72h40" stroke="var(--color-accent-warm)" stroke-width="1" stroke-linecap="round" opacity="0.4" />
+                <ellipse cx="40" cy="38" rx="8" ry="4" stroke="var(--color-accent-warm)" stroke-width="1" opacity="0.3" />
             </svg>
         </div>
 
@@ -49,7 +49,7 @@ const handleError = () => clearError({ redirect: '/' })
 
 .error-root {
     min-height: 100dvh;
-    background: #2C1A14;
+    background: var(--color-primary-deep);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -70,36 +70,36 @@ const handleError = () => clearError({ redirect: '/' })
 .corner.tl {
     top: 20px;
     left: 20px;
-    border-top: 1px solid #C8A96A;
-    border-left: 1px solid #C8A96A;
+    border-top: 1px solid var(--color-accent-warm);
+    border-left: 1px solid var(--color-accent-warm);
 }
 
 .corner.tr {
     top: 20px;
     right: 20px;
-    border-top: 1px solid #C8A96A;
-    border-right: 1px solid #C8A96A;
+    border-top: 1px solid var(--color-accent-warm);
+    border-right: 1px solid var(--color-accent-warm);
 }
 
 .corner.bl {
     bottom: 20px;
     left: 20px;
-    border-bottom: 1px solid #C8A96A;
-    border-left: 1px solid #C8A96A;
+    border-bottom: 1px solid var(--color-accent-warm);
+    border-left: 1px solid var(--color-accent-warm);
 }
 
 .corner.br {
     bottom: 20px;
     right: 20px;
-    border-bottom: 1px solid #C8A96A;
-    border-right: 1px solid #C8A96A;
+    border-bottom: 1px solid var(--color-accent-warm);
+    border-right: 1px solid var(--color-accent-warm);
 }
 
 .four04-bg {
     font-family: 'Playfair Display', serif;
     font-size: clamp(80px, 20vw, 140px);
     font-weight: 600;
-    color: rgba(200, 169, 106, 0.07);
+    color: rgb(var(--rgb-accent-warm) / 0.07);
     position: absolute;
     top: 50%;
     left: 50%;
@@ -119,7 +119,7 @@ const handleError = () => clearError({ redirect: '/' })
     font-size: 13px;
     font-weight: 400;
     font-style: italic;
-    color: #C8A96A;
+    color: var(--color-accent-warm);
     letter-spacing: 0.18em;
     text-transform: uppercase;
     margin: 0 0 10px;
@@ -131,7 +131,7 @@ const handleError = () => clearError({ redirect: '/' })
     font-family: 'Playfair Display', serif;
     font-size: clamp(22px, 5vw, 30px);
     font-weight: 600;
-    color: #F5EFEA;
+    color: var(--color-surface);
     text-align: center;
     line-height: 1.3;
     letter-spacing: 0.02em;
@@ -143,7 +143,7 @@ const handleError = () => clearError({ redirect: '/' })
 .subtitle {
     font-size: 16px;
     font-weight: 300;
-    color: rgba(245, 239, 234, 0.45);
+    color: rgb(var(--rgb-surface) / 0.45);
     letter-spacing: 0.06em;
     text-align: center;
     margin: 0 0 36px;
@@ -154,7 +154,7 @@ const handleError = () => clearError({ redirect: '/' })
 .divider {
     width: 48px;
     height: 1px;
-    background: rgba(200, 169, 106, 0.3);
+    background: rgb(var(--rgb-accent-warm) / 0.3);
     margin: 0 auto 32px;
     position: relative;
     z-index: 2;
@@ -164,8 +164,8 @@ const handleError = () => clearError({ redirect: '/' })
     font-family: 'Cormorant Garamond', serif;
     font-size: 13px;
     font-weight: 500;
-    color: #2C1A14;
-    background: #C8A96A;
+    color: var(--color-primary-deep);
+    background: var(--color-accent-warm);
     border: none;
     padding: 13px 36px;
     letter-spacing: 0.2em;
@@ -182,7 +182,7 @@ const handleError = () => clearError({ redirect: '/' })
 
 .link-menu {
     font-size: 13px;
-    color: rgba(200, 169, 106, 0.55);
+    color: rgb(var(--rgb-accent-warm) / 0.55);
     letter-spacing: 0.12em;
     text-decoration: none;
     margin-top: 16px;
@@ -194,7 +194,7 @@ const handleError = () => clearError({ redirect: '/' })
 }
 
 .link-menu:hover {
-    color: #C8A96A;
+    color: var(--color-accent-warm);
 }
 
 .steam {

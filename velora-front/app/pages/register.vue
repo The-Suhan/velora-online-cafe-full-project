@@ -106,7 +106,7 @@
       <span class="divider-line" />
       <svg class="bean-icon" viewBox="0 0 24 24" fill="currentColor">
         <ellipse cx="12" cy="12" rx="9" ry="6" transform="rotate(-30 12 12)" />
-        <path d="M12 6 Q9 12 12 18" stroke="#F5F0E8" stroke-width="1.5" fill="none" />
+        <path d="M12 6 Q9 12 12 18" stroke="var(--color-surface-warm)" stroke-width="1.5" fill="none" />
       </svg>
       <span class="divider-line" />
     </div>
@@ -181,10 +181,10 @@ const handleRegister = async () => {
 .card {
   width: 100%;
   max-width: 420px;
-  background: #F5F0E8;
+  background: var(--color-surface-warm);
   border-radius: 24px;
   padding: 40px 36px 32px;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 32px 80px rgb(var(--rgb-black) / 0.45);
   font-family: 'Jost', sans-serif;
 }
 
@@ -200,7 +200,7 @@ const handleRegister = async () => {
   font-family: 'Cormorant Garamond', serif;
   font-size: 2rem;
   font-weight: 600;
-  color: #2C1810;
+  color: var(--color-primary);
   letter-spacing: 0.14em;
   text-align: center;
   line-height: 1;
@@ -225,7 +225,7 @@ const handleRegister = async () => {
   font-family: 'Jost', sans-serif;
   font-size: 0.72rem;
   letter-spacing: 0.28em;
-  color: #C8A96E;
+  color: var(--color-accent);
   font-weight: 500;
 }
 
@@ -233,7 +233,7 @@ const handleRegister = async () => {
   flex: 1;
   max-width: 44px;
   height: 0.5px;
-  background: #C8A96E;
+  background: var(--color-accent);
   opacity: 0.6;
 }
 
@@ -241,16 +241,16 @@ const handleRegister = async () => {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
   font-size: 1rem;
-  color: #8a7060;
+  color: var(--color-muted);
   text-align: center;
   margin: 0 0 22px;
 }
 
 /* ── Error box ─────────────────────────── */
 .error-box {
-  background: #fde8e8;
-  border: 1px solid #f5a5a5;
-  color: #8b1a1a;
+  background: var(--color-red-95);
+  border: 1px solid var(--color-red-80);
+  color: var(--color-red-32);
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 0.83rem;
@@ -277,7 +277,7 @@ const handleRegister = async () => {
   transform: translateY(-50%);
   width: 18px;
   height: 18px;
-  color: #C8A96E;
+  color: var(--color-accent);
   pointer-events: none;
   display: flex;
   align-items: center;
@@ -290,33 +290,33 @@ const handleRegister = async () => {
 
 .input-wrap input {
   width: 100%;
-  background: #EDE5D8;
-  border: 1.5px solid rgba(200, 169, 110, 0.35);
+  background: var(--color-brown-89-2);
+  border: 1.5px solid rgb(var(--rgb-accent) / 0.35);
   border-radius: 12px;
   padding: 13px 44px 13px 44px;
   font-family: 'Jost', sans-serif;
   font-size: 0.9rem;
-  color: #2C1810;
+  color: var(--color-primary);
   outline: none;
   transition: border-color 0.2s;
   box-sizing: border-box;
 }
 
 .input-wrap input::placeholder {
-  color: #b0967a;
+  color: var(--color-muted-light);
 }
 
 .input-wrap input:focus {
-  border-color: #C8A96E;
+  border-color: var(--color-accent);
 }
 
 .input-wrap input.input-error {
-  border-color: #e05252;
+  border-color: var(--color-red-60);
 }
 
 .field-error {
   font-size: 0.78rem;
-  color: #c0392b;
+  color: var(--color-red-46);
   margin: -6px 0 8px 4px;
 }
 
@@ -328,7 +328,7 @@ const handleRegister = async () => {
   background: none;
   border: none;
   cursor: pointer;
-  color: #8a7060;
+  color: var(--color-muted);
   padding: 0;
   display: flex;
   align-items: center;
@@ -344,8 +344,8 @@ const handleRegister = async () => {
 /* ── Button ────────────────────────────── */
 .btn-register {
   width: 100%;
-  background: #4A6741;
-  color: #d4b882;
+  background: var(--color-success);
+  color: var(--color-brown-67);
   border: none;
   border-radius: 12px;
   padding: 14px;
@@ -363,7 +363,7 @@ const handleRegister = async () => {
 }
 
 .btn-register:hover:not(:disabled) {
-  background: #5a7a50;
+  background: var(--color-green-40);
 }
 
 .btn-register:active:not(:disabled) {
@@ -378,8 +378,8 @@ const handleRegister = async () => {
 .spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(212, 184, 130, 0.3);
-  border-top-color: #d4b882;
+  border: 2px solid rgb(var(--rgb-brown-67) / 0.3);
+  border-top-color: var(--color-brown-67);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -401,14 +401,14 @@ const handleRegister = async () => {
 .divider-line {
   flex: 1;
   height: 0.5px;
-  background: #C8A96E;
+  background: var(--color-accent);
   opacity: 0.35;
 }
 
 .bean-icon {
   width: 16px;
   height: 16px;
-  color: #C8A96E;
+  color: var(--color-accent);
   opacity: 0.7;
 }
 
@@ -416,12 +416,12 @@ const handleRegister = async () => {
 .login-link {
   text-align: center;
   font-size: 0.82rem;
-  color: #8a7060;
+  color: var(--color-muted);
   margin: 0;
 }
 
 .login-link a {
-  color: #C8A96E;
+  color: var(--color-accent);
   text-decoration: none;
   font-weight: 500;
   margin-left: 4px;

@@ -1,7 +1,7 @@
 <template>
     <Teleport to="body">
         <Transition name="fade">
-            <div v-if="modelValue" class="fixed inset-0 bg-[rgba(44,24,16,0.5)] backdrop-blur-sm z-50"
+            <div v-if="modelValue" class="fixed inset-0 bg-[rgb(var(--rgb-primary) / 0.5)] backdrop-blur-sm z-50"
                 @click.self="$emit('update:modelValue', false)" />
         </Transition>
 
@@ -11,13 +11,13 @@
                 style="max-height: min(85vh, calc(100vh - 120px)); top: calc(50% + 30px);">
 
                 <!-- Header -->
-                <div class="flex items-start justify-between px-6 py-4 border-b border-[#F3F4F6]">
+                <div class="flex items-start justify-between px-6 py-4 border-b border-[var(--color-gray-96)]">
                     <div>
-                        <h2 class="text-[#2C1A14] font-semibold text-lg">{{ $t('profile.orderDetail.title') }}</h2>
-                        <p v-if="order" class="text-[#8a7060] text-xs font-mono mt-0.5">#{{ order.order_no }}</p>
+                        <h2 class="text-[var(--color-primary-deep)] font-semibold text-lg">{{ $t('profile.orderDetail.title') }}</h2>
+                        <p v-if="order" class="text-[var(--color-muted)] text-xs font-mono mt-0.5">#{{ order.order_no }}</p>
                     </div>
                     <button @click="$emit('update:modelValue', false)"
-                        class="w-7 h-7 bg-[#F3F4F6] rounded-lg flex items-center justify-center text-[#6b7280] hover:bg-[#E5E7EB] transition-colors"
+                        class="w-7 h-7 bg-[var(--color-gray-96)] rounded-lg flex items-center justify-center text-[var(--color-gray-46)] hover:bg-[var(--color-border)] transition-colors"
                         :aria-label="$t('profile.orderDetail.close')">
                         <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
                             <path
@@ -31,7 +31,7 @@
 
                     <!-- Loading -->
                     <div v-if="loading" class="space-y-3">
-                        <div v-for="i in 4" :key="i" class="h-12 bg-[#F5EFEA] rounded-xl animate-pulse" />
+                        <div v-for="i in 4" :key="i" class="h-12 bg-[var(--color-surface)] rounded-xl animate-pulse" />
                     </div>
 
                     <template v-else-if="order">
@@ -41,77 +41,77 @@
                                 class="text-xs font-semibold px-3 py-1 rounded-full">
                                 {{ statusLabel(order.status) }}
                             </span>
-                            <span class="text-xs text-[#7A6558] uppercase tracking-wider">
+                            <span class="text-xs text-[var(--color-muted-dark)] uppercase tracking-wider">
                                 {{ order.delivery_type === 'delivery' ? $t('profile.orderDetail.delivery') :
                                     $t('profile.orderDetail.pickup') }}
                             </span>
-                            <span class="text-xs text-[#b0967a] ml-auto">
+                            <span class="text-xs text-[var(--color-muted-light)] ml-auto">
                                 {{ formatDay(order.created_at) }} {{ formatMonth(order.created_at) }}
                             </span>
                         </div>
 
                         <!-- Items -->
                         <div>
-                            <p class="text-[10px] font-bold text-[#8a7060] uppercase tracking-wider mb-3">{{
+                            <p class="text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-wider mb-3">{{
                                 $t('profile.orderDetail.items') }}</p>
                             <div class="space-y-2">
                                 <div v-for="item in order.items" :key="item.product_id"
-                                    class="flex items-center gap-3 p-3 bg-[#FAFAF8] rounded-xl">
+                                    class="flex items-center gap-3 p-3 bg-[var(--color-surface-soft)] rounded-xl">
                                     <div
-                                        class="w-10 h-10 rounded-lg bg-[#F0EDE6] flex items-center justify-center overflow-hidden flex-shrink-0">
+                                        class="w-10 h-10 rounded-lg bg-[var(--color-surface-alt)] flex items-center justify-center overflow-hidden flex-shrink-0">
                                         <img v-if="item.image_url" :src="resolveUrl(item.image_url)"
                                             :alt="getProductName(item)" class="w-full h-full object-cover" />
-                                        <svg v-else viewBox="0 0 24 24" fill="none" stroke="#b0967a" stroke-width="1.5"
+                                        <svg v-else viewBox="0 0 24 24" fill="none" stroke="var(--color-muted-light)" stroke-width="1.5"
                                             width="16" height="16">
                                             <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
                                         </svg>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-semibold text-[#2C1A14] truncate">{{ getProductName(item)
+                                        <p class="text-sm font-semibold text-[var(--color-primary-deep)] truncate">{{ getProductName(item)
                                             }}</p>
-                                        <p class="text-xs text-[#8a7060]">${{ item.price.toFixed(2) }} {{
+                                        <p class="text-xs text-[var(--color-muted)]">${{ item.price.toFixed(2) }} {{
                                             $t('profile.orderDetail.each') }}</p>
                                     </div>
                                     <div class="text-right flex-shrink-0">
-                                        <p class="text-xs text-[#8a7060]">×{{ item.quantity }}</p>
-                                        <p class="text-sm font-bold text-[#4A6741]">${{ item.subtotal.toFixed(2) }}</p>
+                                        <p class="text-xs text-[var(--color-muted)]">×{{ item.quantity }}</p>
+                                        <p class="text-sm font-bold text-[var(--color-success)]">${{ item.subtotal.toFixed(2) }}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Total -->
-                        <div class="flex items-center justify-between bg-[#2C1A14] text-[#C8A96A] px-4 py-3 rounded-xl">
+                        <div class="flex items-center justify-between bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] px-4 py-3 rounded-xl">
                             <span class="text-sm font-bold">{{ $t('profile.orderDetail.total') }}</span>
                             <span class="text-lg font-semibold">${{ order.total_price.toFixed(2) }}</span>
                         </div>
 
                         <!-- Note -->
-                        <div v-if="order.note" class="p-3 bg-[#FAFAF8] rounded-xl border-l-4 border-[#C8A96A]">
-                            <p class="text-[10px] uppercase tracking-wider text-[#8a7060] mb-1">{{
+                        <div v-if="order.note" class="p-3 bg-[var(--color-surface-soft)] rounded-xl border-l-4 border-[var(--color-accent-warm)]">
+                            <p class="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-1">{{
                                 $t('profile.orderDetail.note') }}</p>
-                            <p class="text-sm text-[#6b7280]">{{ order.note }}</p>
+                            <p class="text-sm text-[var(--color-gray-46)]">{{ order.note }}</p>
                         </div>
 
                         <!-- Delivery info -->
-                        <div class="p-3 bg-[#FAFAF8] rounded-xl space-y-1">
-                            <p class="text-[10px] uppercase tracking-wider text-[#8a7060] mb-2">{{
+                        <div class="p-3 bg-[var(--color-surface-soft)] rounded-xl space-y-1">
+                            <p class="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">{{
                                 $t('profile.orderDetail.contactInfo') }}</p>
-                            <p v-if="order.address" class="text-sm text-[#2C1A14]">📍 {{ order.address }}</p>
-                            <p class="text-sm text-[#2C1A14]">📞 {{ order.phone }}</p>
+                            <p v-if="order.address" class="text-sm text-[var(--color-primary-deep)]">📍 {{ order.address }}</p>
+                            <p class="text-sm text-[var(--color-primary-deep)]">📞 {{ order.phone }}</p>
                         </div>
                     </template>
                 </div>
 
                 <!-- Footer -->
-                <div class="px-6 py-4 border-t border-[#F3F4F6] flex justify-between items-center gap-3">
+                <div class="px-6 py-4 border-t border-[var(--color-gray-96)] flex justify-between items-center gap-3">
                     <button v-if="order?.status === 'pending'" @click="$emit('cancel', order.id)"
                         class="text-sm px-4 py-2 border border-red-200 text-red-500 rounded-xl hover:bg-red-50 transition-colors">
                         {{ $t('profile.orderDetail.cancelOrder') }}
                     </button>
                     <div v-else />
                     <button @click="$emit('update:modelValue', false)"
-                        class="text-sm px-5 py-2 bg-[#2C1A14] text-[#C8A96A] rounded-xl hover:bg-[#3d2416] transition-colors">
+                        class="text-sm px-5 py-2 bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] rounded-xl hover:bg-[var(--color-coffee-16)] transition-colors">
                         {{ $t('profile.orderDetail.close') }}
                     </button>
                 </div>

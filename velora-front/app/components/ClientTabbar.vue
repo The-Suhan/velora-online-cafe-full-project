@@ -57,14 +57,14 @@ defineProps({
         left: 0;
         right: 0;
         z-index: 100;
-        background: #f5f0e8;
-        border-top: 1px solid rgba(26, 10, 0, 0.1);
+        background: var(--color-surface-warm);
+        border-top: 1px solid rgb(var(--rgb-primary-black) / 0.1);
         align-items: center;
         justify-content: space-around;
         height: 64px;
         padding: 0 0.5rem;
         padding-bottom: env(safe-area-inset-bottom, 0px);
-        box-shadow: 0 -4px 20px rgba(26, 10, 0, 0.06);
+        box-shadow: 0 -4px 20px rgb(var(--rgb-primary-black) / 0.06);
     }
 }
 
@@ -76,7 +76,7 @@ defineProps({
     justify-content: center;
     gap: 3px;
     text-decoration: none;
-    color: #9a7a60;
+    color: var(--color-brown-49);
     padding: 6px 2px;
     border-radius: 10px;
     transition: color 0.2s;
@@ -85,7 +85,7 @@ defineProps({
 }
 
 .tab-item--active {
-    color: #1a0a00;
+    color: var(--color-primary-black);
 }
 
 .tab-item--active .tab-icon svg {

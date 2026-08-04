@@ -9,11 +9,11 @@
                 <div class="ring-mid">
                     <div class="ring-inner">
                         <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
-                            <path d="M7 10h18l-2 12a2 2 0 01-2 1.5H11A2 2 0 019 22L7 10z" stroke="#C8A96A"
+                            <path d="M7 10h18l-2 12a2 2 0 01-2 1.5H11A2 2 0 019 22L7 10z" stroke="var(--color-accent-warm)"
                                 stroke-width="1.2" stroke-linejoin="round" />
-                            <path d="M22 13h3a2 2 0 010 4h-3" stroke="#C8A96A" stroke-width="1.2"
+                            <path d="M22 13h3a2 2 0 010 4h-3" stroke="var(--color-accent-warm)" stroke-width="1.2"
                                 stroke-linecap="round" />
-                            <path d="M13 7c0-1.5 2-2 2-3.5M17 7c0-1.5 2-2 2-3.5" stroke="#C8A96A" stroke-width="1.2"
+                            <path d="M13 7c0-1.5 2-2 2-3.5M17 7c0-1.5 2-2 2-3.5" stroke="var(--color-accent-warm)" stroke-width="1.2"
                                 stroke-linecap="round" opacity="0.4" />
                         </svg>
                     </div>
@@ -58,7 +58,7 @@ watch(visible, (val) => {
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: #2C1A14;
+    background: var(--color-primary-deep);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -75,15 +75,15 @@ watch(visible, (val) => {
 .corner.tl {
     top: 20px;
     left: 20px;
-    border-top: 1px solid #C8A96A;
-    border-left: 1px solid #C8A96A;
+    border-top: 1px solid var(--color-accent-warm);
+    border-left: 1px solid var(--color-accent-warm);
 }
 
 .corner.br {
     bottom: 20px;
     right: 20px;
-    border-bottom: 1px solid #C8A96A;
-    border-right: 1px solid #C8A96A;
+    border-bottom: 1px solid var(--color-accent-warm);
+    border-right: 1px solid var(--color-accent-warm);
 }
 
 .ring-wrap {
@@ -94,7 +94,7 @@ watch(visible, (val) => {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    border: 1px solid rgba(200, 169, 106, 0.18);
+    border: 1px solid rgb(var(--rgb-accent-warm) / 0.18);
 }
 
 .arc {
@@ -102,8 +102,8 @@ watch(visible, (val) => {
     inset: -1px;
     border-radius: 50%;
     border: 1.5px solid transparent;
-    border-top-color: #C8A96A;
-    border-right-color: rgba(200, 169, 106, 0.25);
+    border-top-color: var(--color-accent-warm);
+    border-right-color: rgb(var(--rgb-accent-warm) / 0.25);
     animation: spin 2.2s linear infinite;
 }
 
@@ -111,7 +111,7 @@ watch(visible, (val) => {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    border: 1px solid rgba(200, 169, 106, 0.3);
+    border: 1px solid rgb(var(--rgb-accent-warm) / 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -121,8 +121,8 @@ watch(visible, (val) => {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    border: 1px solid rgba(200, 169, 106, 0.55);
-    background: rgba(200, 169, 106, 0.06);
+    border: 1px solid rgb(var(--rgb-accent-warm) / 0.55);
+    background: rgb(var(--rgb-accent-warm) / 0.06);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -132,7 +132,7 @@ watch(visible, (val) => {
     font-family: 'Playfair Display', serif;
     font-size: 26px;
     font-weight: 600;
-    color: #F5EFEA;
+    color: var(--color-surface);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     margin: 24px 0 0;
@@ -142,7 +142,7 @@ watch(visible, (val) => {
     font-family: 'Cormorant Garamond', serif;
     font-size: 12px;
     font-weight: 300;
-    color: #C8A96A;
+    color: var(--color-accent-warm);
     letter-spacing: 0.28em;
     text-transform: uppercase;
     margin: 5px 0 0;
@@ -152,7 +152,7 @@ watch(visible, (val) => {
     margin-top: 32px;
     width: 150px;
     height: 1px;
-    background: rgba(200, 169, 106, 0.12);
+    background: rgb(var(--rgb-accent-warm) / 0.12);
     overflow: hidden;
     border-radius: 2px;
 }
@@ -160,7 +160,7 @@ watch(visible, (val) => {
 .progress-bar {
     height: 100%;
     width: 35%;
-    background: #C8A96A;
+    background: var(--color-accent-warm);
     opacity: 0.7;
     animation: slide 1.6s ease-in-out infinite;
 }
@@ -168,7 +168,7 @@ watch(visible, (val) => {
 .status {
     font-family: 'Cormorant Garamond', serif;
     font-size: 11px;
-    color: rgba(245, 239, 234, 0.35);
+    color: rgb(var(--rgb-surface) / 0.35);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     margin-top: 12px;

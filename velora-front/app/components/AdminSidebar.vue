@@ -108,7 +108,7 @@ const handleLogout = async () => {
 
 <style scoped>
 .sidebar {
-    background: #1B0E08;
+    background: var(--color-coffee-7);
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -140,7 +140,7 @@ const handleLogout = async () => {
     align-items: center;
     gap: 12px;
     padding: 11px 20px;
-    color: rgba(245, 240, 232, 0.65);
+    color: rgb(var(--rgb-surface-warm) / 0.65);
     text-decoration: none;
     font-size: 0.88rem;
     font-weight: 400;
@@ -151,13 +151,13 @@ const handleLogout = async () => {
 }
 
 .nav-item:hover {
-    background: rgba(200, 169, 110, 0.1);
-    color: #F5F0E8;
+    background: rgb(var(--rgb-accent) / 0.1);
+    color: var(--color-surface-warm);
 }
 
 .nav-active {
-    background: #4A6741 !important;
-    color: #F5F0E8 !important;
+    background: var(--color-success) !important;
+    color: var(--color-surface-warm) !important;
 }
 
 .nav-icon {
@@ -179,8 +179,8 @@ const handleLogout = async () => {
 }
 
 .nav-badge {
-    background: #e05252;
-    color: #fff;
+    background: var(--color-red-60);
+    color: var(--color-white);
     font-size: 0.65rem;
     font-weight: 600;
     border-radius: 99px;
@@ -197,8 +197,8 @@ const handleLogout = async () => {
     padding: 14px 20px;
     background: none;
     border: none;
-    border-top: 1px solid rgba(200, 169, 110, 0.15);
-    color: rgba(245, 240, 232, 0.5);
+    border-top: 1px solid rgb(var(--rgb-accent) / 0.15);
+    color: rgb(var(--rgb-surface-warm) / 0.5);
     font-family: 'Jost', sans-serif;
     font-size: 0.88rem;
     cursor: pointer;
@@ -207,7 +207,7 @@ const handleLogout = async () => {
 }
 
 .sidebar-logout:hover {
-    color: #e05252;
+    color: var(--color-red-60);
 }
 
 .sidebar-logout .nav-icon {

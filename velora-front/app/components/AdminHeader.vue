@@ -51,8 +51,8 @@ const initials = computed(() =>
     align-items: center;
     justify-content: space-between;
     padding: 16px 24px;
-    background: #fff;
-    border-bottom: 1px solid #E8E2D9;
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-brown-88);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -62,7 +62,7 @@ const initials = computed(() =>
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.15rem;
     font-weight: 500;
-    color: #2C1810;
+    color: var(--color-primary);
     margin: 0;
     display: flex;
     align-items: baseline;
@@ -71,12 +71,12 @@ const initials = computed(() =>
 }
 
 .user-name {
-    color: #4A6741;
+    color: var(--color-success);
     font-weight: 600;
 }
 
 .greeting-suffix {
-    color: #b0967a;
+    color: var(--color-muted-light);
     font-style: italic;
     font-weight: 400;
     font-size: 1rem;
@@ -92,8 +92,8 @@ const initials = computed(() =>
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: #2C1810;
-    color: #C8A96E;
+    background: var(--color-primary);
+    color: var(--color-accent);
     font-size: 0.78rem;
     font-weight: 600;
     font-family: 'Jost', sans-serif;

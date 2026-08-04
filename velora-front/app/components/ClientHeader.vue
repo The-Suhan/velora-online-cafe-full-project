@@ -86,7 +86,7 @@
         <!-- Feedback Modal -->
         <Teleport to="body">
             <Transition name="fade">
-                <div v-if="feedbackOpen" class="fixed inset-0 bg-[rgba(44,24,16,0.45)] backdrop-blur-sm z-[200]"
+                <div v-if="feedbackOpen" class="fixed inset-0 bg-[rgb(var(--rgb-primary) / 0.45)] backdrop-blur-sm z-[200]"
                     @click.self="feedbackOpen = false" />
             </Transition>
 
@@ -95,22 +95,22 @@
                     style="top: 80px; left: 50%; transform: translateX(-50%);">
 
                     <!-- Header -->
-                    <div class="flex items-center justify-between px-5 py-4 border-b border-[#F3F4F6]">
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-[var(--color-gray-96)]">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-[#F5EFEA] flex items-center justify-center">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C8A96A"
+                            <div class="w-8 h-8 rounded-lg bg-[var(--color-surface)] flex items-center justify-center">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-warm)"
                                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-[#2C1A14] font-semibold text-sm">{{ $t('header.feedback.sendTitle') }}
+                                <p class="text-[var(--color-primary-deep)] font-semibold text-sm">{{ $t('header.feedback.sendTitle') }}
                                 </p>
-                                <p class="text-[#8a7060] text-[11px]">{{ $t('header.feedback.sendSubtitle') }}</p>
+                                <p class="text-[var(--color-muted)] text-[11px]">{{ $t('header.feedback.sendSubtitle') }}</p>
                             </div>
                         </div>
                         <button @click="feedbackOpen = false"
-                            class="w-7 h-7 bg-[#F3F4F6] rounded-lg flex items-center justify-center text-[#6b7280] hover:bg-[#E5E7EB] transition-colors">
+                            class="w-7 h-7 bg-[var(--color-gray-96)] rounded-lg flex items-center justify-center text-[var(--color-gray-46)] hover:bg-[var(--color-border)] transition-colors">
                             <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13">
                                 <path
                                     d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -121,13 +121,13 @@
                     <!-- Success state -->
                     <div v-if="submitted" class="px-5 py-10 text-center">
                         <div class="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-3">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"
+                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-ready)" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" width="26" height="26">
                                 <polyline points="20 6 9 17 4 12" />
                             </svg>
                         </div>
-                        <p class="text-[#2C1A14] font-semibold">{{ $t('header.feedback.successTitle') }}</p>
-                        <p class="text-[#8a7060] text-sm mt-1">{{ $t('header.feedback.successDesc') }}</p>
+                        <p class="text-[var(--color-primary-deep)] font-semibold">{{ $t('header.feedback.successTitle') }}</p>
+                        <p class="text-[var(--color-muted)] text-sm mt-1">{{ $t('header.feedback.successDesc') }}</p>
                     </div>
 
                     <!-- Form -->
@@ -140,8 +140,8 @@
                                 { key: 'question', label: $t('header.feedback.typeQuestion') }
                             ]" :key="t.key" @click="feedbackForm.type = t.key"
                                 :class="feedbackForm.type === t.key
-                                    ? 'bg-[#2C1A14] text-[#C8A96A] border-[#2C1A14]'
-                                    : 'bg-white text-[#7A6558] border-[#E0D5CC] hover:border-[#2C1A14] hover:text-[#2C1A14]'"
+                                    ? 'bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] border-[var(--color-primary-deep)]'
+                                    : 'bg-white text-[var(--color-muted-dark)] border-[var(--color-border-warm)] hover:border-[var(--color-primary-deep)] hover:text-[var(--color-primary-deep)]'"
                                 class="flex-1 py-1.5 text-xs font-medium border rounded-lg transition-colors">
                                 {{ t.label }}
                             </button>
@@ -149,22 +149,22 @@
 
                         <!-- Subject -->
                         <input v-model="feedbackForm.subject" :placeholder="$t('header.feedback.subjectPlaceholder')"
-                            class="w-full px-3 py-2.5 text-sm border border-[#E0D5CC] rounded-xl outline-none focus:border-[#2C1A14] transition-colors" />
+                            class="w-full px-3 py-2.5 text-sm border border-[var(--color-border-warm)] rounded-xl outline-none focus:border-[var(--color-primary-deep)] transition-colors" />
 
                         <!-- Message -->
                         <textarea v-model="feedbackForm.message" :placeholder="$t('header.feedback.messagePlaceholder')"
                             rows="4"
-                            class="w-full px-3 py-2.5 text-sm border border-[#E0D5CC] rounded-xl outline-none focus:border-[#2C1A14] transition-colors resize-none" />
+                            class="w-full px-3 py-2.5 text-sm border border-[var(--color-border-warm)] rounded-xl outline-none focus:border-[var(--color-primary-deep)] transition-colors resize-none" />
 
                         <!-- Footer -->
                         <div class="flex gap-2 pt-1">
                             <button @click="feedbackOpen = false"
-                                class="flex-1 py-2.5 border border-[#E0D5CC] text-[#7A6558] text-sm rounded-xl hover:bg-[#F5EFEA] transition-colors">
+                                class="flex-1 py-2.5 border border-[var(--color-border-warm)] text-[var(--color-muted-dark)] text-sm rounded-xl hover:bg-[var(--color-surface)] transition-colors">
                                 {{ $t('header.feedback.cancel') }}
                             </button>
                             <button @click="handleFeedbackSubmit"
                                 :disabled="submitting || !feedbackForm.subject.trim() || !feedbackForm.message.trim()"
-                                class="flex-1 py-2.5 bg-[#2C1A14] text-[#C8A96A] text-sm rounded-xl hover:bg-[#3d2416] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                class="flex-1 py-2.5 bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] text-sm rounded-xl hover:bg-[var(--color-coffee-16)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                                 {{ submitting ? $t('header.feedback.sending') : $t('header.feedback.submit') }}
                             </button>
                         </div>
@@ -238,7 +238,7 @@ watch(feedbackOpen, (val) => {
 
 <style scoped>
 .feedback-btn {
-    color: #5a3e2b;
+    color: var(--color-coffee-26);
     margin-right: 0.1rem;
 }
 
@@ -274,8 +274,8 @@ watch(feedbackOpen, (val) => {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: #f5f0e8;
-    border-bottom: 1px solid rgba(26, 10, 0, 0.08);
+    background: var(--color-surface-warm);
+    border-bottom: 1px solid rgb(var(--rgb-primary-black) / 0.08);
 }
 
 .header-inner {
@@ -313,14 +313,14 @@ watch(feedbackOpen, (val) => {
     font-family: 'Georgia', 'Times New Roman', serif;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #1a0a00;
+    color: var(--color-primary-black);
     letter-spacing: 0.01em;
 }
 
 .logo-sub {
     font-family: 'Georgia', serif;
     font-size: 0.52rem;
-    color: #8a6a50;
+    color: var(--color-brown-43);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-top: 3px;
@@ -341,7 +341,7 @@ watch(feedbackOpen, (val) => {
     font-family: 'Georgia', serif;
     font-size: 0.78rem;
     font-weight: 500;
-    color: #5a3e2b;
+    color: var(--color-coffee-26);
     text-decoration: none;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -351,12 +351,12 @@ watch(feedbackOpen, (val) => {
 }
 
 .nav-link:hover {
-    color: #1a0a00;
-    background: rgba(26, 10, 0, 0.05);
+    color: var(--color-primary-black);
+    background: rgb(var(--rgb-primary-black) / 0.05);
 }
 
 .nav-link--active {
-    color: #1a0a00;
+    color: var(--color-primary-black);
     font-weight: 700;
 }
 
@@ -382,14 +382,14 @@ watch(feedbackOpen, (val) => {
     height: 40px;
     border: none;
     background: transparent;
-    color: #1a0a00;
+    color: var(--color-primary-black);
     border-radius: 50%;
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .icon-btn:hover {
-    background: rgba(26, 10, 0, 0.07);
+    background: rgb(var(--rgb-primary-black) / 0.07);
 }
 
 /* ── Bag button ── */
@@ -399,8 +399,8 @@ watch(feedbackOpen, (val) => {
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    color: #f5f0e8;
-    background: #1a0a00;
+    color: var(--color-surface-warm);
+    background: var(--color-primary-black);
     border-radius: 8px;
     transition: background 0.2s;
 
@@ -410,7 +410,7 @@ watch(feedbackOpen, (val) => {
 }
 
 .bag-btn:hover {
-    background: #2d1200;
+    background: var(--color-coffee-9);
 }
 
 .bag-badge {
@@ -419,8 +419,8 @@ watch(feedbackOpen, (val) => {
     right: -6px;
     width: 18px;
     height: 18px;
-    background: #c8a97e;
-    color: #1a0a00;
+    background: var(--color-brown-64);
+    color: var(--color-primary-black);
     font-size: 0.65rem;
     font-weight: 700;
     border-radius: 50%;
@@ -437,23 +437,23 @@ watch(feedbackOpen, (val) => {
     justify-content: center;
     width: 42px;
     height: 42px;
-    border: 1.5px solid rgba(26, 10, 0, 0.2);
+    border: 1.5px solid rgb(var(--rgb-primary-black) / 0.2);
     background: transparent;
-    color: #1a0a00;
+    color: var(--color-primary-black);
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s;
 }
 
 .burger-btn:hover {
-    background: rgba(26, 10, 0, 0.05);
-    border-color: rgba(26, 10, 0, 0.35);
+    background: rgb(var(--rgb-primary-black) / 0.05);
+    border-color: rgb(var(--rgb-primary-black) / 0.35);
 }
 
 /* ── Search Bar ── */
 .search-bar-wrap {
-    border-top: 1px solid rgba(26, 10, 0, 0.08);
-    background: #f5f0e8;
+    border-top: 1px solid rgb(var(--rgb-primary-black) / 0.08);
+    background: var(--color-surface-warm);
 }
 
 .search-bar-inner {
@@ -466,7 +466,7 @@ watch(feedbackOpen, (val) => {
 }
 
 .search-bar-icon {
-    color: #8a6a50;
+    color: var(--color-brown-43);
     flex-shrink: 0;
 }
 
@@ -477,12 +477,12 @@ watch(feedbackOpen, (val) => {
     outline: none;
     font-family: 'Georgia', serif;
     font-size: 1rem;
-    color: #1a0a00;
+    color: var(--color-primary-black);
     letter-spacing: 0.02em;
 }
 
 .search-bar-input::placeholder {
-    color: #b0957a;
+    color: var(--color-brown-58);
 }
 
 .search-close-btn {
@@ -493,15 +493,15 @@ watch(feedbackOpen, (val) => {
     height: 32px;
     border: none;
     background: transparent;
-    color: #8a6a50;
+    color: var(--color-brown-43);
     border-radius: 50%;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
 }
 
 .search-close-btn:hover {
-    background: rgba(26, 10, 0, 0.07);
-    color: #1a0a00;
+    background: rgb(var(--rgb-primary-black) / 0.07);
+    color: var(--color-primary-black);
 }
 
 /* ── Transitions ── */
@@ -541,13 +541,13 @@ watch(feedbackOpen, (val) => {
         width: 40px;
         height: 40px;
         background: transparent;
-        color: #1a0a00;
+        color: var(--color-primary-black);
         border-radius: 50%;
         border: none;
     }
 
     .bag-btn:hover {
-        background: rgba(26, 10, 0, 0.07);
+        background: rgb(var(--rgb-primary-black) / 0.07);
     }
 
     .search-bar-inner {

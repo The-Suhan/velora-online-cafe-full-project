@@ -47,6 +47,10 @@ const rangeLabel = computed(() => {
 const toISODate = (d: Date) => d.toISOString().split('T')[0]
 
 // ── Chart render ──────────────────────────────────────────────────
+// Chart.js paints on a canvas, which cannot resolve var(), so the tokens are
+// read out of color.css at render time instead.
+const { color, alpha } = useColors()
+
 const renderChart = (data: { labels: string[]; data: number[] }) => {
     if (!chartCanvas.value) return
     if (chartInstance) chartInstance.destroy()
@@ -60,11 +64,11 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
             labels,
             datasets: [{
                 data: values,
-                borderColor: '#4A6741',
-                backgroundColor: 'rgba(74,103,65,0.08)',
+                borderColor: color('success'),
+                backgroundColor: alpha('success', 0.08),
                 borderWidth: 2.5,
-                pointBackgroundColor: '#4A6741',
-                pointBorderColor: '#fff',
+                pointBackgroundColor: color('success'),
+                pointBorderColor: color('white'),
                 pointBorderWidth: 2,
                 pointRadius: 4,
                 pointHoverRadius: 7,
@@ -80,9 +84,9 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: '#2C1810',
-                    titleColor: '#C8A96E',
-                    bodyColor: '#F0EDE6',
+                    backgroundColor: color('primary'),
+                    titleColor: color('accent'),
+                    bodyColor: color('surface-alt'),
                     padding: 10,
                     cornerRadius: 8,
                 },
@@ -92,10 +96,10 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                     beginAtZero: true,
                     min: 0,
                     suggestedMax: 1,          
-                    grid: { color: 'rgba(0,0,0,0.04)' },
+                    grid: { color: alpha('black', 0.04) },
                     ticks: {
                         font: { family: 'Jost', size: 11 },
-                        color: '#8a7060',
+                        color: color('muted'),
                         stepSize: 1,
                         precision: 0,
                     },
@@ -104,7 +108,7 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                     grid: { display: false },
                     ticks: {
                         font: { family: 'Jost', size: 11 },
-                        color: '#8a7060',
+                        color: color('muted'),
                         maxRotation: 45,
                         autoSkip: true,
                         maxTicksLimit: 12,
@@ -240,10 +244,10 @@ onUnmounted(() => {
 
 <style scoped>
 .oc-card {
-    background: #fff;
+    background: var(--color-white);
     border-radius: 16px;
     padding: 20px 24px;
-    box-shadow: 0 1px 4px rgba(44, 24, 16, 0.06);
+    box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
 }
 
 .oc-head {
@@ -259,7 +263,7 @@ onUnmounted(() => {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.05rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
 }
 
 .oc-controls {
@@ -272,7 +276,7 @@ onUnmounted(() => {
 .oc-tabs {
     display: flex;
     gap: 3px;
-    background: #F0EDE6;
+    background: var(--color-surface-alt);
     border-radius: 8px;
     padding: 3px;
 }
@@ -284,17 +288,17 @@ onUnmounted(() => {
     padding: 4px 11px;
     font-family: 'Jost', sans-serif;
     font-size: 0.75rem;
-    color: #8a7060;
+    color: var(--color-muted);
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
     white-space: nowrap;
 }
 
 .oc-tab.active {
-    background: #fff;
-    color: #2C1810;
+    background: var(--color-white);
+    color: var(--color-primary);
     font-weight: 500;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px rgb(var(--rgb-black) / 0.08);
 }
 
 .oc-cal-wrap {
@@ -305,7 +309,7 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #F0EDE6;
+    background: var(--color-surface-alt);
     border: 1.5px solid transparent;
     border-radius: 8px;
     padding: 5px 11px;
@@ -313,21 +317,21 @@ onUnmounted(() => {
     transition: border-color 0.15s, background 0.15s;
     font-family: 'Jost', sans-serif;
     font-size: 0.75rem;
-    color: #8a7060;
+    color: var(--color-muted);
 }
 
 .oc-cal-btn.active,
 .oc-cal-btn:hover {
-    border-color: #4A6741;
-    color: #2C1810;
-    background: #edf2eb;
+    border-color: var(--color-success);
+    color: var(--color-primary);
+    background: var(--color-green-94-2);
 }
 
 .oc-cal-icon {
     width: 15px;
     height: 15px;
     flex-shrink: 0;
-    color: #4A6741;
+    color: var(--color-success);
 }
 
 .oc-cal-label {
@@ -342,9 +346,9 @@ onUnmounted(() => {
     z-index: 200;
     right: 0;
     top: calc(100% + 8px);
-    background: #fff;
+    background: var(--color-white);
     border-radius: 14px;
-    box-shadow: 0 8px 32px rgba(44, 24, 16, 0.14);
+    box-shadow: 0 8px 32px rgb(var(--rgb-primary) / 0.14);
     overflow: hidden;
 }
 
@@ -363,7 +367,7 @@ onUnmounted(() => {
     display: flex;
     gap: 6px;
     padding: 8px 10px;
-    border-top: 1px solid #F0EDE6;
+    border-top: 1px solid var(--color-surface-alt);
 }
 
 .oc-cal-clear,
@@ -380,21 +384,21 @@ onUnmounted(() => {
 }
 
 .oc-cal-clear {
-    background: #F0EDE6;
-    color: #8a7060;
+    background: var(--color-surface-alt);
+    color: var(--color-muted);
 }
 
 .oc-cal-clear:hover {
-    background: #e4ddd3;
+    background: var(--color-brown-86-2);
 }
 
 .oc-cal-apply {
-    background: #4A6741;
-    color: #fff;
+    background: var(--color-success);
+    color: var(--color-white);
 }
 
 .oc-cal-apply:hover {
-    background: #3a5232;
+    background: var(--color-green-26);
 }
 
 .oc-chart-wrap {
@@ -419,7 +423,7 @@ onUnmounted(() => {
     width: 100%;
     height: 100%;
     border-radius: 10px;
-    background: linear-gradient(90deg, #F0EDE6 25%, #e8e2d9 50%, #F0EDE6 75%);
+    background: linear-gradient(90deg, var(--color-surface-alt) 25%, var(--color-brown-88) 50%, var(--color-surface-alt) 75%);
     background-size: 400px 100%;
     animation: shimmer 1.2s infinite linear;
 }
@@ -456,11 +460,11 @@ onUnmounted(() => {
 :deep(.vc-title) {
     font-family: 'Cormorant Garamond', serif !important;
     font-size: 1rem !important;
-    color: #2C1810 !important;
+    color: var(--color-primary) !important;
 }
 
 :deep(.vc-weekday) {
-    color: #8a7060 !important;
+    color: var(--color-muted) !important;
     font-size: 0.72rem !important;
 }
 
@@ -470,10 +474,10 @@ onUnmounted(() => {
 }
 
 :deep(.vc-highlight) {
-    background-color: #4A6741 !important;
+    background-color: var(--color-success) !important;
 }
 
 :deep(.vc-highlight-content-solid) {
-    color: #fff !important;
+    color: var(--color-white) !important;
 }
 </style>

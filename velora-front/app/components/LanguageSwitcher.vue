@@ -56,12 +56,12 @@ onMounted(() => {
     display: flex;
     align-items: center;
     gap: 7px;
-    background: rgba(200, 169, 110, 0.12);
-    border: 1.5px solid rgba(200, 169, 110, 0.4);
+    background: rgb(var(--rgb-accent) / 0.12);
+    border: 1.5px solid rgb(var(--rgb-accent) / 0.4);
     border-radius: 10px;
     padding: 7px 10px;
     cursor: pointer;
-    color: #2C1810;
+    color: var(--color-primary);
     font-size: 0.8rem;
     font-weight: 500;
     letter-spacing: 0.03em;
@@ -70,8 +70,8 @@ onMounted(() => {
 
 .lang-selected:hover,
 .open .lang-selected {
-    background: rgba(200, 169, 110, 0.22);
-    border-color: #C8A96E;
+    background: rgb(var(--rgb-accent) / 0.22);
+    border-color: var(--color-accent);
 }
 
 .lang-flag {
@@ -89,7 +89,7 @@ onMounted(() => {
 .lang-chevron {
     width: 14px;
     height: 14px;
-    color: #C8A96E;
+    color: var(--color-accent);
     transition: transform 0.2s;
     flex-shrink: 0;
 }
@@ -102,11 +102,11 @@ onMounted(() => {
     position: absolute;
     top: calc(100% + 6px);
     left: 0;
-    background: #F5F0E8;
-    border: 1.5px solid rgba(200, 169, 110, 0.4);
+    background: var(--color-surface-warm);
+    border: 1.5px solid rgb(var(--rgb-accent) / 0.4);
     border-radius: 12px;
     padding: 6px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 24px rgb(var(--rgb-black) / 0.15);
     z-index: 50;
     min-width: 140px;
     display: flex;
@@ -125,20 +125,20 @@ onMounted(() => {
     cursor: pointer;
     font-family: 'Jost', sans-serif;
     font-size: 0.83rem;
-    color: #2C1810;
+    color: var(--color-primary);
     transition: background 0.15s;
     text-align: left;
     width: 100%;
 }
 
 .lang-option:hover {
-    background: rgba(200, 169, 110, 0.15);
+    background: rgb(var(--rgb-accent) / 0.15);
 }
 
 .lang-option.active {
-    background: rgba(200, 169, 110, 0.25);
+    background: rgb(var(--rgb-accent) / 0.25);
     font-weight: 600;
-    color: #7a5c30;
+    color: var(--color-coffee-33);
 }
 
 @media (max-width: 860px) {
@@ -161,7 +161,7 @@ onMounted(() => {
     }
 
     .lang-selected:hover {
-        background: rgba(26, 10, 0, 0.07);
+        background: rgb(var(--rgb-primary-black) / 0.07);
     }
 
     .lang-flag {

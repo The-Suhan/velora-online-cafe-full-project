@@ -34,7 +34,7 @@ export default defineNuxtConfig({
     scanPageMeta: 'after-resolve',
   },
 
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/color.css', '~/assets/css/main.css'],
 
   i18n: {
     locales: [

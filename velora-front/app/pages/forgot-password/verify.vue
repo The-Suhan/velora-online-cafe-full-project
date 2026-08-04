@@ -42,7 +42,7 @@
             <span class="divider-line" />
             <svg class="bean-icon" viewBox="0 0 24 24" fill="currentColor">
                 <ellipse cx="12" cy="12" rx="9" ry="6" transform="rotate(-30 12 12)" />
-                <path d="M12 6 Q9 12 12 18" stroke="#F5F0E8" stroke-width="1.5" fill="none" />
+                <path d="M12 6 Q9 12 12 18" stroke="var(--color-surface-warm)" stroke-width="1.5" fill="none" />
             </svg>
             <span class="divider-line" />
         </div>
@@ -149,10 +149,10 @@ const handleResend = async () => {
 .card {
     width: 100%;
     max-width: 420px;
-    background: #F5F0E8;
+    background: var(--color-surface-warm);
     border-radius: 24px;
     padding: 40px 36px 32px;
-    box-shadow: 0 32px 80px rgba(0, 0, 0, .45);
+    box-shadow: 0 32px 80px rgb(var(--rgb-black) / .45);
     font-family: 'Jost', sans-serif;
 }
 
@@ -166,7 +166,7 @@ const handleResend = async () => {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.9rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     letter-spacing: .14em;
     text-align: center;
     margin: 0;
@@ -183,7 +183,7 @@ const handleResend = async () => {
 .cafe-text {
     font-size: .72rem;
     letter-spacing: .28em;
-    color: #C8A96E;
+    color: var(--color-accent);
     font-weight: 500;
 }
 
@@ -191,7 +191,7 @@ const handleResend = async () => {
     flex: 1;
     max-width: 44px;
     height: .5px;
-    background: #C8A96E;
+    background: var(--color-accent);
     opacity: .6;
 }
 
@@ -199,23 +199,23 @@ const handleResend = async () => {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.3rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     text-align: center;
     margin: 0 0 6px;
 }
 
 .otp-desc {
     font-size: .84rem;
-    color: #8a7060;
+    color: var(--color-muted);
     text-align: center;
     margin: 0 0 20px;
     line-height: 1.5;
 }
 
 .error-box {
-    background: #fde8e8;
-    border: 1px solid #f5a5a5;
-    color: #8b1a1a;
+    background: var(--color-red-95);
+    border: 1px solid var(--color-red-80);
+    color: var(--color-red-32);
     border-radius: 10px;
     padding: 10px 14px;
     font-size: .83rem;
@@ -233,30 +233,30 @@ const handleResend = async () => {
 .otp-box {
     width: 48px;
     height: 56px;
-    background: #EDE5D8;
-    border: 1.5px solid rgba(200, 169, 110, .35);
+    background: var(--color-brown-89-2);
+    border: 1.5px solid rgb(var(--rgb-accent) / .35);
     border-radius: 12px;
     text-align: center;
     font-family: 'Jost', sans-serif;
     font-size: 1.4rem;
     font-weight: 500;
-    color: #2C1810;
+    color: var(--color-primary);
     outline: none;
     transition: border-color .2s;
 }
 
 .otp-box:focus {
-    border-color: #C8A96E;
+    border-color: var(--color-accent);
 }
 
 .otp-box.otp-error {
-    border-color: #e05252;
+    border-color: var(--color-red-60);
 }
 
 .btn-verify {
     width: 100%;
-    background: #4A6741;
-    color: #d4b882;
+    background: var(--color-success);
+    color: var(--color-brown-67);
     border: none;
     border-radius: 12px;
     padding: 14px;
@@ -273,7 +273,7 @@ const handleResend = async () => {
 }
 
 .btn-verify:hover:not(:disabled) {
-    background: #5a7a50;
+    background: var(--color-green-40);
 }
 
 .btn-verify:active:not(:disabled) {
@@ -288,8 +288,8 @@ const handleResend = async () => {
 .spinner {
     width: 18px;
     height: 18px;
-    border: 2px solid rgba(212, 184, 130, .3);
-    border-top-color: #d4b882;
+    border: 2px solid rgb(var(--rgb-brown-67) / .3);
+    border-top-color: var(--color-brown-67);
     border-radius: 50%;
     animation: spin .7s linear infinite;
 }
@@ -307,7 +307,7 @@ const handleResend = async () => {
 
 .resend-timer {
     font-size: .82rem;
-    color: #b0967a;
+    color: var(--color-muted-light);
 }
 
 .resend-btn {
@@ -316,7 +316,7 @@ const handleResend = async () => {
     cursor: pointer;
     font-family: 'Jost', sans-serif;
     font-size: .82rem;
-    color: #C8A96E;
+    color: var(--color-accent);
     font-weight: 500;
     text-decoration: underline;
 }
@@ -336,14 +336,14 @@ const handleResend = async () => {
 .divider-line {
     flex: 1;
     height: .5px;
-    background: #C8A96E;
+    background: var(--color-accent);
     opacity: .35;
 }
 
 .bean-icon {
     width: 16px;
     height: 16px;
-    color: #C8A96E;
+    color: var(--color-accent);
     opacity: .7;
 }
 
@@ -354,7 +354,7 @@ const handleResend = async () => {
 
 .back-link a {
     font-size: .82rem;
-    color: #C8A96E;
+    color: var(--color-accent);
     text-decoration: none;
     font-weight: 500;
 }

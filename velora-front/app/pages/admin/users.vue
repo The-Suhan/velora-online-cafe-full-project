@@ -12,8 +12,8 @@
         <!-- Stat card -->
         <div class="stats-row">
             <div class="stat-card">
-                <div class="stat-icon" style="background:#e8f0e4">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.8">
+                <div class="stat-icon" style="background:var(--color-green-92)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="1.8">
                         <circle cx="12" cy="8" r="4" />
                         <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                     </svg>
@@ -295,7 +295,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="delete-icon-wrap">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="1.6">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-red-46)" stroke-width="1.6">
                                 <circle cx="12" cy="12" r="10" />
                                 <line x1="12" y1="8" x2="12" y2="12" />
                                 <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -505,20 +505,20 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.8rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     margin: 0 0 4px;
 }
 
 .page-sub {
     font-size: 0.84rem;
-    color: #8a7060;
+    color: var(--color-muted);
     margin: 0;
 }
 
 .last-updated {
     font-size: 0.78rem;
-    color: #8a7060;
-    background: #F0EDE6;
+    color: var(--color-muted);
+    background: var(--color-surface-alt);
     border-radius: 99px;
     padding: 5px 12px;
     white-space: nowrap;
@@ -532,13 +532,13 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .stat-card {
-    background: #fff;
+    background: var(--color-white);
     border-radius: 16px;
     padding: 18px 22px;
     display: inline-flex;
     align-items: center;
     gap: 14px;
-    box-shadow: 0 1px 4px rgba(44, 24, 16, 0.06);
+    box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
     min-width: 220px;
 }
 
@@ -559,7 +559,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 
 .stat-label {
     font-size: 0.78rem;
-    color: #8a7060;
+    color: var(--color-muted);
     margin: 0 0 2px;
 }
 
@@ -567,7 +567,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.6rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     margin: 0 0 2px;
     line-height: 1;
 }
@@ -578,15 +578,15 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .positive {
-    color: #4A6741;
+    color: var(--color-success);
 }
 
 /* ── Table card ───────────────────────────────────────────── */
 .table-card {
-    background: #fff;
+    background: var(--color-white);
     border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 1px 4px rgba(44, 24, 16, 0.06);
+    box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
 }
 
 .table-toolbar {
@@ -602,7 +602,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
 }
 
 .toolbar-right {
@@ -623,29 +623,29 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     left: 10px;
     width: 15px;
     height: 15px;
-    color: #b0967a;
+    color: var(--color-muted-light);
     pointer-events: none;
 }
 
 .search-input {
-    border: 1.5px solid #E8E2D9;
+    border: 1.5px solid var(--color-brown-88);
     border-radius: 10px;
     padding: 7px 32px 7px 32px;
     font-family: 'Jost', sans-serif;
     font-size: 0.8rem;
-    color: #2C1810;
-    background: #FAFAF8;
+    color: var(--color-primary);
+    background: var(--color-surface-soft);
     outline: none;
     width: 220px;
     transition: border-color 0.15s;
 }
 
 .search-input:focus {
-    border-color: #C8A96E;
+    border-color: var(--color-accent);
 }
 
 .search-input::placeholder {
-    color: #b0967a;
+    color: var(--color-muted-light);
 }
 
 .search-clear {
@@ -654,7 +654,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     background: none;
     border: none;
     font-size: 1rem;
-    color: #b0967a;
+    color: var(--color-muted-light);
     cursor: pointer;
     padding: 0;
     line-height: 1;
@@ -664,16 +664,16 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     display: flex;
     align-items: center;
     gap: 6px;
-    border: 1.5px solid #E8E2D9;
+    border: 1.5px solid var(--color-brown-88);
     border-radius: 10px;
     padding: 6px 10px;
-    background: #FAFAF8;
+    background: var(--color-surface-soft);
 }
 
 .filter-wrap svg {
     width: 15px;
     height: 15px;
-    color: #b0967a;
+    color: var(--color-muted-light);
 }
 
 .filter-select {
@@ -681,7 +681,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     background: none;
     font-family: 'Jost', sans-serif;
     font-size: 0.8rem;
-    color: #2C1810;
+    color: var(--color-primary);
     outline: none;
     cursor: pointer;
 }
@@ -702,15 +702,15 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     text-align: left;
     font-size: 0.7rem;
     font-weight: 600;
-    color: #b0967a;
+    color: var(--color-muted-light);
     letter-spacing: 0.05em;
-    border-bottom: 1.5px solid #F0EDE6;
+    border-bottom: 1.5px solid var(--color-surface-alt);
     white-space: nowrap;
 }
 
 .user-row td {
     padding: 12px;
-    border-bottom: 1px solid #F8F5F0;
+    border-bottom: 1px solid var(--color-brown-96);
     vertical-align: middle;
 }
 
@@ -719,7 +719,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .user-row:hover td {
-    background: #FAFAF8;
+    background: var(--color-surface-soft);
 }
 
 .user-identity {
@@ -737,8 +737,8 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #F0EDE6;
-    color: #8a7060;
+    background: var(--color-surface-alt);
+    color: var(--color-muted);
     font-family: 'Cormorant Garamond', serif;
     font-size: 0.9rem;
     font-weight: 600;
@@ -750,18 +750,18 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 .user-name {
     font-size: 0.85rem;
     font-weight: 500;
-    color: #2C1810;
+    color: var(--color-primary);
     margin: 0 0 2px;
 }
 
 .user-email {
     font-size: 0.75rem;
-    color: #8a7060;
+    color: var(--color-muted);
     margin: 0;
 }
 
 .last-activity-cell {
-    color: #8a7060;
+    color: var(--color-muted);
     font-size: 0.8rem;
     white-space: nowrap;
 }
@@ -777,13 +777,13 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .role-admin {
-    background: #2C1810;
-    color: #C8A96E;
+    background: var(--color-primary);
+    color: var(--color-accent);
 }
 
 .role-customer {
-    background: #F0EDE6;
-    color: #8a7060;
+    background: var(--color-surface-alt);
+    color: var(--color-muted);
 }
 
 .actions-cell {
@@ -798,7 +798,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     cursor: pointer;
     padding: 6px;
     border-radius: 8px;
-    color: #8a7060;
+    color: var(--color-muted);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -806,8 +806,8 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .icon-btn:hover {
-    background: #F0EDE6;
-    color: #2C1810;
+    background: var(--color-surface-alt);
+    color: var(--color-primary);
 }
 
 .icon-btn svg {
@@ -816,8 +816,8 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .trash-btn:hover {
-    background: #fdecea;
-    color: #c0392b;
+    background: var(--color-red-95-2);
+    color: var(--color-red-46);
 }
 
 .dots-wrap {
@@ -828,10 +828,10 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     position: absolute;
     right: 0;
     top: calc(100% + 4px);
-    background: #fff;
-    border: 1.5px solid #E8E2D9;
+    background: var(--color-white);
+    border: 1.5px solid var(--color-brown-88);
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(44, 24, 16, 0.12);
+    box-shadow: 0 8px 24px rgb(var(--rgb-primary) / 0.12);
     z-index: 100;
     min-width: 140px;
     overflow: hidden;
@@ -864,32 +864,32 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     border: none;
     font-family: 'Jost', sans-serif;
     font-size: 0.82rem;
-    color: #2C1810;
+    color: var(--color-primary);
     cursor: pointer;
     text-align: left;
     transition: background 0.12s;
 }
 
 .dropdown-item:hover {
-    background: #F8F5F0;
+    background: var(--color-brown-96);
 }
 
 .dropdown-item svg {
     width: 15px;
     height: 15px;
-    color: #8a7060;
+    color: var(--color-muted);
 }
 
 .danger-item {
-    color: #c0392b;
+    color: var(--color-red-46);
 }
 
 .danger-item svg {
-    color: #c0392b;
+    color: var(--color-red-46);
 }
 
 .danger-item:hover {
-    background: #fdecea;
+    background: var(--color-red-95-2);
 }
 
 .skeleton-rows {
@@ -901,7 +901,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 
 .skeleton-row {
     height: 52px;
-    background: linear-gradient(90deg, #F0EDE6 25%, #e8e2d9 50%, #F0EDE6 75%);
+    background: linear-gradient(90deg, var(--color-surface-alt) 25%, var(--color-brown-88) 50%, var(--color-surface-alt) 75%);
     background-size: 800px;
     border-radius: 10px;
     animation: shimmer 1.2s infinite;
@@ -920,7 +920,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 .empty-state {
     text-align: center;
     padding: 40px;
-    color: #b0967a;
+    color: var(--color-muted-light);
 }
 
 .empty-state svg {
@@ -938,7 +938,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 
 .empty-msg {
     font-size: 0.82rem;
-    color: #b0967a;
+    color: var(--color-muted-light);
     text-align: center;
     padding: 20px 0;
 }
@@ -949,7 +949,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     align-items: center;
     justify-content: space-between;
     padding-top: 16px;
-    border-top: 1.5px solid #F0EDE6;
+    border-top: 1.5px solid var(--color-surface-alt);
     margin-top: 4px;
     flex-wrap: wrap;
     gap: 10px;
@@ -963,7 +963,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 
 .pagination-info {
     font-size: 0.78rem;
-    color: #8a7060;
+    color: var(--color-muted);
 }
 
 .pagination-btns {
@@ -974,25 +974,25 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 
 .page-btn {
     background: none;
-    border: 1.5px solid #E8E2D9;
+    border: 1.5px solid var(--color-brown-88);
     border-radius: 8px;
     padding: 5px 12px;
     font-family: 'Jost', sans-serif;
     font-size: 0.78rem;
-    color: #8a7060;
+    color: var(--color-muted);
     cursor: pointer;
     transition: all 0.15s;
 }
 
 .page-btn:hover:not(:disabled) {
-    border-color: #C8A96E;
-    color: #2C1810;
+    border-color: var(--color-accent);
+    color: var(--color-primary);
 }
 
 .page-btn.active {
-    background: #2C1810;
-    color: #C8A96E;
-    border-color: #2C1810;
+    background: var(--color-primary);
+    color: var(--color-accent);
+    border-color: var(--color-primary);
     font-weight: 600;
 }
 
@@ -1017,7 +1017,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     align-items: center;
     gap: 12px;
     padding: 12px 4px;
-    border-bottom: 1px solid #F0EDE6;
+    border-bottom: 1px solid var(--color-surface-alt);
 }
 
 .mobile-user-card:last-child {
@@ -1044,7 +1044,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(44, 24, 16, 0.4);
+    background: rgb(var(--rgb-primary) / 0.4);
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -1064,11 +1064,11 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .modal {
-    background: #fff;
+    background: var(--color-white);
     border-radius: 20px;
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 20px 60px rgba(44, 24, 16, 0.2);
+    box-shadow: 0 20px 60px rgb(var(--rgb-primary) / 0.2);
     animation: slideUp 0.2s ease;
 }
 
@@ -1099,14 +1099,14 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
 }
 
 .modal-close {
     background: none;
     border: none;
     font-size: 1.4rem;
-    color: #8a7060;
+    color: var(--color-muted);
     cursor: pointer;
     padding: 0 4px;
     line-height: 1;
@@ -1125,8 +1125,8 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: #F0EDE6;
-    color: #8a7060;
+    background: var(--color-surface-alt);
+    color: var(--color-muted);
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.6rem;
     font-weight: 600;
@@ -1139,14 +1139,14 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.3rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     text-align: center;
     margin: 0 0 4px;
 }
 
 .preview-email {
     font-size: 0.8rem;
-    color: #8a7060;
+    color: var(--color-muted);
     text-align: center;
     margin: 0 0 14px;
 }
@@ -1159,7 +1159,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .preview-details {
-    border: 1.5px solid #F0EDE6;
+    border: 1.5px solid var(--color-surface-alt);
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 20px;
@@ -1169,7 +1169,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     display: flex;
     justify-content: space-between;
     padding: 10px 14px;
-    border-bottom: 1px solid #F0EDE6;
+    border-bottom: 1px solid var(--color-surface-alt);
 }
 
 .detail-row:last-child {
@@ -1178,19 +1178,19 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 
 .detail-label {
     font-size: 0.78rem;
-    color: #8a7060;
+    color: var(--color-muted);
 }
 
 .detail-value {
     font-size: 0.82rem;
     font-weight: 500;
-    color: #2C1810;
+    color: var(--color-primary);
 }
 
 .delete-icon-wrap {
     width: 48px;
     height: 48px;
-    background: #fdecea;
+    background: var(--color-red-95-2);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1205,14 +1205,14 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 
 .delete-msg {
     font-size: 0.84rem;
-    color: #8a7060;
+    color: var(--color-muted);
     line-height: 1.6;
     margin: 0 0 20px;
     text-align: center;
 }
 
 .delete-msg strong {
-    color: #2C1810;
+    color: var(--color-primary);
 }
 
 .modal-actions {
@@ -1222,19 +1222,19 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .btn-secondary {
-    background: #F0EDE6;
+    background: var(--color-surface-alt);
     border: none;
     border-radius: 10px;
     padding: 9px 18px;
     font-family: 'Jost', sans-serif;
     font-size: 0.84rem;
-    color: #8a7060;
+    color: var(--color-muted);
     cursor: pointer;
     transition: background 0.15s;
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: #E8E2D9;
+    background: var(--color-brown-88);
 }
 
 .btn-secondary:disabled {
@@ -1243,13 +1243,13 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .btn-primary {
-    background: #2C1810;
+    background: var(--color-primary);
     border: none;
     border-radius: 10px;
     padding: 9px 18px;
     font-family: 'Jost', sans-serif;
     font-size: 0.84rem;
-    color: #C8A96E;
+    color: var(--color-accent);
     cursor: pointer;
     text-decoration: none;
     transition: opacity 0.15s;
@@ -1262,13 +1262,13 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .btn-danger {
-    background: #c0392b;
+    background: var(--color-red-46);
     border: none;
     border-radius: 10px;
     padding: 9px 18px;
     font-family: 'Jost', sans-serif;
     font-size: 0.84rem;
-    color: #fff;
+    color: var(--color-white);
     cursor: pointer;
     transition: opacity 0.15s;
 }

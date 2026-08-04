@@ -148,7 +148,7 @@
                 <div class="cat-list">
                     <div v-for="cat in categories" :key="cat.id" class="cat-row">
                         <div class="cat-icon-wrap">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.8">
                                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
                                 <line x1="3" y1="6" x2="21" y2="6" />
                             </svg>
@@ -213,10 +213,10 @@ const statCards = computed(() => [
         label: t('admin.dashboard.totalUsers'),
         value: stats.value.total_users ?? 0,
         growth: stats.value.users_growth ?? 0,
-        bg: '#e8f0e4',
+        bg: 'var(--color-green-92)',
         format: 'number',
         showCurrency: false,
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.8">
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="1.8">
       <circle cx="12" cy="8" r="4"/>
       <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
     </svg>`,
@@ -226,9 +226,9 @@ const statCards = computed(() => [
         value: stats.value.total_orders ?? 0,
         growth: stats.value.orders_growth ?? 0,
         showCurrency: false,
-        bg: '#fdf3e4',
+        bg: 'var(--color-brown-94)',
         format: 'number',
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8">
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.8">
       <path d="M6 2h12l3 7H3L6 2z"/>
       <path d="M3 9v11a2 2 0 002 2h14a2 2 0 002-2V9"/>
     </svg>`,
@@ -238,9 +238,9 @@ const statCards = computed(() => [
         value: stats.value.total_products ?? 0,
         growth: 0,
         showCurrency: false,
-        bg: '#2C1810',
+        bg: 'var(--color-primary)',
         format: 'number',
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8">
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.8">
       <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
       <line x1="3" y1="6" x2="21" y2="6"/>
       <path d="M16 10a4 4 0 01-8 0"/>
@@ -251,9 +251,9 @@ const statCards = computed(() => [
         value: stats.value.total_categories ?? 0,
         growth: 0,
         showCurrency: false,
-        bg: '#e8f0e4',
+        bg: 'var(--color-green-92)',
         format: 'number',
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.8">
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="1.8">
       <rect x="3" y="3" width="7" height="7" rx="1"/>
       <rect x="14" y="3" width="7" height="7" rx="1"/>
       <rect x="3" y="14" width="7" height="7" rx="1"/>
@@ -264,10 +264,10 @@ const statCards = computed(() => [
         label: t('admin.dashboard.weeklyRevenue'),
         value: stats.value.weekly_revenue ?? 0,
         growth: stats.value.revenue_growth ?? 0,
-        bg: '#fdf3e4',
+        bg: 'var(--color-brown-94)',
         showCurrency: true,
         format: 'number',
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8">
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.8">
       <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
     </svg>`,
     },
@@ -275,10 +275,10 @@ const statCards = computed(() => [
         label: t('admin.dashboard.yearlyRevenue'),
         value: stats.value.yearly_revenue ?? 0,
         growth: 0,
-        bg: '#e8f0e4',
+        bg: 'var(--color-green-92)',
         format: 'number',
         showCurrency: true,
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#4A6741" stroke-width="1.8">
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="1.8">
       <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
     </svg>`,
     },
@@ -334,11 +334,11 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
             labels: data.labels ?? [],
             datasets: [{
                 data: data.data ?? [],
-                borderColor: '#4A6741',
-                backgroundColor: 'rgba(74,103,65,0.08)',
+                borderColor: 'var(--color-success)',
+                backgroundColor: 'rgb(var(--rgb-success) / 0.08)',
                 borderWidth: 2.5,
-                pointBackgroundColor: '#4A6741',
-                pointBorderColor: '#fff',
+                pointBackgroundColor: 'var(--color-success)',
+                pointBorderColor: 'var(--color-white)',
                 pointBorderWidth: 2,
                 pointRadius: 4,
                 pointHoverRadius: 7,
@@ -354,9 +354,9 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: '#2C1810',
-                    titleColor: '#C8A96E',
-                    bodyColor: '#F0EDE6',
+                    backgroundColor: 'var(--color-primary)',
+                    titleColor: 'var(--color-accent)',
+                    bodyColor: 'var(--color-surface-alt)',
                     padding: 10,
                     cornerRadius: 8,
                 },
@@ -366,12 +366,12 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                     beginAtZero: true,
                     min: 0,
                     suggestedMax: 1,
-                    grid: { color: 'rgba(0,0,0,0.04)' },
-                    ticks: { font: { family: 'Jost', size: 11 }, color: '#8a7060', stepSize: 1, precision: 0 },
+                    grid: { color: 'rgb(var(--rgb-black) / 0.04)' },
+                    ticks: { font: { family: 'Jost', size: 11 }, color: 'var(--color-muted)', stepSize: 1, precision: 0 },
                 },
                 x: {
                     grid: { display: false },
-                    ticks: { font: { family: 'Jost', size: 11 }, color: '#8a7060', maxRotation: 45, autoSkip: true, maxTicksLimit: 12 },
+                    ticks: { font: { family: 'Jost', size: 11 }, color: 'var(--color-muted)', maxRotation: 45, autoSkip: true, maxTicksLimit: 12 },
                 },
             },
         },
@@ -476,13 +476,13 @@ const formatCurrency = (n: number) =>
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.8rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     margin: 0 0 4px;
 }
 
 .page-sub {
     font-size: 0.84rem;
-    color: #8a7060;
+    color: var(--color-muted);
     margin: 0;
 }
 
@@ -494,13 +494,13 @@ const formatCurrency = (n: number) =>
 }
 
 .stat-card {
-    background: #fff;
+    background: var(--color-white);
     border-radius: 16px;
     padding: 18px;
     display: flex;
     align-items: center;
     gap: 14px;
-    box-shadow: 0 1px 4px rgba(44, 24, 16, 0.06);
+    box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
 }
 
 .stat-icon {
@@ -520,7 +520,7 @@ const formatCurrency = (n: number) =>
 
 .stat-label {
     font-size: 0.78rem;
-    color: #8a7060;
+    color: var(--color-muted);
     margin: 0 0 2px;
 }
 
@@ -528,7 +528,7 @@ const formatCurrency = (n: number) =>
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.6rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     margin: 0 0 2px;
     line-height: 1;
 }
@@ -539,11 +539,11 @@ const formatCurrency = (n: number) =>
 }
 
 .positive {
-    color: #4A6741;
+    color: var(--color-success);
 }
 
 .negative {
-    color: #c0392b;
+    color: var(--color-red-46);
 }
 
 .mid-row {
@@ -555,10 +555,10 @@ const formatCurrency = (n: number) =>
 
 .recent-card,
 .bottom-card {
-    background: #fff;
+    background: var(--color-white);
     border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 1px 4px rgba(44, 24, 16, 0.06);
+    box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
 }
 
 .card-header {
@@ -572,12 +572,12 @@ const formatCurrency = (n: number) =>
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.05rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
 }
 
 .view-all {
     font-size: 0.78rem;
-    color: #4A6741;
+    color: var(--color-success);
     text-decoration: none;
     font-weight: 500;
 }
@@ -611,7 +611,7 @@ const formatCurrency = (n: number) =>
 }
 
 .order-img-placeholder {
-    background: #F0EDE6;
+    background: var(--color-surface-alt);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -620,7 +620,7 @@ const formatCurrency = (n: number) =>
 .order-img-placeholder svg {
     width: 20px;
     height: 20px;
-    color: #C8A96E;
+    color: var(--color-accent);
 }
 
 .order-info {
@@ -631,7 +631,7 @@ const formatCurrency = (n: number) =>
 .order-no {
     font-size: 0.82rem;
     font-weight: 500;
-    color: #2C1810;
+    color: var(--color-primary);
     margin: 0 0 2px;
     white-space: nowrap;
     overflow: hidden;
@@ -640,7 +640,7 @@ const formatCurrency = (n: number) =>
 
 .order-product {
     font-size: 0.75rem;
-    color: #8a7060;
+    color: var(--color-muted);
     margin: 0;
 }
 
@@ -652,13 +652,13 @@ const formatCurrency = (n: number) =>
 .order-price {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #4A6741;
+    color: var(--color-success);
     margin: 0 0 2px;
 }
 
 .order-time {
     font-size: 0.72rem;
-    color: #b0967a;
+    color: var(--color-muted-light);
     margin: 0;
 }
 
@@ -670,7 +670,7 @@ const formatCurrency = (n: number) =>
 
 .skeleton-row {
     height: 44px;
-    background: linear-gradient(90deg, #F0EDE6 25%, #e8e2d9 50%, #F0EDE6 75%);
+    background: linear-gradient(90deg, var(--color-surface-alt) 25%, var(--color-brown-88) 50%, var(--color-surface-alt) 75%);
     background-size: 400px 100%;
     border-radius: 10px;
     animation: shimmer 1.2s infinite linear;
@@ -707,7 +707,7 @@ const formatCurrency = (n: number) =>
 .product-rank {
     font-size: 0.78rem;
     font-weight: 500;
-    color: #8a7060;
+    color: var(--color-muted);
     width: 16px;
     text-align: center;
 }
@@ -721,13 +721,13 @@ const formatCurrency = (n: number) =>
 }
 
 .product-img-placeholder {
-    background: #F0EDE6;
+    background: var(--color-surface-alt);
 }
 
 .product-name {
     flex: 1;
     font-size: 0.85rem;
-    color: #2C1810;
+    color: var(--color-primary);
 }
 
 .stars {
@@ -740,17 +740,17 @@ const formatCurrency = (n: number) =>
 }
 
 .star.filled {
-    color: #C8A96E;
+    color: var(--color-accent);
 }
 
 .star.empty {
-    color: #E8E2D9;
+    color: var(--color-brown-88);
 }
 
 .product-rating {
     font-size: 0.78rem;
     font-weight: 500;
-    color: #8a7060;
+    color: var(--color-muted);
     min-width: 28px;
     text-align: right;
 }
@@ -770,7 +770,7 @@ const formatCurrency = (n: number) =>
 .cat-icon-wrap {
     width: 36px;
     height: 36px;
-    background: #fdf3e4;
+    background: var(--color-brown-94);
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -786,21 +786,21 @@ const formatCurrency = (n: number) =>
 .cat-name {
     flex: 1;
     font-size: 0.85rem;
-    color: #2C1810;
+    color: var(--color-primary);
 }
 
 .cat-count {
     font-size: 0.82rem;
     font-weight: 500;
-    color: #8a7060;
-    background: #F0EDE6;
+    color: var(--color-muted);
+    background: var(--color-surface-alt);
     padding: 2px 8px;
     border-radius: 99px;
 }
 
 .empty-msg {
     font-size: 0.82rem;
-    color: #b0967a;
+    color: var(--color-muted-light);
     text-align: center;
     padding: 12px 0;
 }
@@ -836,10 +836,10 @@ const formatCurrency = (n: number) =>
 
 /* ── Chart card ──────────────────────────────────────────── */
 .oc-card {
-    background: #fff;
+    background: var(--color-white);
     border-radius: 16px;
     padding: 20px 24px;
-    box-shadow: 0 1px 4px rgba(44, 24, 16, 0.06);
+    box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
 }
 
 .oc-head {
@@ -855,7 +855,7 @@ const formatCurrency = (n: number) =>
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.05rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
 }
 
 .oc-controls {
@@ -868,7 +868,7 @@ const formatCurrency = (n: number) =>
 .oc-tabs {
     display: flex;
     gap: 3px;
-    background: #F0EDE6;
+    background: var(--color-surface-alt);
     border-radius: 8px;
     padding: 3px;
 }
@@ -880,17 +880,17 @@ const formatCurrency = (n: number) =>
     padding: 4px 11px;
     font-family: 'Jost', sans-serif;
     font-size: 0.75rem;
-    color: #8a7060;
+    color: var(--color-muted);
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
     white-space: nowrap;
 }
 
 .oc-tab.active {
-    background: #fff;
-    color: #2C1810;
+    background: var(--color-white);
+    color: var(--color-primary);
     font-weight: 500;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px rgb(var(--rgb-black) / 0.08);
 }
 
 .oc-cal-wrap {
@@ -901,7 +901,7 @@ const formatCurrency = (n: number) =>
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #F0EDE6;
+    background: var(--color-surface-alt);
     border: 1.5px solid transparent;
     border-radius: 8px;
     padding: 5px 11px;
@@ -909,21 +909,21 @@ const formatCurrency = (n: number) =>
     transition: border-color 0.15s, background 0.15s;
     font-family: 'Jost', sans-serif;
     font-size: 0.75rem;
-    color: #8a7060;
+    color: var(--color-muted);
 }
 
 .oc-cal-btn.active,
 .oc-cal-btn:hover {
-    border-color: #4A6741;
-    color: #2C1810;
-    background: #edf2eb;
+    border-color: var(--color-success);
+    color: var(--color-primary);
+    background: var(--color-green-94-2);
 }
 
 .oc-cal-icon {
     width: 15px;
     height: 15px;
     flex-shrink: 0;
-    color: #4A6741;
+    color: var(--color-success);
 }
 
 .oc-cal-label {
@@ -938,9 +938,9 @@ const formatCurrency = (n: number) =>
     z-index: 200;
     right: 0;
     top: calc(100% + 8px);
-    background: #fff;
+    background: var(--color-white);
     border-radius: 14px;
-    box-shadow: 0 8px 32px rgba(44, 24, 16, 0.14);
+    box-shadow: 0 8px 32px rgb(var(--rgb-primary) / 0.14);
     overflow: hidden;
 }
 
@@ -959,7 +959,7 @@ const formatCurrency = (n: number) =>
     display: flex;
     gap: 6px;
     padding: 8px 10px;
-    border-top: 1px solid #F0EDE6;
+    border-top: 1px solid var(--color-surface-alt);
 }
 
 .oc-cal-clear,
@@ -976,21 +976,21 @@ const formatCurrency = (n: number) =>
 }
 
 .oc-cal-clear {
-    background: #F0EDE6;
-    color: #8a7060;
+    background: var(--color-surface-alt);
+    color: var(--color-muted);
 }
 
 .oc-cal-clear:hover {
-    background: #e4ddd3;
+    background: var(--color-brown-86-2);
 }
 
 .oc-cal-apply {
-    background: #4A6741;
-    color: #fff;
+    background: var(--color-success);
+    color: var(--color-white);
 }
 
 .oc-cal-apply:hover {
-    background: #3a5232;
+    background: var(--color-green-26);
 }
 
 .oc-chart-wrap {
@@ -1015,7 +1015,7 @@ const formatCurrency = (n: number) =>
     width: 100%;
     height: 100%;
     border-radius: 10px;
-    background: linear-gradient(90deg, #F0EDE6 25%, #e8e2d9 50%, #F0EDE6 75%);
+    background: linear-gradient(90deg, var(--color-surface-alt) 25%, var(--color-brown-88) 50%, var(--color-surface-alt) 75%);
     background-size: 400px 100%;
     animation: shimmer 1.2s infinite linear;
 }
@@ -1032,11 +1032,11 @@ const formatCurrency = (n: number) =>
 :deep(.vc-title) {
     font-family: 'Cormorant Garamond', serif !important;
     font-size: 1rem !important;
-    color: #2C1810 !important;
+    color: var(--color-primary) !important;
 }
 
 :deep(.vc-weekday) {
-    color: #8a7060 !important;
+    color: var(--color-muted) !important;
     font-size: 0.72rem !important;
 }
 
@@ -1046,10 +1046,10 @@ const formatCurrency = (n: number) =>
 }
 
 :deep(.vc-highlight) {
-    background-color: #4A6741 !important;
+    background-color: var(--color-success) !important;
 }
 
 :deep(.vc-highlight-content-solid) {
-    color: #fff !important;
+    color: var(--color-white) !important;
 }
 </style>

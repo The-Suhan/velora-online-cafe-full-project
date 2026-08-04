@@ -71,7 +71,7 @@
             <span class="divider-line" />
             <svg class="bean-icon" viewBox="0 0 24 24" fill="currentColor">
                 <ellipse cx="12" cy="12" rx="9" ry="6" transform="rotate(-30 12 12)" />
-                <path d="M12 6 Q9 12 12 18" stroke="#F5F0E8" stroke-width="1.5" fill="none" />
+                <path d="M12 6 Q9 12 12 18" stroke="var(--color-surface-warm)" stroke-width="1.5" fill="none" />
             </svg>
             <span class="divider-line" />
         </div>
@@ -143,10 +143,10 @@ const handleLogin = async () => {
 .card {
     width: 100%;
     max-width: 420px;
-    background: #F5F0E8;
+    background: var(--color-surface-warm);
     border-radius: 24px;
     padding: 40px 36px 32px;
-    box-shadow: 0 32px 80px rgba(0, 0, 0, .5);
+    box-shadow: 0 32px 80px rgb(var(--rgb-black) / .5);
     font-family: 'Jost', sans-serif;
 }
 
@@ -166,7 +166,7 @@ const handleLogin = async () => {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     letter-spacing: .14em;
     text-align: center;
     line-height: 1;
@@ -184,7 +184,7 @@ const handleLogin = async () => {
 .cafe-text {
     font-size: .72rem;
     letter-spacing: .28em;
-    color: #C8A96E;
+    color: var(--color-accent);
     font-weight: 500;
 }
 
@@ -192,7 +192,7 @@ const handleLogin = async () => {
     flex: 1;
     max-width: 44px;
     height: .5px;
-    background: #C8A96E;
+    background: var(--color-accent);
     opacity: .6;
 }
 
@@ -200,15 +200,15 @@ const handleLogin = async () => {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 1rem;
-    color: #8a7060;
+    color: var(--color-muted);
     text-align: center;
     margin: 0 0 24px;
 }
 
 .error-box {
-    background: #fde8e8;
-    border: 1px solid #f5a5a5;
-    color: #8b1a1a;
+    background: var(--color-red-95);
+    border: 1px solid var(--color-red-80);
+    color: var(--color-red-32);
     border-radius: 10px;
     padding: 10px 14px;
     font-size: .83rem;
@@ -223,25 +223,25 @@ const handleLogin = async () => {
 
 .forgot-link a {
     font-size: 0.78rem;
-    color: #8a7060;
+    color: var(--color-muted);
     text-decoration: none;
     font-family: 'Jost', sans-serif;
     font-weight: 400;
     letter-spacing: 0.02em;
-    border-bottom: 0.5px solid rgba(200, 169, 110, 0.4);
+    border-bottom: 0.5px solid rgb(var(--rgb-accent) / 0.4);
     padding-bottom: 1px;
     transition: color 0.2s, border-color 0.2s;
 }
 
 .forgot-link a:hover {
-    color: #C8A96E;
-    border-bottom-color: #C8A96E;
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
 }
 
 .info-box {
-    background: #eef6ee;
-    border: 1px solid #a5c8a5;
-    color: #2d5a2d;
+    background: var(--color-green-95);
+    border: 1px solid var(--color-green-72);
+    color: var(--color-green-26-2);
     border-radius: 10px;
     padding: 10px 14px;
     font-size: .83rem;
@@ -252,7 +252,7 @@ const handleLogin = async () => {
 
 .otp-link {
     display: block;
-    color: #4A6741;
+    color: var(--color-success);
     font-weight: 600;
     margin-top: 4px;
     text-decoration: none;
@@ -279,7 +279,7 @@ const handleLogin = async () => {
     transform: translateY(-50%);
     width: 18px;
     height: 18px;
-    color: #C8A96E;
+    color: var(--color-accent);
     pointer-events: none;
     display: flex;
     align-items: center;
@@ -292,33 +292,33 @@ const handleLogin = async () => {
 
 .input-wrap input {
     width: 100%;
-    background: #EDE5D8;
-    border: 1.5px solid rgba(200, 169, 110, .35);
+    background: var(--color-brown-89-2);
+    border: 1.5px solid rgb(var(--rgb-accent) / .35);
     border-radius: 12px;
     padding: 13px 44px;
     font-family: 'Jost', sans-serif;
     font-size: .9rem;
-    color: #2C1810;
+    color: var(--color-primary);
     outline: none;
     transition: border-color .2s;
     box-sizing: border-box;
 }
 
 .input-wrap input::placeholder {
-    color: #b0967a;
+    color: var(--color-muted-light);
 }
 
 .input-wrap input:focus {
-    border-color: #C8A96E;
+    border-color: var(--color-accent);
 }
 
 .input-wrap input.input-error {
-    border-color: #e05252;
+    border-color: var(--color-red-60);
 }
 
 .field-error {
     font-size: .78rem;
-    color: #c0392b;
+    color: var(--color-red-46);
     margin: -6px 0 8px 4px;
 }
 
@@ -330,7 +330,7 @@ const handleLogin = async () => {
     background: none;
     border: none;
     cursor: pointer;
-    color: #8a7060;
+    color: var(--color-muted);
     padding: 0;
     display: flex;
     align-items: center;
@@ -345,8 +345,8 @@ const handleLogin = async () => {
 
 .btn-submit {
     width: 100%;
-    background: #C8A96E;
-    color: #2C1810;
+    background: var(--color-accent);
+    color: var(--color-primary);
     border: none;
     border-radius: 12px;
     padding: 14px;
@@ -364,7 +364,7 @@ const handleLogin = async () => {
 }
 
 .btn-submit:hover:not(:disabled) {
-    background: #d4b882;
+    background: var(--color-brown-67);
 }
 
 .btn-submit:active:not(:disabled) {
@@ -379,8 +379,8 @@ const handleLogin = async () => {
 .spinner {
     width: 18px;
     height: 18px;
-    border: 2px solid rgba(44, 24, 16, .2);
-    border-top-color: #2C1810;
+    border: 2px solid rgb(var(--rgb-primary) / .2);
+    border-top-color: var(--color-primary);
     border-radius: 50%;
     animation: spin .7s linear infinite;
 }
@@ -401,21 +401,21 @@ const handleLogin = async () => {
 .divider-line {
     flex: 1;
     height: .5px;
-    background: #C8A96E;
+    background: var(--color-accent);
     opacity: .35;
 }
 
 .bean-icon {
     width: 16px;
     height: 16px;
-    color: #C8A96E;
+    color: var(--color-accent);
     opacity: .7;
 }
 
 .no-account {
     text-align: center;
     font-size: .84rem;
-    color: #8a7060;
+    color: var(--color-muted);
     margin: 0 0 12px;
 }
 
@@ -423,14 +423,14 @@ const handleLogin = async () => {
     display: block;
     width: 100%;
     background: transparent;
-    border: 1.5px solid #C8A96E;
+    border: 1.5px solid var(--color-accent);
     border-radius: 12px;
     padding: 13px;
     font-family: 'Jost', sans-serif;
     font-size: .78rem;
     font-weight: 500;
     letter-spacing: .24em;
-    color: #C8A96E;
+    color: var(--color-accent);
     text-align: center;
     text-decoration: none;
     transition: background .2s, color .2s;
@@ -438,8 +438,8 @@ const handleLogin = async () => {
 }
 
 .btn-register-outline:hover {
-    background: #C8A96E;
-    color: #2C1810;
+    background: var(--color-accent);
+    color: var(--color-primary);
 }
 
 @media (max-width:480px) {

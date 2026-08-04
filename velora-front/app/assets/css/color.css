@@ -1,0 +1,282 @@
+/**
+ * Velora — color tokens
+ * ---------------------------------------------------------------------------
+ * Every color used anywhere in the app lives here and nowhere else.
+ * Change a value in this file and it changes across the whole UI.
+ *
+ * Each token comes in two forms:
+ *   --rgb-<name>    raw channels, for when you need transparency
+ *   --color-<name>  the ready-to-use color
+ *
+ * Usage:
+ *   color: var(--color-primary);
+ *   background: rgb(var(--rgb-primary) / 0.08);   <- the same color at 8%
+ */
+:root {
+  /* Brand & semantic */
+  --rgb-primary: 44 24 16;
+  --color-primary: rgb(var(--rgb-primary));
+  --rgb-primary-deep: 44 26 20;
+  --color-primary-deep: rgb(var(--rgb-primary-deep));
+  --rgb-primary-espresso: 44 26 14;
+  --color-primary-espresso: rgb(var(--rgb-primary-espresso));
+  --rgb-primary-black: 26 10 0;
+  --color-primary-black: rgb(var(--rgb-primary-black));
+  --rgb-ink: 26 26 26;
+  --color-ink: rgb(var(--rgb-ink));
+  --rgb-accent: 200 169 110;
+  --color-accent: rgb(var(--rgb-accent));
+  --rgb-accent-warm: 200 169 106;
+  --color-accent-warm: rgb(var(--rgb-accent-warm));
+  --rgb-accent-soft: 201 169 110;
+  --color-accent-soft: rgb(var(--rgb-accent-soft));
+  --rgb-muted: 138 112 96;
+  --color-muted: rgb(var(--rgb-muted));
+  --rgb-muted-dark: 122 101 88;
+  --color-muted-dark: rgb(var(--rgb-muted-dark));
+  --rgb-muted-light: 176 150 122;
+  --color-muted-light: rgb(var(--rgb-muted-light));
+  --rgb-surface: 245 239 234;
+  --color-surface: rgb(var(--rgb-surface));
+  --rgb-surface-alt: 240 237 230;
+  --color-surface-alt: rgb(var(--rgb-surface-alt));
+  --rgb-surface-warm: 245 240 232;
+  --color-surface-warm: rgb(var(--rgb-surface-warm));
+  --rgb-surface-soft: 250 250 248;
+  --color-surface-soft: rgb(var(--rgb-surface-soft));
+  --rgb-border: 229 231 235;
+  --color-border: rgb(var(--rgb-border));
+  --rgb-border-warm: 224 213 204;
+  --color-border-warm: rgb(var(--rgb-border-warm));
+  --rgb-success: 74 103 65;
+  --color-success: rgb(var(--rgb-success));
+  --rgb-success-dark: 61 90 46;
+  --color-success-dark: rgb(var(--rgb-success-dark));
+  --rgb-ready: 22 163 74;
+  --color-ready: rgb(var(--rgb-ready));
+  --rgb-warning: 217 119 6;
+  --color-warning: rgb(var(--rgb-warning));
+  --rgb-info: 59 130 246;
+  --color-info: rgb(var(--rgb-info));
+  --rgb-danger: 220 38 38;
+  --color-danger: rgb(var(--rgb-danger));
+  --rgb-white: 255 255 255;
+  --color-white: rgb(var(--rgb-white));
+  --rgb-black: 0 0 0;
+  --color-black: rgb(var(--rgb-black));
+
+  /* Coffee — the darkest browns */
+  --rgb-coffee-7: 27 14 8;
+  --color-coffee-7: rgb(var(--rgb-coffee-7));
+  --rgb-coffee-9: 45 18 0;
+  --color-coffee-9: rgb(var(--rgb-coffee-9));
+  --rgb-coffee-16: 61 36 22;
+  --color-coffee-16: rgb(var(--rgb-coffee-16));
+  --rgb-coffee-17: 61 37 24;
+  --color-coffee-17: rgb(var(--rgb-coffee-17));
+  --rgb-coffee-18: 61 38 29;
+  --color-coffee-18: rgb(var(--rgb-coffee-18));
+  --rgb-coffee-21: 74 46 34;
+  --color-coffee-21: rgb(var(--rgb-coffee-21));
+  --rgb-coffee-24: 92 61 30;
+  --color-coffee-24: rgb(var(--rgb-coffee-24));
+  --rgb-coffee-24-2: 92 56 32;
+  --color-coffee-24-2: rgb(var(--rgb-coffee-24-2));
+  --rgb-coffee-26: 90 62 43;
+  --color-coffee-26: rgb(var(--rgb-coffee-26));
+  --rgb-coffee-29: 90 74 58;
+  --color-coffee-29: rgb(var(--rgb-coffee-29));
+  --rgb-coffee-31: 146 64 14;
+  --color-coffee-31: rgb(var(--rgb-coffee-31));
+  --rgb-coffee-33: 122 92 48;
+  --color-coffee-33: rgb(var(--rgb-coffee-33));
+
+  /* Browns & beiges */
+  --rgb-brown-37: 180 83 9;
+  --color-brown-37: rgb(var(--rgb-brown-37));
+  --rgb-brown-38: 122 92 74;
+  --color-brown-38: rgb(var(--rgb-brown-38));
+  --rgb-brown-40: 122 102 82;
+  --color-brown-40: rgb(var(--rgb-brown-40));
+  --rgb-brown-41: 122 106 88;
+  --color-brown-41: rgb(var(--rgb-brown-41));
+  --rgb-brown-43-2: 155 123 62;
+  --color-brown-43-2: rgb(var(--rgb-brown-43-2));
+  --rgb-brown-43: 138 106 80;
+  --color-brown-43: rgb(var(--rgb-brown-43));
+  --rgb-brown-49: 154 122 96;
+  --color-brown-49: rgb(var(--rgb-brown-49));
+  --rgb-brown-50: 245 158 11;
+  --color-brown-50: rgb(var(--rgb-brown-50));
+  --rgb-brown-51: 154 122 104;
+  --color-brown-51: rgb(var(--rgb-brown-51));
+  --rgb-brown-52: 184 146 79;
+  --color-brown-52: rgb(var(--rgb-brown-52));
+  --rgb-brown-54: 154 138 120;
+  --color-brown-54: rgb(var(--rgb-brown-54));
+  --rgb-brown-54-2: 168 145 107;
+  --color-brown-54-2: rgb(var(--rgb-brown-54-2));
+  --rgb-brown-58-2: 212 168 83;
+  --color-brown-58-2: rgb(var(--rgb-brown-58-2));
+  --rgb-brown-58: 176 149 122;
+  --color-brown-58: rgb(var(--rgb-brown-58));
+  --rgb-brown-64: 200 169 126;
+  --color-brown-64: rgb(var(--rgb-brown-64));
+  --rgb-brown-67: 212 184 130;
+  --color-brown-67: rgb(var(--rgb-brown-67));
+  --rgb-brown-69: 200 184 154;
+  --color-brown-69: rgb(var(--rgb-brown-69));
+  --rgb-brown-71: 191 181 173;
+  --color-brown-71: rgb(var(--rgb-brown-71));
+  --rgb-brown-74: 200 191 176;
+  --color-brown-74: rgb(var(--rgb-brown-74));
+  --rgb-brown-75: 212 197 169;
+  --color-brown-75: rgb(var(--rgb-brown-75));
+  --rgb-brown-75-2: 208 196 176;
+  --color-brown-75-2: rgb(var(--rgb-brown-75-2));
+  --rgb-brown-84: 228 218 200;
+  --color-brown-84: rgb(var(--rgb-brown-84));
+  --rgb-brown-86-2: 228 221 211;
+  --color-brown-86-2: rgb(var(--rgb-brown-86-2));
+  --rgb-brown-86: 232 221 208;
+  --color-brown-86: rgb(var(--rgb-brown-86));
+  --rgb-brown-87: 232 221 214;
+  --color-brown-87: rgb(var(--rgb-brown-87));
+  --rgb-brown-88: 232 226 217;
+  --color-brown-88: rgb(var(--rgb-brown-88));
+  --rgb-brown-89: 232 227 220;
+  --color-brown-89: rgb(var(--rgb-brown-89));
+  --rgb-brown-89-2: 237 229 216;
+  --color-brown-89-2: rgb(var(--rgb-brown-89-2));
+  --rgb-brown-89-3: 237 227 216;
+  --color-brown-89-3: rgb(var(--rgb-brown-89-3));
+  --rgb-brown-90: 237 232 222;
+  --color-brown-90: rgb(var(--rgb-brown-90));
+  --rgb-brown-91: 240 232 224;
+  --color-brown-91: rgb(var(--rgb-brown-91));
+  --rgb-brown-94-2: 243 240 235;
+  --color-brown-94-2: rgb(var(--rgb-brown-94-2));
+  --rgb-brown-94: 253 243 228;
+  --color-brown-94: rgb(var(--rgb-brown-94));
+  --rgb-brown-96: 248 245 240;
+  --color-brown-96: rgb(var(--rgb-brown-96));
+
+  /* Golds & ambers */
+  --rgb-gold-30: 122 92 30;
+  --color-gold-30: rgb(var(--rgb-gold-30));
+  --rgb-gold-31: 139 105 20;
+  --color-gold-31: rgb(var(--rgb-gold-31));
+  --rgb-gold-77: 253 230 138;
+  --color-gold-77: rgb(var(--rgb-gold-77));
+  --rgb-gold-78: 240 217 160;
+  --color-gold-78: rgb(var(--rgb-gold-78));
+  --rgb-gold-80: 209 207 201;
+  --color-gold-80: rgb(var(--rgb-gold-80));
+  --rgb-gold-89: 254 243 199;
+  --color-gold-89: rgb(var(--rgb-gold-89));
+  --rgb-gold-89-2: 240 232 216;
+  --color-gold-89-2: rgb(var(--rgb-gold-89-2));
+  --rgb-gold-95: 254 249 231;
+  --color-gold-95: rgb(var(--rgb-gold-95));
+  --rgb-gold-96: 255 251 235;
+  --color-gold-96: rgb(var(--rgb-gold-96));
+
+  /* Reds */
+  --rgb-red-32: 139 26 26;
+  --color-red-32: rgb(var(--rgb-red-32));
+  --rgb-red-35: 153 27 27;
+  --color-red-35: rgb(var(--rgb-red-35));
+  --rgb-red-42: 185 28 28;
+  --color-red-42: rgb(var(--rgb-red-42));
+  --rgb-red-46: 192 57 43;
+  --color-red-46: rgb(var(--rgb-red-46));
+  --rgb-red-54: 200 87 74;
+  --color-red-54: rgb(var(--rgb-red-54));
+  --rgb-red-60: 224 82 82;
+  --color-red-60: rgb(var(--rgb-red-60));
+  --rgb-red-80: 245 165 165;
+  --color-red-80: rgb(var(--rgb-red-80));
+  --rgb-red-89: 254 202 202;
+  --color-red-89: rgb(var(--rgb-red-89));
+  --rgb-red-94: 254 226 226;
+  --color-red-94: rgb(var(--rgb-red-94));
+  --rgb-red-95: 253 232 232;
+  --color-red-95: rgb(var(--rgb-red-95));
+  --rgb-red-95-2: 253 236 234;
+  --color-red-95-2: rgb(var(--rgb-red-95-2));
+  --rgb-red-97: 254 242 242;
+  --color-red-97: rgb(var(--rgb-red-97));
+  --rgb-red-98: 255 245 245;
+  --color-red-98: rgb(var(--rgb-red-98));
+
+  /* Greens */
+  --rgb-green-20: 46 68 34;
+  --color-green-20: rgb(var(--rgb-green-20));
+  --rgb-green-24: 22 101 52;
+  --color-green-24: rgb(var(--rgb-green-24));
+  --rgb-green-26: 58 82 50;
+  --color-green-26: rgb(var(--rgb-green-26));
+  --rgb-green-26-2: 45 90 45;
+  --color-green-26-2: rgb(var(--rgb-green-26-2));
+  --rgb-green-40: 90 122 80;
+  --color-green-40: rgb(var(--rgb-green-40));
+  --rgb-green-44: 107 143 82;
+  --color-green-44: rgb(var(--rgb-green-44));
+  --rgb-green-72: 165 200 165;
+  --color-green-72: rgb(var(--rgb-green-72));
+  --rgb-green-80: 198 217 190;
+  --color-green-80: rgb(var(--rgb-green-80));
+  --rgb-green-85: 187 247 208;
+  --color-green-85: rgb(var(--rgb-green-85));
+  --rgb-green-92: 232 240 228;
+  --color-green-92: rgb(var(--rgb-green-92));
+  --rgb-green-93: 220 252 231;
+  --color-green-93: rgb(var(--rgb-green-93));
+  --rgb-green-93-2: 232 240 232;
+  --color-green-93-2: rgb(var(--rgb-green-93-2));
+  --rgb-green-94-2: 237 242 235;
+  --color-green-94-2: rgb(var(--rgb-green-94-2));
+  --rgb-green-94: 240 244 236;
+  --color-green-94: rgb(var(--rgb-green-94));
+  --rgb-green-95: 238 246 238;
+  --color-green-95: rgb(var(--rgb-green-95));
+  --rgb-green-97: 240 253 244;
+  --color-green-97: rgb(var(--rgb-green-97));
+
+  /* Blues */
+  --rgb-blue-48: 29 78 216;
+  --color-blue-48: rgb(var(--rgb-blue-48));
+  --rgb-blue-53: 37 99 235;
+  --color-blue-53: rgb(var(--rgb-blue-53));
+  --rgb-blue-87: 191 219 254;
+  --color-blue-87: rgb(var(--rgb-blue-87));
+  --rgb-blue-93: 219 234 254;
+  --color-blue-93: rgb(var(--rgb-blue-93));
+  --rgb-blue-97: 239 246 255;
+  --color-blue-97: rgb(var(--rgb-blue-97));
+
+  /* Neutrals */
+  --rgb-gray-27: 55 65 81;
+  --color-gray-27: rgb(var(--rgb-gray-27));
+  --rgb-gray-46: 107 114 128;
+  --color-gray-46: rgb(var(--rgb-gray-46));
+  --rgb-gray-65: 156 163 175;
+  --color-gray-65: rgb(var(--rgb-gray-65));
+  --rgb-gray-84: 209 213 219;
+  --color-gray-84: rgb(var(--rgb-gray-84));
+  --rgb-gray-94: 240 240 240;
+  --color-gray-94: rgb(var(--rgb-gray-94));
+  --rgb-gray-96: 243 244 246;
+  --color-gray-96: rgb(var(--rgb-gray-96));
+  --rgb-gray-97: 248 250 246;
+  --color-gray-97: rgb(var(--rgb-gray-97));
+  --rgb-gray-97-2: 249 249 247;
+  --color-gray-97-2: rgb(var(--rgb-gray-97-2));
+  --rgb-gray-98: 250 250 250;
+  --color-gray-98: rgb(var(--rgb-gray-98));
+  --rgb-gray-98-2: 249 250 251;
+  --color-gray-98-2: rgb(var(--rgb-gray-98-2));
+
+  /* Translucent variants */
+  --color-accent-soft-a33: rgb(var(--rgb-accent-soft) / 33%);
+}

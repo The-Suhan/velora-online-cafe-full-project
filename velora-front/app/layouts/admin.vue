@@ -28,7 +28,7 @@ const userName = computed(() => (user.value as any)?.name ?? 'Admin')
 .admin-root {
     display: flex;
     min-height: 100vh;
-    background: #F0EDE6;
+    background: var(--color-surface-alt);
     font-family: 'Jost', sans-serif;
 }
 

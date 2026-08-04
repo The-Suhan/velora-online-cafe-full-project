@@ -53,56 +53,56 @@ export const STATUS_META: Record<
 > = {
     all: {
         label: 'admin.orders.allOrders',
-        color: '#C8A96E',
-        bg: '#fdf3e4',
-        dot: '#C8A96E',
+        color: 'var(--color-accent)',
+        bg: 'var(--color-brown-94)',
+        dot: 'var(--color-accent)',
         badge: 'admin.orders.allOrders',
-        badgeBg: '#fdf3e4'
+        badgeBg: 'var(--color-brown-94)'
     },
 
     pending: {
         label: 'admin.statuses.pending',
-        color: '#d97706',
-        bg: '#fef9e7',
-        dot: '#d97706',
+        color: 'var(--color-warning)',
+        bg: 'var(--color-gold-95)',
+        dot: 'var(--color-warning)',
         badge: 'admin.statuses.pending',
-        badgeBg: '#fef3c7'
+        badgeBg: 'var(--color-gold-89)'
     },
 
     preparing: {
         label: 'admin.statuses.preparing',
-        color: '#3b82f6',
-        bg: '#eff6ff',
-        dot: '#3b82f6',
+        color: 'var(--color-info)',
+        bg: 'var(--color-blue-97)',
+        dot: 'var(--color-info)',
         badge: 'admin.statuses.preparing',
-        badgeBg: '#dbeafe'
+        badgeBg: 'var(--color-blue-93)'
     },
 
     ready: {
         label: 'admin.statuses.ready',
-        color: '#16a34a',
-        bg: '#f0fdf4',
-        dot: '#16a34a',
+        color: 'var(--color-ready)',
+        bg: 'var(--color-green-97)',
+        dot: 'var(--color-ready)',
         badge: 'admin.statuses.ready',
-        badgeBg: '#dcfce7'
+        badgeBg: 'var(--color-green-93)'
     },
 
     delivered: {
         label: 'admin.statuses.delivered',
-        color: '#4A6741',
-        bg: '#e8f0e4',
-        dot: '#4A6741',
+        color: 'var(--color-success)',
+        bg: 'var(--color-green-92)',
+        dot: 'var(--color-success)',
         badge: 'admin.statuses.delivered',
-        badgeBg: '#e8f0e4'
+        badgeBg: 'var(--color-green-92)'
     },
 
     cancelled: {
         label: 'admin.statuses.cancelled',
-        color: '#dc2626',
-        bg: '#fef2f2',
-        dot: '#dc2626',
+        color: 'var(--color-danger)',
+        bg: 'var(--color-red-97)',
+        dot: 'var(--color-danger)',
         badge: 'admin.statuses.cancelled',
-        badgeBg: '#fee2e2'
+        badgeBg: 'var(--color-red-94)'
     },
 }
 
@@ -114,6 +114,7 @@ export function useOrders(fixedStatus?: OrderStatus) {
 
     const { resolveUrl } = useMediaUrl()
     const { token } = useAuth()
+    const { rootBlock } = useColors()
     const authHeaders = computed(() => ({ Authorization: `Bearer ${token.value}` }))
     const DELIVERY_FEE = 15
 
@@ -361,12 +362,19 @@ export function useOrders(fixedStatus?: OrderStatus) {
 
             const deliveryFeeHtml = order.delivery_type === 'delivery' ? `
     <tr>
-      <td style="padding:6px 0;font-size:12px;color:#8a7060;font-style:italic;">Delivery Fee</td>
-      <td style="padding:6px 0;font-size:12px;color:#8a7060;text-align:center;">×1</td>
-      <td style="padding:6px 0;font-size:12px;font-weight:700;color:#2C1810;text-align:right;">$${DELIVERY_FEE.toFixed(2)}</td>
+      <td style="padding:6px 0;font-size:12px;color:var(--color-muted);font-style:italic;">Delivery Fee</td>
+      <td style="padding:6px 0;font-size:12px;color:var(--color-muted);text-align:center;">×1</td>
+      <td style="padding:6px 0;font-size:12px;font-weight:700;color:var(--color-primary);text-align:right;">$${DELIVERY_FEE.toFixed(2)}</td>
     </tr>` : ''
 
             const finalTotal = displayPrice(order)
+
+            // The print window is its own document, so it never loads color.css —
+            // carry the tokens the receipt uses across by hand.
+            const receiptTokens = rootBlock([
+                'white', 'primary', 'muted', 'muted-light', 'accent',
+                'border', 'surface-soft', 'brown-75-2', 'gray-46',
+            ])
 
             const receiptHtml = `
         <!DOCTYPE html>
@@ -374,31 +382,32 @@ export function useOrders(fixedStatus?: OrderStatus) {
         <head>
           <meta charset="utf-8"/>
           <style>
+            ${receiptTokens}
             * { margin:0; padding:0; box-sizing:border-box; }
-            body { font-family:'Courier New',monospace; background:#fff; }
+            body { font-family:'Courier New',monospace; background:var(--color-white); }
             .receipt { max-width:320px; margin:0 auto; padding:32px 24px; }
             .header { text-align:center; margin-bottom:16px; }
             .logo { font-size:28px; margin-bottom:8px; }
-            .brand { font-size:16px; font-weight:800; letter-spacing:5px; color:#2C1810; }
-            .tagline { font-size:10px; color:#8a7060; font-style:italic; margin-top:4px; }
-            .divider { text-align:center; color:#d0c4b0; font-size:9px; margin:12px 0; letter-spacing:3px; }
+            .brand { font-size:16px; font-weight:800; letter-spacing:5px; color:var(--color-primary); }
+            .tagline { font-size:10px; color:var(--color-muted); font-style:italic; margin-top:4px; }
+            .divider { text-align:center; color:var(--color-brown-75-2); font-size:9px; margin:12px 0; letter-spacing:3px; }
             .info-table { width:100%; border-collapse:collapse; margin-bottom:4px; }
-            .info-table td { padding:3px 0; font-size:11px; color:#2C1810; }
-            .info-table td:first-child { color:#8a7060; width:70px; }
+            .info-table td { padding:3px 0; font-size:11px; color:var(--color-primary); }
+            .info-table td:first-child { color:var(--color-muted); width:70px; }
             .info-table td:last-child { text-align:right; font-weight:500; }
             .items-table { width:100%; border-collapse:collapse; }
-            .items-header { font-size:9px; color:#8a7060; text-transform:uppercase; letter-spacing:1px; border-bottom:1px dashed #e5e7eb; padding-bottom:4px; margin-bottom:4px; }
+            .items-header { font-size:9px; color:var(--color-muted); text-transform:uppercase; letter-spacing:1px; border-bottom:1px dashed var(--color-border); padding-bottom:4px; margin-bottom:4px; }
             .items-header td { padding:0 0 6px; }
             .items-header td:last-child { text-align:right; }
             .items-header td:nth-child(2) { text-align:center; }
-            .total-row { display:flex; justify-content:space-between; font-weight:800; font-size:14px; color:#2C1810; padding:8px 0; border-top:2px solid #2C1810; margin-top:8px; letter-spacing:1px; }
-            .note-box { background:#fafaf8; border-left:3px solid #C8A96E; padding:8px 10px; margin-top:8px; border-radius:2px; }
-            .note-label { font-size:8px; color:#8a7060; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
-            .note-text { font-size:10px; color:#6b7280; font-style:italic; line-height:1.4; }
+            .total-row { display:flex; justify-content:space-between; font-weight:800; font-size:14px; color:var(--color-primary); padding:8px 0; border-top:2px solid var(--color-primary); margin-top:8px; letter-spacing:1px; }
+            .note-box { background:var(--color-surface-soft); border-left:3px solid var(--color-accent); padding:8px 10px; margin-top:8px; border-radius:2px; }
+            .note-label { font-size:8px; color:var(--color-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+            .note-text { font-size:10px; color:var(--color-gray-46); font-style:italic; line-height:1.4; }
             .footer { text-align:center; margin-top:4px; }
-            .quote { font-style:italic; font-size:10px; color:#8a7060; line-height:1.5; margin-bottom:8px; }
-            .thanks { font-size:11px; font-weight:700; color:#2C1810; margin-bottom:4px; }
-            .website { font-size:8px; color:#b0967a; text-transform:uppercase; letter-spacing:3px; }
+            .quote { font-style:italic; font-size:10px; color:var(--color-muted); line-height:1.5; margin-bottom:8px; }
+            .thanks { font-size:11px; font-weight:700; color:var(--color-primary); margin-bottom:4px; }
+            .website { font-size:8px; color:var(--color-muted-light); text-transform:uppercase; letter-spacing:3px; }
             .status-text { font-weight:700; text-transform:uppercase; letter-spacing:1px; }
           </style>
         </head>

@@ -101,10 +101,10 @@ watch(activeProduct, async (p, prevP) => {
 
 // ─── Gradients fallback ───────────────────────────────────────
 const gradients = [
-    'linear-gradient(135deg,#C9A96E 0%,#9B7B3E 100%)',
-    'linear-gradient(135deg,#D4C5A9 0%,#A8916B 100%)',
-    'linear-gradient(135deg,#2C1A0E 0%,#5C3D1E 100%)',
-    'linear-gradient(135deg,#B8924F 0%,#D4A853 100%)',
+    'linear-gradient(135deg,var(--color-accent-soft) 0%,var(--color-brown-43-2) 100%)',
+    'linear-gradient(135deg,var(--color-brown-75) 0%,var(--color-brown-54-2) 100%)',
+    'linear-gradient(135deg,var(--color-primary-espresso) 0%,var(--color-coffee-24) 100%)',
+    'linear-gradient(135deg,var(--color-brown-52) 0%,var(--color-brown-58-2) 100%)',
 ]
 function cardGradient(id) { return gradients[id % gradients.length] }
 
@@ -274,7 +274,7 @@ watch(() => props.modelValue, async (isOpen) => {
 .pm-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(44, 26, 14, 0.6);
+    background: rgb(var(--rgb-primary-espresso) / 0.6);
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -297,7 +297,7 @@ watch(() => props.modelValue, async (isOpen) => {
 /* ── Modal shell ── */
 .pm-modal {
     position: relative;
-    background: #F5F0E8;
+    background: var(--color-surface-warm);
     width: 100%;
     max-width: 900px;
     border-radius: 2px;
@@ -307,7 +307,7 @@ watch(() => props.modelValue, async (isOpen) => {
     max-height: calc(100vh - 48px);
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #C9A96E transparent;
+    scrollbar-color: var(--color-accent-soft) transparent;
 }
 
 /* ── Close button ── */
@@ -316,11 +316,11 @@ watch(() => props.modelValue, async (isOpen) => {
     top: 10px;
     right: 14px;
     z-index: 10;
-    background: rgba(245, 240, 232, 0.85);
+    background: rgb(var(--rgb-surface-warm) / 0.85);
     border: none;
     font-size: 22px;
     line-height: 1;
-    color: #7A6652;
+    color: var(--color-brown-40);
     cursor: pointer;
     width: 32px;
     height: 32px;
@@ -332,8 +332,8 @@ watch(() => props.modelValue, async (isOpen) => {
 }
 
 .pm-close:hover {
-    background: #fff;
-    color: #2C1A0E;
+    background: var(--color-white);
+    color: var(--color-primary-espresso);
 }
 
 /* ── Top section ── */
@@ -366,8 +366,8 @@ watch(() => props.modelValue, async (isOpen) => {
     position: absolute;
     bottom: 12px;
     right: 12px;
-    background: rgba(245, 240, 232, 0.88);
-    color: #2C1A0E;
+    background: rgb(var(--rgb-surface-warm) / 0.88);
+    color: var(--color-primary-espresso);
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -392,8 +392,8 @@ watch(() => props.modelValue, async (isOpen) => {
     font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #9B7B3E;
-    background: rgba(201, 169, 110, 0.15);
+    color: var(--color-brown-43-2);
+    background: rgb(var(--rgb-accent-soft) / 0.15);
     padding: 4px 10px;
     font-family: 'Lato', sans-serif;
 }
@@ -402,14 +402,14 @@ watch(() => props.modelValue, async (isOpen) => {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.75rem;
     font-weight: 400;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     line-height: 1.2;
     margin: 0;
 }
 
 .pm-desc {
     font-size: 0.82rem;
-    color: #7A6652;
+    color: var(--color-brown-40);
     line-height: 1.65;
     flex: 1;
     font-family: 'Lato', sans-serif;
@@ -424,7 +424,7 @@ watch(() => props.modelValue, async (isOpen) => {
 
 .pm-rating-val {
     font-size: 0.72rem;
-    color: #8a6a50;
+    color: var(--color-brown-43);
     font-family: 'Lato', sans-serif;
 }
 
@@ -466,7 +466,7 @@ watch(() => props.modelValue, async (isOpen) => {
 /* ── Divider ── */
 .pm-divider {
     height: 0.5px;
-    background: #E8DDD0;
+    background: var(--color-brown-86);
 }
 
 /* ── Meta ── */
@@ -478,13 +478,13 @@ watch(() => props.modelValue, async (isOpen) => {
 
 .pm-meta-item {
     font-size: 0.7rem;
-    color: #9a7a68;
+    color: var(--color-brown-51);
     letter-spacing: 0.06em;
     font-family: 'Lato', sans-serif;
 }
 
 .pm-meta-item strong {
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     font-weight: 500;
 }
 
@@ -494,19 +494,19 @@ watch(() => props.modelValue, async (isOpen) => {
     align-items: center;
     justify-content: space-between;
     padding-top: 8px;
-    border-top: 0.5px solid #E8DDD0;
+    border-top: 0.5px solid var(--color-brown-86);
     margin-top: auto;
 }
 
 .pm-price {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 2rem;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
 }
 
 .pm-add-btn {
-    background: #C9A96E;
-    color: #fff;
+    background: var(--color-accent-soft);
+    color: var(--color-white);
     border: none;
     padding: 0.5rem 1.4rem;
     font-family: 'Lato', sans-serif;
@@ -518,13 +518,13 @@ watch(() => props.modelValue, async (isOpen) => {
 }
 
 .pm-add-btn:hover {
-    background: #b8924f;
+    background: var(--color-brown-52);
 }
 
 .pm-qty-ctrl {
     display: flex;
     align-items: center;
-    border: 1px solid #C9A96E;
+    border: 1px solid var(--color-accent-soft);
 }
 
 .pm-qty-btn {
@@ -532,7 +532,7 @@ watch(() => props.modelValue, async (isOpen) => {
     height: 32px;
     border: none;
     background: transparent;
-    color: #C9A96E;
+    color: var(--color-accent-soft);
     font-size: 1.1rem;
     cursor: pointer;
     display: flex;
@@ -542,36 +542,36 @@ watch(() => props.modelValue, async (isOpen) => {
 }
 
 .pm-qty-btn:hover {
-    background: rgba(201, 169, 110, 0.12);
+    background: rgb(var(--rgb-accent-soft) / 0.12);
 }
 
 .pm-qty-num {
     width: 28px;
     text-align: center;
     font-size: 0.82rem;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     font-family: 'Lato', sans-serif;
 }
 
 /* ── Related section ── */
 .pm-related {
     padding: 20px 24px 24px;
-    border-top: 3px solid #C9A96E;
-    background: #EDE8DE;
+    border-top: 3px solid var(--color-accent-soft);
+    background: var(--color-brown-90);
 }
 
 .pm-related-title {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.1rem;
     font-weight: 400;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     margin-bottom: 14px;
     letter-spacing: 0.01em;
 }
 
 .pm-related-empty {
     font-size: 0.78rem;
-    color: #9a7a68;
+    color: var(--color-brown-51);
     font-family: 'Lato', sans-serif;
 }
 
@@ -590,17 +590,17 @@ watch(() => props.modelValue, async (isOpen) => {
 /* ── Related card ── */
 .pm-rel-card {
     flex: 0 0 160px;
-    background: #fff;
+    background: var(--color-white);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 0.5px solid rgba(44, 26, 14, 0.08);
+    border: 0.5px solid rgb(var(--rgb-primary-espresso) / 0.08);
     transition: box-shadow 0.2s, transform 0.2s;
     cursor: pointer;
 }
 
 .pm-rel-card:hover {
-    box-shadow: 0 4px 16px rgba(44, 26, 14, 0.12);
+    box-shadow: 0 4px 16px rgb(var(--rgb-primary-espresso) / 0.12);
     transform: translateY(-2px);
 }
 
@@ -633,7 +633,7 @@ watch(() => props.modelValue, async (isOpen) => {
 .pm-rel-name {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.9rem;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     line-height: 1.2;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -644,13 +644,13 @@ watch(() => props.modelValue, async (isOpen) => {
 .pm-rel-price {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.85rem;
-    color: #C9A96E;
+    color: var(--color-accent-soft);
 }
 
 .pm-rel-add {
     margin-top: auto;
-    background: #C9A96E;
-    color: #fff;
+    background: var(--color-accent-soft);
+    color: var(--color-white);
     border: none;
     width: 100%;
     padding: 5px 0;
@@ -663,7 +663,7 @@ watch(() => props.modelValue, async (isOpen) => {
 }
 
 .pm-rel-add:hover {
-    background: #b8924f;
+    background: var(--color-brown-52);
 }
 
 .pm-rel-qty {
@@ -672,17 +672,17 @@ watch(() => props.modelValue, async (isOpen) => {
     justify-content: center;
     gap: 4px;
     margin-top: auto;
-    border: 1px solid #C9A96E;
+    border: 1px solid var(--color-accent-soft);
     padding: 3px 0;
     font-size: 0.75rem;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     font-family: 'Lato', sans-serif;
 }
 
 .pm-rel-qty-btn {
     background: transparent;
     border: none;
-    color: #C9A96E;
+    color: var(--color-accent-soft);
     font-size: 1rem;
     cursor: pointer;
     padding: 0 4px;
@@ -695,14 +695,14 @@ watch(() => props.modelValue, async (isOpen) => {
 }
 
 .pm-skeleton-block {
-    background: linear-gradient(90deg, #EDE5D8 25%, #E4DAC8 50%, #EDE5D8 75%);
+    background: linear-gradient(90deg, var(--color-brown-89-2) 25%, var(--color-brown-84) 50%, var(--color-brown-89-2) 75%);
     background-size: 200% 100%;
     animation: pm-shimmer 1.4s infinite;
 }
 
 .pm-skeleton-line {
     border-radius: 2px;
-    background: linear-gradient(90deg, #EDE5D8 25%, #E4DAC8 50%, #EDE5D8 75%);
+    background: linear-gradient(90deg, var(--color-brown-89-2) 25%, var(--color-brown-84) 50%, var(--color-brown-89-2) 75%);
     background-size: 200% 100%;
     animation: pm-shimmer 1.4s infinite;
 }
@@ -721,7 +721,7 @@ watch(() => props.modelValue, async (isOpen) => {
 .pm-lightbox {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgb(var(--rgb-black) / 0.9);
     z-index: 1100;
     display: flex;
     align-items: center;
@@ -740,9 +740,9 @@ watch(() => props.modelValue, async (isOpen) => {
     position: absolute;
     top: 20px;
     right: 24px;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgb(var(--rgb-white) / 0.12);
     border: none;
-    color: #fff;
+    color: var(--color-white);
     font-size: 28px;
     line-height: 1;
     width: 40px;
@@ -756,7 +756,7 @@ watch(() => props.modelValue, async (isOpen) => {
 }
 
 .pm-lightbox-close:hover {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgb(var(--rgb-white) / 0.22);
 }
 
 /* ── Responsive ── */

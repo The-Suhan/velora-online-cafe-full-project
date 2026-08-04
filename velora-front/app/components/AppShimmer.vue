@@ -21,18 +21,18 @@ defineProps({
 
 .app-shimmer--light {
     background: linear-gradient(90deg,
-            #EDE5D8 0%,
-            #E4DAC8 40%,
-            #EDE5D8 80%);
+            var(--color-brown-89-2) 0%,
+            var(--color-brown-84) 40%,
+            var(--color-brown-89-2) 80%);
 }
 
 .app-shimmer--dark {
     background: linear-gradient(90deg,
-            #2C1A14 0%,
-            #3d2518 25%,
-            #5c3820 50%,
-            #3d2518 75%,
-            #2C1A14 100%);
+            var(--color-primary-deep) 0%,
+            var(--color-coffee-17) 25%,
+            var(--color-coffee-24-2) 50%,
+            var(--color-coffee-17) 75%,
+            var(--color-primary-deep) 100%);
 }
 
 @keyframes shimmer {

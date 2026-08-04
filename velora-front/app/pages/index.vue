@@ -172,10 +172,10 @@ async function flushPendingRatings() {
 }
 
 const gradients = [
-    'linear-gradient(135deg,#C9A96E 0%,#9B7B3E 100%)',
-    'linear-gradient(135deg,#D4C5A9 0%,#A8916B 100%)',
-    'linear-gradient(135deg,#2C1A0E 0%,#5C3D1E 100%)',
-    'linear-gradient(135deg,#B8924F 0%,#D4A853 100%)',
+    'linear-gradient(135deg,var(--color-accent-soft) 0%,var(--color-brown-43-2) 100%)',
+    'linear-gradient(135deg,var(--color-brown-75) 0%,var(--color-brown-54-2) 100%)',
+    'linear-gradient(135deg,var(--color-primary-espresso) 0%,var(--color-coffee-24) 100%)',
+    'linear-gradient(135deg,var(--color-brown-52) 0%,var(--color-brown-58-2) 100%)',
 ]
 function cardGradient(id) { return gradients[id % gradients.length] }
 
@@ -380,7 +380,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 /* ── Page ── */
 .velora-page {
     min-height: 100vh;
-    background: #F5F0E8;
+    background: var(--color-surface-warm);
     font-family: 'Lato', sans-serif;
     padding-bottom: 4rem;
 }
@@ -423,14 +423,14 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.65rem;
     font-weight: 400;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     margin: 0;
     letter-spacing: 0.01em;
 }
 
 .section-count {
     font-size: 0.7rem;
-    color: #9a7a68;
+    color: var(--color-brown-51);
     letter-spacing: 0.1em;
     text-transform: uppercase;
 }
@@ -443,7 +443,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     font-size: 0.7rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #C9A96E;
+    color: var(--color-accent-soft);
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: color 0.15s, border-color 0.15s;
@@ -452,8 +452,8 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 }
 
 .see-all-btn:hover {
-    color: #b8924f;
-    border-bottom-color: #b8924f;
+    color: var(--color-brown-52);
+    border-bottom-color: var(--color-brown-52);
 }
 
 /* ── Carousel wrap ── */
@@ -470,20 +470,20 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 1px solid rgba(44, 26, 14, 0.15);
-    background: #F5F0E8;
-    color: #2C1A0E;
+    border: 1px solid rgb(var(--rgb-primary-espresso) / 0.15);
+    background: var(--color-surface-warm);
+    color: var(--color-primary-espresso);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 12px rgba(44, 26, 14, 0.12);
+    box-shadow: 0 2px 12px rgb(var(--rgb-primary-espresso) / 0.12);
     transition: background 0.18s, box-shadow 0.18s, opacity 0.18s;
 }
 
 .carousel-arrow:hover {
-    background: #fff;
-    box-shadow: 0 4px 20px rgba(44, 26, 14, 0.18);
+    background: var(--color-white);
+    box-shadow: 0 4px 20px rgb(var(--rgb-primary-espresso) / 0.18);
 }
 
 .carousel-arrow--left {
@@ -527,12 +527,12 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 .product-card {
     flex: 0 0 260px;
     width: 260px;
-    background: #fff;
+    background: var(--color-white);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     scroll-snap-align: start;
-    box-shadow: 0 1px 4px rgba(44, 26, 14, 0.07);
+    box-shadow: 0 1px 4px rgb(var(--rgb-primary-espresso) / 0.07);
     transition: box-shadow 0.25s, transform 0.25s;
     animation: cardIn 0.4s ease both;
     animation-delay: var(--card-delay, 0ms);
@@ -552,7 +552,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 }
 
 .product-card:hover {
-    box-shadow: 0 6px 24px rgba(44, 26, 14, 0.13);
+    box-shadow: 0 6px 24px rgb(var(--rgb-primary-espresso) / 0.13);
     transform: translateY(-2px);
 }
 
@@ -568,11 +568,11 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     position: absolute;
     inset: 0;
     background: linear-gradient(90deg,
-            #2C1A14 0%,
-            #3d2518 30%,
-            #5c3820 50%,
-            #3d2518 70%,
-            #2C1A14 100%);
+            var(--color-primary-deep) 0%,
+            var(--color-coffee-17) 30%,
+            var(--color-coffee-24-2) 50%,
+            var(--color-coffee-17) 70%,
+            var(--color-primary-deep) 100%);
     background-size: 200% 100%;
     animation: imgShimmer 1.6s ease-in-out infinite;
     transition: opacity 0.35s ease;
@@ -619,8 +619,8 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     position: absolute;
     bottom: 10px;
     left: 12px;
-    background: rgba(255, 255, 255, 0.92);
-    color: #2C1A0E;
+    background: rgb(var(--rgb-white) / 0.92);
+    color: var(--color-primary-espresso);
     font-size: 0.6rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -641,7 +641,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.15rem;
     font-weight: 400;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     margin: 0;
     line-height: 1.25;
     display: -webkit-box;
@@ -652,7 +652,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 
 .card-desc {
     font-size: 0.75rem;
-    color: #7A6652;
+    color: var(--color-brown-40);
     line-height: 1.5;
     margin: 0;
     flex: 1;
@@ -670,7 +670,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 
 .rating-value {
     font-size: 0.7rem;
-    color: #8a6a50;
+    color: var(--color-brown-43);
 }
 
 :deep(.stars) {
@@ -714,7 +714,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     align-items: center;
     justify-content: space-between;
     padding-top: 0.55rem;
-    border-top: 1px solid #F0E8D8;
+    border-top: 1px solid var(--color-gold-89-2);
     margin-top: auto;
     gap: 0.4rem;
     flex-wrap: wrap;
@@ -723,12 +723,12 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 .card-price {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.2rem;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
 }
 
 .add-btn {
-    background: #C9A96E;
-    color: #fff;
+    background: var(--color-accent-soft);
+    color: var(--color-white);
     border: none;
     padding: 0.4rem 1rem;
     font-family: 'Lato', sans-serif;
@@ -740,13 +740,13 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 }
 
 .add-btn:hover {
-    background: #b8924f;
+    background: var(--color-brown-52);
 }
 
 .qty-ctrl {
     display: flex;
     align-items: center;
-    border: 1px solid #C9A96E;
+    border: 1px solid var(--color-accent-soft);
 }
 
 .qty-btn {
@@ -754,7 +754,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     height: 28px;
     border: none;
     background: transparent;
-    color: #C9A96E;
+    color: var(--color-accent-soft);
     font-size: 1rem;
     cursor: pointer;
     display: flex;
@@ -764,14 +764,14 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 }
 
 .qty-btn:hover {
-    background: rgba(201, 169, 110, 0.12);
+    background: rgb(var(--rgb-accent-soft) / 0.12);
 }
 
 .qty-num {
     width: 26px;
     text-align: center;
     font-size: 0.8rem;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     font-family: 'Lato', sans-serif;
 }
 
@@ -782,7 +782,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 
 .skeleton-block {
     height: 190px;
-    background: linear-gradient(90deg, #EDE5D8 25%, #E4DAC8 50%, #EDE5D8 75%);
+    background: linear-gradient(90deg, var(--color-brown-89-2) 25%, var(--color-brown-84) 50%, var(--color-brown-89-2) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite;
 }
@@ -790,7 +790,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 .skeleton-line {
     height: 12px;
     border-radius: 2px;
-    background: linear-gradient(90deg, #EDE5D8 25%, #E4DAC8 50%, #EDE5D8 75%);
+    background: linear-gradient(90deg, var(--color-brown-89-2) 25%, var(--color-brown-84) 50%, var(--color-brown-89-2) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite;
 }
@@ -831,8 +831,8 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 
 .detail-btn {
     background: transparent;
-    color: #C9A96E;
-    border: 1px solid #C9A96E;
+    color: var(--color-accent-soft);
+    border: 1px solid var(--color-accent-soft);
     padding: 0.4rem 0.75rem;
     font-family: 'Lato', sans-serif;
     font-size: 0.68rem;
@@ -843,8 +843,8 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 }
 
 .detail-btn:hover {
-    background: #C9A96E;
-    color: #fff;
+    background: var(--color-accent-soft);
+    color: var(--color-white);
 }
 
 @keyframes shimmer {
@@ -861,7 +861,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 .empty-state {
     text-align: center;
     padding: 5rem 0;
-    color: #8a6a50;
+    color: var(--color-brown-43);
     font-size: 0.9rem;
 }
 

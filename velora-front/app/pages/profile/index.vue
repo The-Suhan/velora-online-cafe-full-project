@@ -1,11 +1,11 @@
 <template>
-    <div class="min-h-screen bg-[#F5EFEA]">
+    <div class="min-h-screen bg-[var(--color-surface)]">
 
         <!-- Top Header -->
-        <div class="bg-[#2C1A14] px-6 pt-8 pb-14">
-            <h1 class="text-[#c8b89a] text-3xl font-light leading-tight">
+        <div class="bg-[var(--color-primary-deep)] px-6 pt-8 pb-14">
+            <h1 class="text-[var(--color-brown-69)] text-3xl font-light leading-tight">
                 {{ $t('profile.welcome') }}<br />
-                <em class="text-[#C8A96A] not-italic font-normal text-4xl">
+                <em class="text-[var(--color-accent-warm)] not-italic font-normal text-4xl">
                     {{ firstName }}.
                 </em>
             </h1>
@@ -19,24 +19,24 @@
                 <div class="flex flex-col gap-3">
 
                     <!-- Profile card -->
-                    <div class="bg-white rounded-2xl border border-[#E0D5CC] p-5">
+                    <div class="bg-white rounded-2xl border border-[var(--color-border-warm)] p-5">
                         <div
-                            class="w-16 h-16 rounded-full bg-[#2C1A14] flex items-center justify-center text-[#C8A96A] text-xl font-medium mx-auto mb-3">
+                            class="w-16 h-16 rounded-full bg-[var(--color-primary-deep)] flex items-center justify-center text-[var(--color-accent-warm)] text-xl font-medium mx-auto mb-3">
                             {{ initials }}
                         </div>
-                        <p class="text-center text-[#2C1A14] font-medium text-sm">{{ authUser?.name }}</p>
-                        <p class="text-center text-[#7A6558] text-xs mt-1">{{ authUser?.email }}</p>
+                        <p class="text-center text-[var(--color-primary-deep)] font-medium text-sm">{{ authUser?.name }}</p>
+                        <p class="text-center text-[var(--color-muted-dark)] text-xs mt-1">{{ authUser?.email }}</p>
 
-                        <div class="flex justify-around mt-4 pt-4 border-t border-[#E0D5CC]">
+                        <div class="flex justify-around mt-4 pt-4 border-t border-[var(--color-border-warm)]">
                             <div class="text-center">
-                                <p class="text-[#2C1A14] font-medium text-lg">{{ orders?.total ?? '–' }}</p>
-                                <p class="text-[#7A6558] text-[10px] uppercase tracking-wider mt-0.5">{{
+                                <p class="text-[var(--color-primary-deep)] font-medium text-lg">{{ orders?.total ?? '–' }}</p>
+                                <p class="text-[var(--color-muted-dark)] text-[10px] uppercase tracking-wider mt-0.5">{{
                                     $t('profile.orders') }}</p>
                             </div>
                         </div>
 
                         <NuxtLink to="/profile/edit"
-                            class="mt-4 w-full py-2.5 border border-[#2C1A14] rounded-lg text-[#2C1A14] text-sm hover:bg-[#F5EFEA] transition-colors grid grid-cols-[16px_1fr] items-center gap-2 px-4">
+                            class="mt-4 w-full py-2.5 border border-[var(--color-primary-deep)] rounded-lg text-[var(--color-primary-deep)] text-sm hover:bg-[var(--color-surface)] transition-colors grid grid-cols-[16px_1fr] items-center gap-2 px-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="1.5">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -46,7 +46,7 @@
                         </NuxtLink>
 
                         <button @click="handleLogout"
-                            class="mt-2 flex items-center justify-center gap-2 w-full py-2.5 border border-[#E0D5CC] rounded-lg text-[#7A6558] text-sm hover:bg-[#F5EFEA] transition-colors">
+                            class="mt-2 flex items-center justify-center gap-2 w-full py-2.5 border border-[var(--color-border-warm)] rounded-lg text-[var(--color-muted-dark)] text-sm hover:bg-[var(--color-surface)] transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="1.5">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
@@ -57,22 +57,22 @@
                 </div>
 
                 <!-- Right: Orders panel -->
-                <div class="bg-white rounded-2xl border border-[#E0D5CC] overflow-hidden">
+                <div class="bg-white rounded-2xl border border-[var(--color-border-warm)] overflow-hidden">
                     <!-- Tabs -->
-                    <div class="flex border-b border-[#E0D5CC] px-5">
+                    <div class="flex border-b border-[var(--color-border-warm)] px-5">
                         <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key" :class="[
                             'py-3.5 px-4 text-sm border-b-2 -mb-px transition-colors',
                             activeTab === tab.key
-                                ? 'text-[#2C1A14] border-[#C8A96A] font-medium'
-                                : 'text-[#7A6558] border-transparent hover:text-[#2C1A14]'
+                                ? 'text-[var(--color-primary-deep)] border-[var(--color-accent-warm)] font-medium'
+                                : 'text-[var(--color-muted-dark)] border-transparent hover:text-[var(--color-primary-deep)]'
                         ]">{{ tab.label }}</button>
                     </div>
 
                     <!-- Orders tab -->
                     <div v-if="activeTab === 'orders'">
                         <div class="flex justify-between items-center px-5 py-3">
-                            <span class="text-sm font-medium text-[#2C1A14]">{{ $t('profile.recentOrders') }}</span>
-                            <span class="text-xs text-[#7A6558] uppercase tracking-wider">
+                            <span class="text-sm font-medium text-[var(--color-primary-deep)]">{{ $t('profile.recentOrders') }}</span>
+                            <span class="text-xs text-[var(--color-muted-dark)] uppercase tracking-wider">
                                 {{ $t('profile.showing', {
                                     shown: orders?.data?.length ?? 0, total: orders?.total ?? 0
                                 }) }}
@@ -80,43 +80,43 @@
                         </div>
 
                         <!-- Loading skeleton -->
-                        <div v-if="loadingOrders" class="divide-y divide-[#E0D5CC]">
+                        <div v-if="loadingOrders" class="divide-y divide-[var(--color-border-warm)]">
                             <div v-for="i in 5" :key="i" class="flex items-center gap-3 px-5 py-4 animate-pulse">
-                                <div class="w-9 h-10 bg-[#F5EFEA] rounded-lg flex-shrink-0"></div>
+                                <div class="w-9 h-10 bg-[var(--color-surface)] rounded-lg flex-shrink-0"></div>
                                 <div class="flex-1 space-y-2">
-                                    <div class="h-3 bg-[#F5EFEA] rounded w-2/3"></div>
-                                    <div class="h-3 bg-[#F5EFEA] rounded w-1/3"></div>
+                                    <div class="h-3 bg-[var(--color-surface)] rounded w-2/3"></div>
+                                    <div class="h-3 bg-[var(--color-surface)] rounded w-1/3"></div>
                                 </div>
-                                <div class="h-3 bg-[#F5EFEA] rounded w-12"></div>
+                                <div class="h-3 bg-[var(--color-surface)] rounded w-12"></div>
                             </div>
                         </div>
 
                         <!-- Empty -->
                         <div v-else-if="!orders?.data?.length" class="py-16 text-center">
-                            <p class="text-[#7A6558] text-sm">{{ $t('profile.noOrders') }}</p>
+                            <p class="text-[var(--color-muted-dark)] text-sm">{{ $t('profile.noOrders') }}</p>
                             <NuxtLink to="/menu"
-                                class="mt-3 inline-block text-[#C8A96A] text-sm underline underline-offset-2">
+                                class="mt-3 inline-block text-[var(--color-accent-warm)] text-sm underline underline-offset-2">
                                 Browse the menu
                             </NuxtLink>
                         </div>
 
                         <!-- Order list -->
-                        <div v-else class="divide-y divide-[#E0D5CC]">
+                        <div v-else class="divide-y divide-[var(--color-border-warm)]">
                             <div v-for="order in orders.data" :key="order.id"
                                 class="flex items-center gap-3 px-5 py-3.5">
                                 <!-- Date -->
                                 <div class="w-9 text-center flex-shrink-0">
-                                    <p class="text-[#2C1A14] font-medium text-lg leading-none">{{
+                                    <p class="text-[var(--color-primary-deep)] font-medium text-lg leading-none">{{
                                         formatDay(order.created_at) }}</p>
-                                    <p class="text-[#7A6558] text-[10px] uppercase tracking-wide mt-0.5">{{
+                                    <p class="text-[var(--color-muted-dark)] text-[10px] uppercase tracking-wide mt-0.5">{{
                                         formatMonth(order.created_at) }}</p>
                                 </div>
 
                                 <!-- Info -->
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-[#2C1A14] font-medium text-sm truncate">
+                                    <p class="text-[var(--color-primary-deep)] font-medium text-sm truncate">
                                         {{ getProductName(order.items[0]) }}
-                                        <span v-if="order.items.length > 1" class="text-[#7A6558] font-normal text-xs">
+                                        <span v-if="order.items.length > 1" class="text-[var(--color-muted-dark)] font-normal text-xs">
                                             +{{ order.items.length - 1 }} {{ $t('profile.more') }}
                                         </span>
                                     </p>
@@ -125,7 +125,7 @@
                                             class="text-[10px] font-medium px-2 py-0.5 rounded-full">
                                             {{ statusLabel(order.status) }}
                                         </span>
-                                        <span class="text-[#7A6558] text-[10px] uppercase">
+                                        <span class="text-[var(--color-muted-dark)] text-[10px] uppercase">
                                             {{ order.delivery_type === 'delivery' ? $t('bag.delivery') :
                                                 $t('bag.pickup') }}
                                         </span>
@@ -134,7 +134,7 @@
 
                                 <!-- Price + actions -->
                                 <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
-                                    <span class="text-[#2C1A14] font-medium text-sm">${{ order.total_price.toFixed(2)
+                                    <span class="text-[var(--color-primary-deep)] font-medium text-sm">${{ order.total_price.toFixed(2)
                                         }}</span>
                                     <div class="flex gap-1.5">
                                         <button v-if="order.status === 'pending'" @click="handleCancel(order.id)"
@@ -143,7 +143,7 @@
                                             {{ cancellingId === order.id ? '...' : $t('profile.cancel') }}
                                         </button>
                                         <button @click="openDetail(order.id)"
-                                            class="text-[10px] px-2.5 py-1 border border-[#E0D5CC] text-[#7A6558] rounded-md hover:border-[#2C1A14] hover:text-[#2C1A14] transition-colors">
+                                            class="text-[10px] px-2.5 py-1 border border-[var(--color-border-warm)] text-[var(--color-muted-dark)] rounded-md hover:border-[var(--color-primary-deep)] hover:text-[var(--color-primary-deep)] transition-colors">
                                             {{ $t('profile.details') }}
                                         </button>
                                     </div>
@@ -153,12 +153,12 @@
 
                         <!-- Pagination -->
                         <div v-if="orders && orders.last_page > 1"
-                            class="flex justify-center gap-2 py-4 border-t border-[#E0D5CC]">
+                            class="flex justify-center gap-2 py-4 border-t border-[var(--color-border-warm)]">
                             <button v-for="p in orders.last_page" :key="p" @click="loadOrders(p)" :class="[
                                 'w-8 h-8 rounded-lg text-xs border transition-colors',
                                 currentPage === p
-                                    ? 'bg-[#2C1A14] text-white border-[#2C1A14]'
-                                    : 'border-[#E0D5CC] text-[#7A6558] hover:border-[#2C1A14] hover:text-[#2C1A14]'
+                                    ? 'bg-[var(--color-primary-deep)] text-white border-[var(--color-primary-deep)]'
+                                    : 'border-[var(--color-border-warm)] text-[var(--color-muted-dark)] hover:border-[var(--color-primary-deep)] hover:text-[var(--color-primary-deep)]'
                             ]">{{ p }}</button>
                         </div>
                     </div>
@@ -167,42 +167,42 @@
                     <!-- Other tabs placeholder -->
                     <div v-else-if="activeTab === 'favorites'">
                         <div class="flex justify-between items-center px-5 py-3">
-                            <span class="text-sm font-medium text-[#2C1A14]">{{ $t('profile.ratedProducts') }}</span>
-                            <span class="text-xs text-[#7A6558] uppercase tracking-wider">
+                            <span class="text-sm font-medium text-[var(--color-primary-deep)]">{{ $t('profile.ratedProducts') }}</span>
+                            <span class="text-xs text-[var(--color-muted-dark)] uppercase tracking-wider">
                                 {{ $t('home.itemsCount', favorites.length, { named: { n: favorites.length } }) }}
                             </span>
                         </div>
 
                         <!-- Loading -->
-                        <div v-if="loadingFavorites" class="divide-y divide-[#E0D5CC]">
+                        <div v-if="loadingFavorites" class="divide-y divide-[var(--color-border-warm)]">
                             <div v-for="i in 4" :key="i" class="flex items-center gap-3 px-5 py-4 animate-pulse">
-                                <div class="w-10 h-10 bg-[#F5EFEA] rounded-lg flex-shrink-0"></div>
+                                <div class="w-10 h-10 bg-[var(--color-surface)] rounded-lg flex-shrink-0"></div>
                                 <div class="flex-1 space-y-2">
-                                    <div class="h-3 bg-[#F5EFEA] rounded w-2/3"></div>
-                                    <div class="h-3 bg-[#F5EFEA] rounded w-1/3"></div>
+                                    <div class="h-3 bg-[var(--color-surface)] rounded w-2/3"></div>
+                                    <div class="h-3 bg-[var(--color-surface)] rounded w-1/3"></div>
                                 </div>
-                                <div class="h-3 bg-[#F5EFEA] rounded w-10"></div>
+                                <div class="h-3 bg-[var(--color-surface)] rounded w-10"></div>
                             </div>
                         </div>
 
                         <!-- Empty -->
                         <div v-else-if="!favorites.length" class="py-16 text-center">
-                            <p class="text-[#7A6558] text-sm">{{ $t('profile.noRatings') }}</p>
+                            <p class="text-[var(--color-muted-dark)] text-sm">{{ $t('profile.noRatings') }}</p>
                             <NuxtLink to="/menu"
-                                class="mt-3 inline-block text-[#C8A96A] text-sm underline underline-offset-2">
+                                class="mt-3 inline-block text-[var(--color-accent-warm)] text-sm underline underline-offset-2">
                                 {{ $t('profile.browseMenu') }}
                             </NuxtLink>
                         </div>
 
                         <!-- List -->
-                        <div v-else class="divide-y divide-[#E0D5CC]">
+                        <div v-else class="divide-y divide-[var(--color-border-warm)]">
                             <div v-for="item in favorites" :key="item.product_id"
                                 class="flex items-center gap-3 px-5 py-3.5">
                                 <!-- Image -->
-                                <div class="w-10 h-10 rounded-lg bg-[#F0EDE6] flex-shrink-0 overflow-hidden">
+                                <div class="w-10 h-10 rounded-lg bg-[var(--color-surface-alt)] flex-shrink-0 overflow-hidden">
                                     <img v-if="item.image_url" :src="resolveImageUrl(item.image_url)"
                                         :alt="item.product_name" class="w-full h-full object-cover" />
-                                    <div v-else class="w-full h-full flex items-center justify-center text-[#b0967a]">
+                                    <div v-else class="w-full h-full flex items-center justify-center text-[var(--color-muted-light)]">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                             width="16" height="16">
                                             <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
@@ -212,26 +212,26 @@
 
                                 <!-- Info -->
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-[#2C1A14] font-medium text-sm truncate">{{ item.product_name }}</p>
+                                    <p class="text-[var(--color-primary-deep)] font-medium text-sm truncate">{{ item.product_name }}</p>
                                     <div class="flex items-center gap-2 mt-0.5">
                                         <span v-if="item.category"
-                                            class="text-[#7A6558] text-[10px] uppercase tracking-wider">
+                                            class="text-[var(--color-muted-dark)] text-[10px] uppercase tracking-wider">
                                             {{ item.category }}
                                         </span>
-                                        <span class="text-[#b0967a] text-[10px]">{{ item.rated_at }}</span>
+                                        <span class="text-[var(--color-muted-light)] text-[10px]">{{ item.rated_at }}</span>
                                     </div>
                                 </div>
 
                                 <!-- Score + price -->
                                 <div class="flex flex-col items-end gap-1 flex-shrink-0">
                                     <div class="flex items-center gap-1">
-                                        <svg viewBox="0 0 24 24" fill="#C8A96A" width="12" height="12">
+                                        <svg viewBox="0 0 24 24" fill="var(--color-accent-warm)" width="12" height="12">
                                             <path
                                                 d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                         </svg>
-                                        <span class="text-[#2C1A14] font-medium text-sm">{{ item.score }}</span>
+                                        <span class="text-[var(--color-primary-deep)] font-medium text-sm">{{ item.score }}</span>
                                     </div>
-                                    <span class="text-[#7A6558] text-xs">${{ item.price.toFixed(2) }}</span>
+                                    <span class="text-[var(--color-muted-dark)] text-xs">${{ item.price.toFixed(2) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -239,38 +239,38 @@
 
                     <div v-else-if="activeTab === 'feedback'">
                         <div class="flex justify-between items-center px-5 py-3">
-                            <span class="text-sm font-medium text-[#2C1A14]">{{ $t('profile.myFeedback') }}</span>
+                            <span class="text-sm font-medium text-[var(--color-primary-deep)]">{{ $t('profile.myFeedback') }}</span>
                             <button @click="showFeedbackForm = !showFeedbackForm"
-                                class="text-xs px-3 py-1.5 bg-[#2C1A14] text-[#C8A96A] rounded-lg hover:bg-[#3d2416] transition-colors">
+                                class="text-xs px-3 py-1.5 bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] rounded-lg hover:bg-[var(--color-coffee-16)] transition-colors">
                                 + {{ $t('profile.new') }}
                             </button>
                         </div>
 
                         <!-- New feedback form -->
                         <div v-if="showFeedbackForm"
-                            class="mx-5 mb-4 p-4 bg-[#FAFAF8] rounded-xl border border-[#E0D5CC] space-y-3">
+                            class="mx-5 mb-4 p-4 bg-[var(--color-surface-soft)] rounded-xl border border-[var(--color-border-warm)] space-y-3">
                             <div class="flex gap-2">
                                 <button v-for="type in feedbackTypes" :key="type.key"
                                     @click="feedbackForm.type = type.key" :class="feedbackForm.type === type.key
-                                        ? 'bg-[#2C1A14] text-[#C8A96A]'
-                                        : 'border border-[#E0D5CC] text-[#7A6558] hover:border-[#2C1A14]'"
+                                        ? 'bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)]'
+                                        : 'border border-[var(--color-border-warm)] text-[var(--color-muted-dark)] hover:border-[var(--color-primary-deep)]'"
                                     class="px-3 py-1 rounded-lg text-xs capitalize transition-colors">
                                     {{ type.label }}
                                 </button>
                             </div>
                             <input v-model="feedbackForm.subject"
                                 :placeholder="$t('header.feedback.subjectPlaceholder')"
-                                class="w-full px-3 py-2 text-sm border border-[#E0D5CC] rounded-lg outline-none focus:border-[#2C1A14] bg-white" />
+                                class="w-full px-3 py-2 text-sm border border-[var(--color-border-warm)] rounded-lg outline-none focus:border-[var(--color-primary-deep)] bg-white" />
                             <textarea v-model="feedbackForm.message"
                                 :placeholder="$t('header.feedback.messagePlaceholder')" rows="3"
-                                class="w-full px-3 py-2 text-sm border border-[#E0D5CC] rounded-lg outline-none focus:border-[#2C1A14] bg-white resize-none" />
+                                class="w-full px-3 py-2 text-sm border border-[var(--color-border-warm)] rounded-lg outline-none focus:border-[var(--color-primary-deep)] bg-white resize-none" />
                             <div class="flex gap-2 justify-end">
                                 <button @click="showFeedbackForm = false"
-                                    class="text-xs px-3 py-1.5 border border-[#E0D5CC] text-[#7A6558] rounded-lg hover:bg-[#F5EFEA] transition-colors">
+                                    class="text-xs px-3 py-1.5 border border-[var(--color-border-warm)] text-[var(--color-muted-dark)] rounded-lg hover:bg-[var(--color-surface)] transition-colors">
                                     {{ $t('header.feedback.cancel') }}
                                 </button>
                                 <button @click="handleSubmitFeedback" :disabled="submittingFeedback"
-                                    class="text-xs px-3 py-1.5 bg-[#2C1A14] text-[#C8A96A] rounded-lg hover:bg-[#3d2416] transition-colors disabled:opacity-50">
+                                    class="text-xs px-3 py-1.5 bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] rounded-lg hover:bg-[var(--color-coffee-16)] transition-colors disabled:opacity-50">
                                     {{ submittingFeedback ? $t('header.feedback.sending') : $t('header.feedback.submit')
                                     }}
                                 </button>
@@ -278,27 +278,27 @@
                         </div>
 
                         <!-- Loading -->
-                        <div v-if="loadingFeedback" class="divide-y divide-[#E0D5CC]">
+                        <div v-if="loadingFeedback" class="divide-y divide-[var(--color-border-warm)]">
                             <div v-for="i in 3" :key="i" class="flex items-center gap-3 px-5 py-4 animate-pulse">
                                 <div class="flex-1 space-y-2">
-                                    <div class="h-3 bg-[#F5EFEA] rounded w-2/3"></div>
-                                    <div class="h-3 bg-[#F5EFEA] rounded w-1/3"></div>
+                                    <div class="h-3 bg-[var(--color-surface)] rounded w-2/3"></div>
+                                    <div class="h-3 bg-[var(--color-surface)] rounded w-1/3"></div>
                                 </div>
-                                <div class="h-5 bg-[#F5EFEA] rounded w-16"></div>
+                                <div class="h-5 bg-[var(--color-surface)] rounded w-16"></div>
                             </div>
                         </div>
 
                         <!-- Empty -->
                         <div v-else-if="!feedbacks.length && !showFeedbackForm" class="py-16 text-center">
-                            <p class="text-[#7A6558] text-sm">{{ $t('profile.noFeedback') }}</p>
+                            <p class="text-[var(--color-muted-dark)] text-sm">{{ $t('profile.noFeedback') }}</p>
                             <button @click="showFeedbackForm = true"
-                                class="mt-3 text-[#C8A96A] text-sm underline underline-offset-2">
+                                class="mt-3 text-[var(--color-accent-warm)] text-sm underline underline-offset-2">
                                 {{ $t('profile.sendFirstFeedback') }}
                             </button>
                         </div>
 
                         <!-- List -->
-                        <div v-else-if="feedbacks.length" class="divide-y divide-[#E0D5CC]">
+                        <div v-else-if="feedbacks.length" class="divide-y divide-[var(--color-border-warm)]">
                             <div v-for="fb in feedbacks" :key="fb.id" class="px-5 py-3.5">
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="flex-1 min-w-0">
@@ -311,10 +311,10 @@
                                                 {{ $t(`header.feedback.type${fb.type.charAt(0).toUpperCase() +
                                                     fb.type.slice(1)}`) }}
                                             </span>
-                                            <span class="text-[#b0967a] text-[10px]">{{ fb.created_at }}</span>
+                                            <span class="text-[var(--color-muted-light)] text-[10px]">{{ fb.created_at }}</span>
                                         </div>
-                                        <p class="text-[#2C1A14] font-medium text-sm truncate">{{ fb.subject }}</p>
-                                        <p class="text-[#7A6558] text-xs mt-0.5 line-clamp-2">{{ fb.message }}</p>
+                                        <p class="text-[var(--color-primary-deep)] font-medium text-sm truncate">{{ fb.subject }}</p>
+                                        <p class="text-[var(--color-muted-dark)] text-xs mt-0.5 line-clamp-2">{{ fb.message }}</p>
                                     </div>
                                     <span :class="fb.is_done
                                         ? 'bg-green-50 text-green-700'
@@ -327,7 +327,7 @@
                         </div>
                     </div>
 
-                    <div v-else class="py-16 text-center text-[#7A6558] text-sm">{{ $t('profile.comingSoon') }}</div>
+                    <div v-else class="py-16 text-center text-[var(--color-muted-dark)] text-sm">{{ $t('profile.comingSoon') }}</div>
                 </div>
             </div>
         </div>

@@ -47,10 +47,10 @@ const modalOpen = ref(false)
 
 // ─── Gradients fallback ───────────────────────────────────────
 const gradients = [
-    'linear-gradient(135deg,#C9A96E 0%,#9B7B3E 100%)',
-    'linear-gradient(135deg,#D4C5A9 0%,#A8916B 100%)',
-    'linear-gradient(135deg,#2C1A0E 0%,#5C3D1E 100%)',
-    'linear-gradient(135deg,#B8924F 0%,#D4A853 100%)',
+    'linear-gradient(135deg,var(--color-accent-soft) 0%,var(--color-brown-43-2) 100%)',
+    'linear-gradient(135deg,var(--color-brown-75) 0%,var(--color-brown-54-2) 100%)',
+    'linear-gradient(135deg,var(--color-primary-espresso) 0%,var(--color-coffee-24) 100%)',
+    'linear-gradient(135deg,var(--color-brown-52) 0%,var(--color-brown-58-2) 100%)',
 ]
 function cardGradient(id) { return gradients[id % gradients.length] }
 
@@ -265,7 +265,7 @@ watch(categoryId, loadData)
 
         <!-- ── Empty state ── -->
         <div v-else class="empty-state">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" stroke-width="1.2"
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-soft)" stroke-width="1.2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8" />
                 <path d="M21 21l-4.35-4.35" />
@@ -305,14 +305,14 @@ watch(categoryId, loadData)
 /* ── Page ── */
 .velora-cat-page {
     min-height: 100vh;
-    background: #F5F0E8;
+    background: var(--color-surface-warm);
     font-family: 'Lato', sans-serif;
     padding-bottom: 5rem;
 }
 
 /* ── Header ── */
 .page-header {
-    background: #2C1A0E;
+    background: var(--color-primary-espresso);
     padding: 1.75rem 3.5rem 2rem;
     position: relative;
     overflow: hidden;
@@ -333,7 +333,7 @@ watch(categoryId, loadData)
 .header-bg-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(44, 26, 14, 0.85) 0%, rgba(44, 26, 14, 0.5) 100%);
+    background: linear-gradient(135deg, rgb(var(--rgb-primary-espresso) / 0.85) 0%, rgb(var(--rgb-primary-espresso) / 0.5) 100%);
     pointer-events: none;
 }
 
@@ -355,13 +355,13 @@ watch(categoryId, loadData)
     font-size: 0.68rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #C9A96E;
+    color: var(--color-accent-soft);
     text-decoration: none;
     transition: color 0.15s;
 }
 
 .breadcrumb-link:hover {
-    color: #F5F0E8;
+    color: var(--color-surface-warm);
 }
 
 .back-icon {
@@ -373,7 +373,7 @@ watch(categoryId, loadData)
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 2.4rem;
     font-weight: 400;
-    color: #F5F0E8;
+    color: var(--color-surface-warm);
     margin: 0 0 0.25rem;
     letter-spacing: 0.01em;
     min-height: 2.9rem;
@@ -381,7 +381,7 @@ watch(categoryId, loadData)
 
 .page-subtitle {
     font-size: 0.7rem;
-    color: rgba(245, 240, 232, 0.65);
+    color: rgb(var(--rgb-surface-warm) / 0.65);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     margin: 0;
@@ -391,7 +391,7 @@ watch(categoryId, loadData)
 .skeleton-breadcrumb {
     height: 12px;
     width: 100px;
-    background: rgba(200, 169, 110, 0.25);
+    background: rgb(var(--rgb-accent) / 0.25);
     border-radius: 3px;
     margin-bottom: 0.75rem;
     animation: shimmer 1.4s infinite;
@@ -433,12 +433,12 @@ watch(categoryId, loadData)
 .divider-line {
     flex: 1;
     height: 0.5px;
-    background: linear-gradient(to right, transparent, #C9A96E55, transparent);
+    background: linear-gradient(to right, transparent, var(--color-accent-soft-a33), transparent);
 }
 
 .divider-ornament {
     font-size: 0.55rem;
-    color: #C9A96E;
+    color: var(--color-accent-soft);
     letter-spacing: 0.2em;
 }
 
@@ -454,11 +454,11 @@ watch(categoryId, loadData)
 
 /* ── Card ── */
 .product-card {
-    background: #fff;
+    background: var(--color-white);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    box-shadow: 0 1px 4px rgba(44, 26, 14, 0.07);
+    box-shadow: 0 1px 4px rgb(var(--rgb-primary-espresso) / 0.07);
     transition: box-shadow 0.25s, transform 0.25s;
     animation: cardIn 0.4s ease both;
     animation-delay: var(--card-delay, 0ms);
@@ -477,7 +477,7 @@ watch(categoryId, loadData)
 }
 
 .product-card:hover {
-    box-shadow: 0 6px 24px rgba(44, 26, 14, 0.13);
+    box-shadow: 0 6px 24px rgb(var(--rgb-primary-espresso) / 0.13);
     transform: translateY(-3px);
 }
 
@@ -505,8 +505,8 @@ watch(categoryId, loadData)
     position: absolute;
     bottom: 10px;
     left: 12px;
-    background: rgba(255, 255, 255, 0.92);
-    color: #2C1A0E;
+    background: rgb(var(--rgb-white) / 0.92);
+    color: var(--color-primary-espresso);
     font-size: 0.6rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -527,7 +527,7 @@ watch(categoryId, loadData)
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.15rem;
     font-weight: 400;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     margin: 0;
     line-height: 1.25;
     display: -webkit-box;
@@ -546,7 +546,7 @@ watch(categoryId, loadData)
 
 .card-desc {
     font-size: 0.75rem;
-    color: #7A6652;
+    color: var(--color-brown-40);
     line-height: 1.5;
     margin: 0;
     flex: 1;
@@ -564,7 +564,7 @@ watch(categoryId, loadData)
 
 .rating-value {
     font-size: 0.7rem;
-    color: #8a6a50;
+    color: var(--color-brown-43);
 }
 
 :deep(.stars) {
@@ -608,7 +608,7 @@ watch(categoryId, loadData)
     align-items: center;
     justify-content: space-between;
     padding-top: 0.55rem;
-    border-top: 1px solid #F0E8D8;
+    border-top: 1px solid var(--color-gold-89-2);
     margin-top: auto;
     gap: 0.4rem;
 }
@@ -616,7 +616,7 @@ watch(categoryId, loadData)
 .card-price {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.2rem;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
 }
 
 .card-actions {
@@ -629,8 +629,8 @@ watch(categoryId, loadData)
 
 .detail-btn {
     background: transparent;
-    color: #C9A96E;
-    border: 1px solid #C9A96E;
+    color: var(--color-accent-soft);
+    border: 1px solid var(--color-accent-soft);
     padding: 0.4rem 0.75rem;
     font-family: 'Lato', sans-serif;
     font-size: 0.68rem;
@@ -641,13 +641,13 @@ watch(categoryId, loadData)
 }
 
 .detail-btn:hover {
-    background: #C9A96E;
-    color: #fff;
+    background: var(--color-accent-soft);
+    color: var(--color-white);
 }
 
 .add-btn {
-    background: #C9A96E;
-    color: #fff;
+    background: var(--color-accent-soft);
+    color: var(--color-white);
     border: none;
     padding: 0.4rem 1rem;
     font-family: 'Lato', sans-serif;
@@ -659,13 +659,13 @@ watch(categoryId, loadData)
 }
 
 .add-btn:hover {
-    background: #b8924f;
+    background: var(--color-brown-52);
 }
 
 .qty-ctrl {
     display: flex;
     align-items: center;
-    border: 1px solid #C9A96E;
+    border: 1px solid var(--color-accent-soft);
 }
 
 .qty-btn {
@@ -673,7 +673,7 @@ watch(categoryId, loadData)
     height: 28px;
     border: none;
     background: transparent;
-    color: #C9A96E;
+    color: var(--color-accent-soft);
     font-size: 1rem;
     cursor: pointer;
     display: flex;
@@ -683,14 +683,14 @@ watch(categoryId, loadData)
 }
 
 .qty-btn:hover {
-    background: rgba(201, 169, 110, 0.12);
+    background: rgb(var(--rgb-accent-soft) / 0.12);
 }
 
 .qty-num {
     width: 26px;
     text-align: center;
     font-size: 0.8rem;
-    color: #2C1A0E;
+    color: var(--color-primary-espresso);
     font-family: 'Lato', sans-serif;
 }
 
@@ -701,7 +701,7 @@ watch(categoryId, loadData)
 
 .skeleton-block {
     height: 210px;
-    background: linear-gradient(90deg, #EDE5D8 25%, #E4DAC8 50%, #EDE5D8 75%);
+    background: linear-gradient(90deg, var(--color-brown-89-2) 25%, var(--color-brown-84) 50%, var(--color-brown-89-2) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite;
 }
@@ -709,7 +709,7 @@ watch(categoryId, loadData)
 .skeleton-line {
     height: 12px;
     border-radius: 2px;
-    background: linear-gradient(90deg, #EDE5D8 25%, #E4DAC8 50%, #EDE5D8 75%);
+    background: linear-gradient(90deg, var(--color-brown-89-2) 25%, var(--color-brown-84) 50%, var(--color-brown-89-2) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite;
 }
@@ -752,7 +752,7 @@ watch(categoryId, loadData)
     align-items: center;
     gap: 1rem;
     padding: 6rem 0;
-    color: #8a6a50;
+    color: var(--color-brown-43);
     font-size: 0.9rem;
 }
 

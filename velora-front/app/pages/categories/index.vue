@@ -18,11 +18,11 @@
     <!-- Error / Empty State -->
     <div v-else-if="!categories || categories.length === 0" class="empty-state">
       <svg class="empty-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="40" cy="40" r="36" stroke="#C8A96A" stroke-width="2.5" stroke-dasharray="6 4" />
-        <path d="M28 30 Q40 18 52 30" stroke="#C8A96A" stroke-width="2.5" stroke-linecap="round" fill="none" />
-        <circle cx="33" cy="38" r="3" fill="#C8A96A" />
-        <circle cx="47" cy="38" r="3" fill="#C8A96A" />
-        <path d="M33 54 Q40 48 47 54" stroke="#C8A96A" stroke-width="2.5" stroke-linecap="round" fill="none" />
+        <circle cx="40" cy="40" r="36" stroke="var(--color-accent-warm)" stroke-width="2.5" stroke-dasharray="6 4" />
+        <path d="M28 30 Q40 18 52 30" stroke="var(--color-accent-warm)" stroke-width="2.5" stroke-linecap="round" fill="none" />
+        <circle cx="33" cy="38" r="3" fill="var(--color-accent-warm)" />
+        <circle cx="47" cy="38" r="3" fill="var(--color-accent-warm)" />
+        <path d="M33 54 Q40 48 47 54" stroke="var(--color-accent-warm)" stroke-width="2.5" stroke-linecap="round" fill="none" />
       </svg>
       <p class="empty-title">{{ $t('categories.emptyTitle') }}</p>
       <p class="empty-sub">{{ $t('categories.emptySub') }}</p>
@@ -38,8 +38,8 @@
             class="card-image" loading="lazy" />
           <div v-else class="card-image-placeholder">
             <svg viewBox="0 0 40 40" fill="none" class="placeholder-icon">
-              <path d="M8 28 Q20 12 32 28" stroke="#C8A96A" stroke-width="2" stroke-linecap="round" fill="none" />
-              <circle cx="20" cy="18" r="4" fill="#C8A96A" opacity="0.5" />
+              <path d="M8 28 Q20 12 32 28" stroke="var(--color-accent-warm)" stroke-width="2" stroke-linecap="round" fill="none" />
+              <circle cx="20" cy="18" r="4" fill="var(--color-accent-warm)" opacity="0.5" />
             </svg>
           </div>
           <div class="card-overlay"></div>
@@ -87,13 +87,13 @@ onMounted(load)
 <style scoped>
 .categories-page {
   min-height: 100vh;
-  background-color: #F5EFEA;
+  background-color: var(--color-surface);
   padding-bottom: 2rem;
 }
 
 /* ── Header ── */
 .page-header {
-  background: #2C1A14;
+  background: var(--color-primary-deep);
   padding: 1.75rem 1.5rem 2rem;
   position: relative;
   overflow: hidden;
@@ -103,7 +103,7 @@ onMounted(load)
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(200, 169, 106, 0.18) 0%, transparent 70%);
+  background: radial-gradient(ellipse at 80% 50%, rgb(var(--rgb-accent-warm) / 0.18) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -118,7 +118,7 @@ onMounted(load)
   font-family: 'Georgia', serif;
   font-size: 1.85rem;
   font-weight: 700;
-  color: #F5EFEA;
+  color: var(--color-surface);
   margin: 0;
   letter-spacing: -0.5px;
 }
@@ -148,23 +148,23 @@ onMounted(load)
 
 /* ── Card ── */
 .category-card {
-  background: #fff;
+  background: var(--color-white);
   border-radius: 16px;
   overflow: hidden;
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 8px rgba(44, 26, 20, 0.07);
+  box-shadow: 0 2px 8px rgb(var(--rgb-primary-deep) / 0.07);
   transition: transform 0.22s ease, box-shadow 0.22s ease;
   animation: fadeUp 0.4s ease both;
   animation-delay: var(--delay, 0ms);
-  border: 1.5px solid rgba(44, 26, 20, 0.06);
+  border: 1.5px solid rgb(var(--rgb-primary-deep) / 0.06);
 }
 
 .category-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(44, 26, 20, 0.14);
+  box-shadow: 0 8px 24px rgb(var(--rgb-primary-deep) / 0.14);
 }
 
 @keyframes fadeUp {
@@ -182,7 +182,7 @@ onMounted(load)
 .card-image-wrap {
   position: relative;
   aspect-ratio: 4 / 3;
-  background: #F5EFEA;
+  background: var(--color-surface);
   overflow: hidden;
 }
 
@@ -203,7 +203,7 @@ onMounted(load)
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #F5EFEA 0%, #ede3d8 100%);
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-brown-89-3) 100%);
 }
 
 .placeholder-icon {
@@ -215,7 +215,7 @@ onMounted(load)
 .card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(44, 26, 20, 0.08) 0%, transparent 60%);
+  background: linear-gradient(to top, rgb(var(--rgb-primary-deep) / 0.08) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -223,8 +223,8 @@ onMounted(load)
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(200, 169, 106, 0.92);
-  color: #2C1A14;
+  background: rgb(var(--rgb-accent-warm) / 0.92);
+  color: var(--color-primary-deep);
   font-size: 0.65rem;
   font-weight: 700;
   padding: 3px 8px;
@@ -245,7 +245,7 @@ onMounted(load)
 .card-title {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #2C1A14;
+  color: var(--color-primary-deep);
   margin: 0;
   line-height: 1.3;
 }
@@ -253,7 +253,7 @@ onMounted(load)
 .card-arrow {
   width: 18px;
   height: 18px;
-  color: #C8A96A;
+  color: var(--color-accent-warm);
   flex-shrink: 0;
   transition: transform 0.2s ease;
 }
@@ -270,7 +270,7 @@ onMounted(load)
 
 .skeleton-img {
   aspect-ratio: 4 / 3;
-  background: linear-gradient(90deg, #e8ddd6 25%, #f0e8e0 50%, #e8ddd6 75%);
+  background: linear-gradient(90deg, var(--color-brown-87) 25%, var(--color-brown-91) 50%, var(--color-brown-87) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
@@ -278,7 +278,7 @@ onMounted(load)
 .skeleton-text {
   height: 2.5rem;
   margin: 0.75rem 1rem;
-  background: linear-gradient(90deg, #e8ddd6 25%, #f0e8e0 50%, #e8ddd6 75%);
+  background: linear-gradient(90deg, var(--color-brown-87) 25%, var(--color-brown-91) 50%, var(--color-brown-87) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
   border-radius: 6px;
@@ -315,20 +315,20 @@ onMounted(load)
 .empty-title {
   font-family: 'Georgia', serif;
   font-size: 1.2rem;
-  color: #2C1A14;
+  color: var(--color-primary-deep);
   margin: 0;
   font-weight: 600;
 }
 
 .empty-sub {
-  color: #9a7a68;
+  color: var(--color-brown-51);
   font-size: 0.88rem;
   margin: 0;
 }
 
 .retry-btn {
-  background: #2C1A14;
-  color: #F5EFEA;
+  background: var(--color-primary-deep);
+  color: var(--color-surface);
   border: none;
   padding: 0.6rem 1.5rem;
   border-radius: 8px;
@@ -340,7 +340,7 @@ onMounted(load)
 }
 
 .retry-btn:hover {
-  background: #C8A96A;
-  color: #2C1A14;
+  background: var(--color-accent-warm);
+  color: var(--color-primary-deep);
 }
 </style>

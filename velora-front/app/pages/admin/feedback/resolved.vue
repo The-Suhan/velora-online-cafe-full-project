@@ -522,13 +522,13 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.8rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     margin: 0 0 4px;
 }
 
 .page-sub {
     font-size: 0.84rem;
-    color: #8a7060;
+    color: var(--color-muted);
     margin: 0;
 }
 
@@ -537,10 +537,10 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
-    border: 1.5px solid #e8e3dc;
+    border: 1.5px solid var(--color-brown-89);
     border-radius: 10px;
-    background: #fff;
-    color: #2C1810;
+    background: var(--color-white);
+    color: var(--color-primary);
     font-size: 0.82rem;
     font-weight: 600;
     font-family: 'Jost', sans-serif;
@@ -550,13 +550,13 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 }
 
 .btn-back:hover {
-    background: #f0ede6;
+    background: var(--color-surface-alt);
 }
 
 .table-card {
-    background: #fff;
+    background: var(--color-white);
     border-radius: 16px;
-    box-shadow: 0 1px 4px rgba(44, 24, 16, 0.06);
+    box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
     overflow: hidden;
 }
 
@@ -567,14 +567,14 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     padding: 18px 20px 14px;
     gap: 12px;
     flex-wrap: wrap;
-    border-bottom: 1px solid #f3f0eb;
+    border-bottom: 1px solid var(--color-brown-94-2);
 }
 
 .table-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.05rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     white-space: nowrap;
 }
 
@@ -596,30 +596,30 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     transform: translateY(-50%);
     width: 14px;
     height: 14px;
-    color: #9ca3af;
+    color: var(--color-gray-65);
 }
 
 .search-input {
     padding: 8px 12px 8px 32px;
-    border: 1.5px solid #e8e3dc;
+    border: 1.5px solid var(--color-brown-89);
     border-radius: 10px;
     font-size: 0.82rem;
     width: 200px;
     outline: none;
-    color: #2C1810;
-    background: #fafaf8;
+    color: var(--color-primary);
+    background: var(--color-surface-soft);
     font-family: 'Jost', sans-serif;
     transition: border-color .2s;
 }
 
 .search-input:focus {
-    border-color: #4A6741;
+    border-color: var(--color-success);
 }
 
 .type-tabs {
     display: flex;
     gap: 2px;
-    background: #f0ede6;
+    background: var(--color-surface-alt);
     border-radius: 10px;
     padding: 3px;
 }
@@ -632,16 +632,16 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     font-weight: 500;
     cursor: pointer;
     background: none;
-    color: #8a7060;
+    color: var(--color-muted);
     font-family: 'Jost', sans-serif;
     transition: all .15s;
     white-space: nowrap;
 }
 
 .type-tab.active {
-    background: #fff;
-    color: #2C1810;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+    background: var(--color-white);
+    color: var(--color-primary);
+    box-shadow: 0 1px 3px rgb(var(--rgb-black) / .08);
 }
 
 .fb-table {
@@ -654,16 +654,16 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     text-align: left;
     font-size: 0.72rem;
     font-weight: 600;
-    color: #8a7060;
+    color: var(--color-muted);
     text-transform: uppercase;
     letter-spacing: .06em;
-    background: #fafaf8;
-    border-bottom: 1px solid #f0ede6;
+    background: var(--color-surface-soft);
+    border-bottom: 1px solid var(--color-surface-alt);
 }
 
 .fb-row td {
     padding: 14px 16px;
-    border-bottom: 1px solid #f3f0eb;
+    border-bottom: 1px solid var(--color-brown-94-2);
     vertical-align: middle;
 }
 
@@ -672,7 +672,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 }
 
 .fb-row:hover td {
-    background: #fafaf8;
+    background: var(--color-surface-soft);
 }
 
 .user-cell {
@@ -687,7 +687,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    background: #f0ede6;
+    background: var(--color-surface-alt);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -707,20 +707,20 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 .avatar-initials {
     font-size: 0.7rem;
     font-weight: 700;
-    color: #8a7060;
+    color: var(--color-muted);
 }
 
 .user-name {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     margin: 0 0 1px;
     white-space: nowrap;
 }
 
 .user-email {
     font-size: 0.72rem;
-    color: #b0967a;
+    color: var(--color-muted-light);
     margin: 0;
     white-space: nowrap;
 }
@@ -734,30 +734,30 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 }
 
 .type-complaint {
-    background: #fee2e2;
-    color: #dc2626;
+    background: var(--color-red-94);
+    color: var(--color-danger);
 }
 
 .type-request {
-    background: #fdf3e4;
-    color: #C8A96E;
+    background: var(--color-brown-94);
+    color: var(--color-accent);
 }
 
 .type-question {
-    background: #e8f0e4;
-    color: #4A6741;
+    background: var(--color-green-92);
+    color: var(--color-success);
 }
 
 .subject-cell {
     font-size: 0.85rem;
     font-weight: 500;
-    color: #2C1810;
+    color: var(--color-primary);
     max-width: 140px;
 }
 
 .preview-cell {
     font-size: 0.82rem;
-    color: #8a7060;
+    color: var(--color-muted);
     max-width: 180px;
     white-space: nowrap;
     overflow: hidden;
@@ -774,20 +774,20 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     gap: 5px;
     font-size: 0.78rem;
     font-weight: 500;
-    color: #4A6741;
-    background: #e8f0e4;
+    color: var(--color-success);
+    background: var(--color-green-92);
     padding: 3px 8px;
     border-radius: 20px;
 }
 
 .text-muted {
     font-size: 0.78rem;
-    color: #c8bfb0;
+    color: var(--color-brown-74);
 }
 
 .date-cell {
     font-size: 0.78rem;
-    color: #b0967a;
+    color: var(--color-muted-light);
     white-space: nowrap;
 }
 
@@ -795,7 +795,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    color: #4A6741;
+    color: var(--color-success);
     font-weight: 600;
 }
 
@@ -809,31 +809,31 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     width: 30px;
     height: 30px;
     border-radius: 8px;
-    border: 1.5px solid #e8e3dc;
-    background: #fff;
+    border: 1.5px solid var(--color-brown-89);
+    background: var(--color-white);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all .15s;
-    color: #8a7060;
+    color: var(--color-muted);
 }
 
 .btn-view:hover {
-    border-color: #2C1810;
-    color: #2C1810;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .btn-unresolve:hover {
-    border-color: #C8A96E;
-    color: #C8A96E;
-    background: #fdf3e4;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: var(--color-brown-94);
 }
 
 .btn-delete:hover {
-    border-color: #dc2626;
-    color: #dc2626;
-    background: #fee2e2;
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+    background: var(--color-red-94);
 }
 
 .mobile-cards {
@@ -844,7 +844,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 }
 
 .mobile-card {
-    border: 1.5px solid #f0ede6;
+    border: 1.5px solid var(--color-surface-alt);
     border-radius: 12px;
     padding: 14px;
 }
@@ -860,13 +860,13 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 .mobile-subject {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     margin: 0 0 4px;
 }
 
 .mobile-preview {
     font-size: 0.78rem;
-    color: #8a7060;
+    color: var(--color-muted);
     margin: 0 0 8px;
     white-space: nowrap;
     overflow: hidden;
@@ -878,7 +878,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     align-items: center;
     gap: 5px;
     font-size: 0.72rem;
-    color: #4A6741;
+    color: var(--color-success);
     margin-bottom: 10px;
 }
 
@@ -894,7 +894,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     gap: 5px;
     font-size: 0.78rem;
     font-weight: 600;
-    color: #4A6741;
+    color: var(--color-success);
 }
 
 .skeleton-wrap {
@@ -903,7 +903,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 
 .skeleton-row {
     height: 58px;
-    background: linear-gradient(90deg, #f0ede6 25%, #e8e3dc 50%, #f0ede6 75%);
+    background: linear-gradient(90deg, var(--color-surface-alt) 25%, var(--color-brown-89) 50%, var(--color-surface-alt) 75%);
     border-radius: 10px;
     margin-bottom: 8px;
     animation: shimmer 1.2s infinite;
@@ -926,7 +926,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     align-items: center;
     justify-content: center;
     padding: 60px 20px;
-    color: #c8bfb0;
+    color: var(--color-brown-74);
     gap: 12px;
 }
 
@@ -939,21 +939,21 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     align-items: center;
     justify-content: space-between;
     padding: 14px 20px;
-    border-top: 1px solid #f0ede6;
+    border-top: 1px solid var(--color-surface-alt);
     flex-wrap: wrap;
     gap: 10px;
 }
 
 .pagination-info {
     font-size: 0.78rem;
-    color: #8a7060;
+    color: var(--color-muted);
 }
 
 .pagination-info-only {
     padding: 14px 20px;
     font-size: 0.78rem;
-    color: #8a7060;
-    border-top: 1px solid #f0ede6;
+    color: var(--color-muted);
+    border-top: 1px solid var(--color-surface-alt);
 }
 
 .pagination-btns {
@@ -965,10 +965,10 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 .pg-btn {
     width: 32px;
     height: 32px;
-    border: 1.5px solid #e8e3dc;
+    border: 1.5px solid var(--color-brown-89);
     border-radius: 8px;
-    background: #fff;
-    color: #2C1810;
+    background: var(--color-white);
+    color: var(--color-primary);
     font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
@@ -980,14 +980,14 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 }
 
 .pg-btn:hover:not(:disabled) {
-    border-color: #4A6741;
-    color: #4A6741;
+    border-color: var(--color-success);
+    color: var(--color-success);
 }
 
 .pg-btn.active {
-    background: #2C1810;
-    border-color: #2C1810;
-    color: #fff;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-white);
 }
 
 .pg-btn:disabled {
@@ -997,14 +997,14 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 
 .pg-ellipsis {
     padding: 0 4px;
-    color: #b0967a;
+    color: var(--color-muted-light);
     font-size: 0.85rem;
 }
 
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(44, 24, 16, .45);
+    background: rgb(var(--rgb-primary) / .45);
     backdrop-filter: blur(2px);
     z-index: 200;
 }
@@ -1017,9 +1017,9 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     width: 90%;
     max-width: 500px;
     max-height: 90vh;
-    background: #fff;
+    background: var(--color-white);
     border-radius: 20px;
-    box-shadow: 0 24px 60px rgba(44, 24, 16, .18);
+    box-shadow: 0 24px 60px rgb(var(--rgb-primary) / .18);
     z-index: 300;
     display: flex;
     flex-direction: column;
@@ -1035,7 +1035,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     align-items: center;
     justify-content: space-between;
     padding: 20px 24px 16px;
-    border-bottom: 1px solid #f0ede6;
+    border-bottom: 1px solid var(--color-surface-alt);
     flex-shrink: 0;
 }
 
@@ -1043,25 +1043,25 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
 }
 
 .modal-close {
     width: 30px;
     height: 30px;
     border: none;
-    background: #f0ede6;
+    background: var(--color-surface-alt);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #8a7060;
+    color: var(--color-muted);
     transition: background .15s;
 }
 
 .modal-close:hover {
-    background: #e8e3dc;
+    background: var(--color-brown-89);
 }
 
 .modal-body {
@@ -1072,7 +1072,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 
 .modal-footer {
     padding: 16px 24px;
-    border-top: 1px solid #f0ede6;
+    border-top: 1px solid var(--color-surface-alt);
     display: flex;
     justify-content: flex-end;
     gap: 10px;
@@ -1097,7 +1097,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 .detail-label {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #b0967a;
+    color: var(--color-muted-light);
     text-transform: uppercase;
     letter-spacing: .05em;
     margin: 0 0 4px;
@@ -1105,20 +1105,20 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 
 .detail-value {
     font-size: 0.875rem;
-    color: #2C1810;
+    color: var(--color-primary);
     font-weight: 500;
     margin: 0;
 }
 
 .detail-message {
     font-size: 0.875rem;
-    color: #5a4a3a;
+    color: var(--color-coffee-29);
     line-height: 1.6;
     margin: 0;
-    background: #fafaf8;
+    background: var(--color-surface-soft);
     border-radius: 10px;
     padding: 12px 14px;
-    border: 1px solid #f0ede6;
+    border: 1px solid var(--color-surface-alt);
 }
 
 .detail-meta-row {
@@ -1137,52 +1137,52 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     width: 68px;
     height: 68px;
     border-radius: 50%;
-    background: #fee2e2;
+    background: var(--color-red-94);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 16px;
-    color: #dc2626;
+    color: var(--color-danger);
 }
 
 .delete-title {
     text-align: center;
     font-size: 1rem;
     font-weight: 700;
-    color: #2C1810;
+    color: var(--color-primary);
     margin-bottom: 8px;
 }
 
 .delete-desc {
     text-align: center;
     font-size: 0.875rem;
-    color: #8a7060;
+    color: var(--color-muted);
     line-height: 1.5;
 }
 
 .btn-cancel {
     padding: 9px 18px;
-    border: 1.5px solid #e8e3dc;
+    border: 1.5px solid var(--color-brown-89);
     border-radius: 10px;
-    background: #fff;
+    background: var(--color-white);
     font-size: 0.875rem;
     font-weight: 600;
-    color: #2C1810;
+    color: var(--color-primary);
     cursor: pointer;
     font-family: 'Jost', sans-serif;
     transition: all .15s;
 }
 
 .btn-cancel:hover {
-    background: #fafaf8;
+    background: var(--color-surface-soft);
 }
 
 .btn-unresolve-modal {
     padding: 9px 18px;
-    border: 1.5px solid #C8A96E;
+    border: 1.5px solid var(--color-accent);
     border-radius: 10px;
-    background: #fff;
-    color: #C8A96E;
+    background: var(--color-white);
+    color: var(--color-accent);
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
@@ -1194,7 +1194,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 }
 
 .btn-unresolve-modal:hover {
-    background: #fdf3e4;
+    background: var(--color-brown-94);
 }
 
 .btn-unresolve-modal:disabled {
@@ -1206,8 +1206,8 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     padding: 9px 18px;
     border: none;
     border-radius: 10px;
-    background: #dc2626;
-    color: #fff;
+    background: var(--color-danger);
+    color: var(--color-white);
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
@@ -1219,7 +1219,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 }
 
 .btn-danger:hover {
-    background: #b91c1c;
+    background: var(--color-red-42);
 }
 
 .btn-danger:disabled {
@@ -1230,8 +1230,8 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 .spinner {
     width: 13px;
     height: 13px;
-    border: 2px solid rgba(255, 255, 255, .3);
-    border-top-color: #fff;
+    border: 2px solid rgb(var(--rgb-white) / .3);
+    border-top-color: var(--color-white);
     border-radius: 50%;
     animation: spin .6s linear infinite;
 }
@@ -1254,18 +1254,18 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     font-size: 0.875rem;
     font-weight: 600;
     font-family: 'Jost', sans-serif;
-    box-shadow: 0 8px 24px rgba(44, 24, 16, .18);
+    box-shadow: 0 8px 24px rgb(var(--rgb-primary) / .18);
     z-index: 9999;
 }
 
 .toast.success {
-    background: #2C1810;
-    color: #fff;
+    background: var(--color-primary);
+    color: var(--color-white);
 }
 
 .toast.error {
-    background: #dc2626;
-    color: #fff;
+    background: var(--color-danger);
+    color: var(--color-white);
 }
 
 .fade-enter-active,

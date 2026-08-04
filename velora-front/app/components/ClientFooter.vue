@@ -5,9 +5,9 @@
         <div class="footer-rule">
             <span class="rule-line" />
             <svg class="rule-icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#C9A96E"
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="var(--color-accent-soft)"
                     opacity="0.25" />
-                <circle cx="12" cy="12" r="3" fill="#C9A96E" />
+                <circle cx="12" cy="12" r="3" fill="var(--color-accent-soft)" />
             </svg>
             <span class="rule-line" />
         </div>
@@ -154,8 +154,8 @@ const currentYear = computed(() => new Date().getFullYear())
 <style scoped>
 /* ── Footer shell ── */
 .velora-footer {
-    background: #2C1A0E;
-    color: #D4C5A9;
+    background: var(--color-primary-espresso);
+    color: var(--color-brown-75);
     font-family: 'Lato', sans-serif;
     margin-top: auto;
 }
@@ -172,7 +172,7 @@ const currentYear = computed(() => new Date().getFullYear())
 .rule-line {
     flex: 1;
     height: 1px;
-    background: linear-gradient(to right, transparent, rgba(201, 169, 110, 0.35), transparent);
+    background: linear-gradient(to right, transparent, rgb(var(--rgb-accent-soft) / 0.35), transparent);
 }
 
 .rule-icon {
@@ -205,7 +205,7 @@ const currentYear = computed(() => new Date().getFullYear())
     height: 48px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid rgba(201, 169, 110, 0.25);
+    border: 1px solid rgb(var(--rgb-accent-soft) / 0.25);
 }
 
 .brand-text {
@@ -219,7 +219,7 @@ const currentYear = computed(() => new Date().getFullYear())
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.4rem;
     font-weight: 400;
-    color: #F5F0E8;
+    color: var(--color-surface-warm);
     letter-spacing: 0.02em;
 }
 
@@ -227,13 +227,13 @@ const currentYear = computed(() => new Date().getFullYear())
     font-size: 0.58rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #C9A96E;
+    color: var(--color-accent-soft);
 }
 
 .brand-desc {
     font-size: 0.78rem;
     line-height: 1.75;
-    color: #9a8a78;
+    color: var(--color-brown-54);
     margin: 0 0 1.5rem;
     max-width: 240px;
 }
@@ -252,17 +252,17 @@ const currentYear = computed(() => new Date().getFullYear())
     justify-content: center;
     width: 36px;
     height: 36px;
-    border: 1px solid rgba(201, 169, 110, 0.2);
+    border: 1px solid rgb(var(--rgb-accent-soft) / 0.2);
     border-radius: 50%;
-    color: #9a8a78;
+    color: var(--color-brown-54);
     text-decoration: none;
     transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
 
 .social-btn:hover {
-    border-color: #C9A96E;
-    color: #C9A96E;
-    background: rgba(201, 169, 110, 0.08);
+    border-color: var(--color-accent-soft);
+    color: var(--color-accent-soft);
+    background: rgb(var(--rgb-accent-soft) / 0.08);
 }
 
 /* ── Nav group ── */
@@ -282,12 +282,12 @@ const currentYear = computed(() => new Date().getFullYear())
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.95rem;
     font-weight: 400;
-    color: #F5F0E8;
+    color: var(--color-surface-warm);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin: 0 0 0.25rem;
     padding-bottom: 0.65rem;
-    border-bottom: 1px solid rgba(201, 169, 110, 0.15);
+    border-bottom: 1px solid rgb(var(--rgb-accent-soft) / 0.15);
 }
 
 .col-links {
@@ -301,7 +301,7 @@ const currentYear = computed(() => new Date().getFullYear())
 
 .col-link {
     font-size: 0.78rem;
-    color: #9a8a78;
+    color: var(--color-brown-54);
     text-decoration: none;
     letter-spacing: 0.04em;
     transition: color 0.18s;
@@ -309,7 +309,7 @@ const currentYear = computed(() => new Date().getFullYear())
 }
 
 .col-link:hover {
-    color: #C9A96E;
+    color: var(--color-accent-soft);
 }
 
 .col-info {
@@ -317,21 +317,21 @@ const currentYear = computed(() => new Date().getFullYear())
     align-items: flex-start;
     gap: 0.55rem;
     font-size: 0.76rem;
-    color: #9a8a78;
+    color: var(--color-brown-54);
     line-height: 1.5;
 }
 
 .col-info svg {
     flex-shrink: 0;
     margin-top: 2px;
-    color: #C9A96E;
+    color: var(--color-accent-soft);
     opacity: 0.7;
 }
 
 /* ── App Store / Google Play buttons ── */
 .app-desc {
     font-size: 0.75rem;
-    color: #7a6a58;
+    color: var(--color-brown-41);
     line-height: 1.6;
     margin: 0;
 }
@@ -347,17 +347,17 @@ const currentYear = computed(() => new Date().getFullYear())
     align-items: center;
     gap: 0.65rem;
     padding: 0.6rem 0.9rem;
-    border: 1px solid rgba(201, 169, 110, 0.25);
+    border: 1px solid rgb(var(--rgb-accent-soft) / 0.25);
     border-radius: 8px;
     text-decoration: none;
-    color: #F5F0E8;
-    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-surface-warm);
+    background: rgb(var(--rgb-white) / 0.04);
     transition: border-color 0.2s, background 0.2s;
 }
 
 .app-btn:hover {
-    border-color: #C9A96E;
-    background: rgba(201, 169, 110, 0.08);
+    border-color: var(--color-accent-soft);
+    background: rgb(var(--rgb-accent-soft) / 0.08);
 }
 
 .app-btn svg {
@@ -383,7 +383,7 @@ const currentYear = computed(() => new Date().getFullYear())
 
 .app-btn-sub {
     font-size: 0.58rem;
-    color: #9a8a78;
+    color: var(--color-brown-54);
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
@@ -391,20 +391,20 @@ const currentYear = computed(() => new Date().getFullYear())
 .app-btn-name {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.95rem;
-    color: #F5F0E8;
+    color: var(--color-surface-warm);
     letter-spacing: 0.02em;
 }
 
 /* ── Copyright bar ── */
 .footer-bottom {
-    border-top: 1px solid rgba(201, 169, 110, 0.1);
+    border-top: 1px solid rgb(var(--rgb-accent-soft) / 0.1);
     padding: 1.1rem 3.5rem;
     text-align: center;
 }
 
 .copyright {
     font-size: 0.68rem;
-    color: #ffffff;
+    color: var(--color-white);
     letter-spacing: 0.06em;
     margin: 0;
 }

@@ -25,7 +25,7 @@ const { totalCount } = useCart()
 <style scoped>
 .client-layout {
     min-height: 100vh;
-    background: #f5f0e8;
+    background: var(--color-surface-warm);
     display: flex;
     flex-direction: column;
 }
@@ -46,24 +46,24 @@ const { totalCount } = useCart()
     inset: 0;
     top: 72px;
     z-index: 99;
-    background: rgba(26, 10, 0, 0.25);
+    background: rgb(var(--rgb-primary-black) / 0.25);
     backdrop-filter: blur(2px);
 }
 
 .mobile-menu-inner {
-    background: #f5f0e8;
+    background: var(--color-surface-warm);
     padding: 1rem 1.5rem 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    border-bottom: 1px solid rgba(26, 10, 0, 0.08);
-    box-shadow: 0 8px 24px rgba(26, 10, 0, 0.12);
+    border-bottom: 1px solid rgb(var(--rgb-primary-black) / 0.08);
+    box-shadow: 0 8px 24px rgb(var(--rgb-primary-black) / 0.12);
 }
 
 .mobile-nav-link {
     font-family: 'Georgia', serif;
     font-size: 1rem;
-    color: #5a3e2b;
+    color: var(--color-coffee-26);
     text-decoration: none;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -73,18 +73,18 @@ const { totalCount } = useCart()
 }
 
 .mobile-nav-link:hover {
-    color: #1a0a00;
-    background: rgba(26, 10, 0, 0.04);
+    color: var(--color-primary-black);
+    background: rgb(var(--rgb-primary-black) / 0.04);
 }
 
 .mobile-nav-link--active {
-    color: #1a0a00;
+    color: var(--color-primary-black);
     font-weight: 700;
 }
 
 .mobile-menu-divider {
     height: 1px;
-    background: rgba(26, 10, 0, 0.1);
+    background: rgb(var(--rgb-primary-black) / 0.1);
     margin: 0.5rem 0;
 }
 
@@ -94,28 +94,28 @@ const { totalCount } = useCart()
     gap: 0.6rem;
     font-family: 'Georgia', serif;
     font-size: 0.9rem;
-    color: #1a0a00;
+    color: var(--color-primary-black);
     text-decoration: none;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     padding: 0.65rem 0.9rem;
-    background: #1a0a00;
-    color: #f5f0e8;
+    background: var(--color-primary-black);
+    color: var(--color-surface-warm);
     border-radius: 8px;
     margin-top: 0.25rem;
     transition: background 0.15s;
 }
 
 .mobile-bag-link:hover {
-    background: #2d1200;
+    background: var(--color-coffee-9);
 }
 
 .mobile-badge {
     margin-left: auto;
     width: 20px;
     height: 20px;
-    background: #c8a97e;
-    color: #1a0a00;
+    background: var(--color-brown-64);
+    color: var(--color-primary-black);
     font-size: 0.7rem;
     font-weight: 700;
     border-radius: 50%;

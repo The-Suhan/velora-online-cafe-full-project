@@ -76,13 +76,13 @@ const items = computed(() => [
     bottom: 0;
     left: 0;
     right: 0;
-    background: #2C1810;
+    background: var(--color-primary);
     display: flex;
     align-items: center;
     justify-content: space-around;
     padding: 8px 0 max(8px, env(safe-area-inset-bottom));
     z-index: 100;
-    border-top: 1px solid rgba(200, 169, 110, 0.2);
+    border-top: 1px solid rgb(var(--rgb-accent) / 0.2);
 }
 
 .tab-item {
@@ -90,7 +90,7 @@ const items = computed(() => [
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    color: rgba(245, 240, 232, 0.5);
+    color: rgb(var(--rgb-surface-warm) / 0.5);
     text-decoration: none;
     flex: 1;
     transition: color 0.15s;
@@ -98,7 +98,7 @@ const items = computed(() => [
 }
 
 .tab-active {
-    color: #C8A96E !important;
+    color: var(--color-accent) !important;
 }
 
 .tab-icon-wrap {
@@ -122,8 +122,8 @@ const items = computed(() => [
     position: absolute;
     top: -5px;
     right: -8px;
-    background: #e05252;
-    color: #fff;
+    background: var(--color-red-60);
+    color: var(--color-white);
     font-size: 0.58rem;
     font-weight: 700;
     border-radius: 99px;
