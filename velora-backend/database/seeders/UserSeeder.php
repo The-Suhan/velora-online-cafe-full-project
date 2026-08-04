@@ -25,27 +25,27 @@ class UserSeeder extends Seeder
                 'updated_at' => $now,
             ],
             // ── id = 2 ────────────────────────────────────────────────────
-            [
-                'name' => 'Akmuhammet',
-                'email' => 'Akmyradow@velora.com',
-                'password' => Hash::make('VeloraOps'),
-                'role' => 'admin',
-                'is_verified' => true,
-                'remember_token' => null,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
+            // [
+            //     'name' => 'Akmuhammet',
+            //     'email' => 'Akmyradow@velora.com',
+            //     'password' => Hash::make('VeloraOps'),
+            //     'role' => 'admin',
+            //     'is_verified' => true,
+            //     'remember_token' => null,
+            //     'created_at' => $now,
+            //     'updated_at' => $now,
+            // ],
             // ── id = 3 ────────────────────────────────────────────────────
-            [
-                'name' => 'Oraz',
-                'email' => 'chollaev@velora.com',
-                'password' => Hash::make('VeloraOps'),
-                'role' => 'admin',
-                'is_verified' => true,
-                'remember_token' => null,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
+            // [
+            //     'name' => 'Oraz',
+            //     'email' => 'chollaev@velora.com',
+            //     'password' => Hash::make('VeloraOps'),
+            //     'role' => 'admin',
+            //     'is_verified' => true,
+            //     'remember_token' => null,
+            //     'created_at' => $now,
+            //     'updated_at' => $now,
+            // ],
         ]);
     }
 }
