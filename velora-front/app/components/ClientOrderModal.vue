@@ -35,6 +35,9 @@
                     </div>
 
                     <template v-else-if="order">
+                        <!-- Adım adım ilerleme; detay yanıtı status_history'yi de getirir -->
+                        <OrderTracker :status="order.status" :history="order.status_history" />
+
                         <!-- Status + type -->
                         <div class="flex items-center gap-3 flex-wrap">
                             <span :class="statusClass(order.status)"

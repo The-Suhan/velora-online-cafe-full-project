@@ -19,6 +19,10 @@
 <script setup lang="ts">
 const { user } = useAuth()
 
+// Yeni sipariş nabzı: rozetleri besler, yeni sipariş gelince ses + toast.
+// Layout'ta başlatılır, böylece tüm admin sayfalarını kapsar.
+useAdminOrderPulse().useTracking()
+
 const pendingOrders = useState('admin:pendingOrders', () => 0)
 const unreadFeedbacks = useState('admin:unreadFeedbacks', () => 0)
 const userName = computed(() => (user.value as any)?.name ?? 'Admin')

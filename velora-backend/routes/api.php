@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderUpdatesController;
 // Client
 use App\Http\Controllers\ProductController;
 
@@ -64,9 +65,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/products/{product}/toggle', [ProductController::class, 'toggle']);
         Route::get('/products/{product}/translations', [ProductController::class, 'translations']);
 
-        // Orders
+        // Orders — statik segmentler {order} bağlamasından ÖNCE gelmeli
         Route::get('/orders/stats', [OrderController::class, 'stats']);
         Route::get('/orders/export', [OrderController::class, 'export']);
+        Route::get('/orders/updates', [OrderUpdatesController::class, 'admin']);
         Route::get('/orders', [OrderController::class, 'index']);
         Route::get('/orders/{order}', [OrderController::class, 'show']);
         Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus']);
@@ -98,9 +100,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/products/{product}/rate', [CustomerController::class, 'rateProduct']);
     Route::delete('/products/{product}/rate', [CustomerController::class, 'deleteRating']);
 
-    // Orders
+    // Orders — /orders/updates, {order} bağlamasından ÖNCE gelmeli
     Route::post('/orders', [CustomerController::class, 'placeOrder']);
     Route::get('/orders', [CustomerController::class, 'myOrders']);
+    Route::get('/orders/updates', [OrderUpdatesController::class, 'customer']);
     Route::get('/orders/{order}', [CustomerController::class, 'showOrder']);
     Route::patch('/orders/{order}/cancel', [CustomerController::class, 'cancelOrder']);
 

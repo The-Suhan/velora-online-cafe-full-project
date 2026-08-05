@@ -365,6 +365,15 @@ const {
     capitalize, initials, canCancel, canDelete, handleOutsideClick, DELIVERY_FEE, displayPrice,
 } = useOrders(props.status)
 
+// Canlı nabız bir değişim bildirdiğinde listeyi kendiliğinden tazele.
+// Açık bir modal varken tazelemeyiz — düzenlenen satır kullanıcının altından çekilir.
+const { changedIds } = useAdminOrderPulse()
+watch(changedIds, (ids) => {
+    if (!ids.length || activeModal.value) return
+    loadOrders(pagination.value.current_page)
+    loadStats()
+})
+
 onMounted(async () => {
     await Promise.all([loadOrders(), loadStats()])
     document.addEventListener('click', handleOutsideClick)

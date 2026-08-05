@@ -31,7 +31,6 @@ export default defineNuxtConfig({
 
   experimental: {
     typedPages: true,
-    scanPageMeta: 'after-resolve',
   },
 
   css: ['~/assets/css/color.css', '~/assets/css/main.css'],
@@ -60,9 +59,20 @@ export default defineNuxtConfig({
           // Runs before first paint, so the page never renders in light mode
           // and then snaps to dark. Kept inline and dependency-free for the
           // same reason — anything async would be too late.
-          innerHTML: `(function(){try{var t=localStorage.getItem('velora-theme');`
+          //
+          // Also mirrors the choice into the `velora-theme` cookie (not just
+          // localStorage): localStorage never reaches the server, so on a
+          // repeat visit SSR would always render 'light' and hydration would
+          // mismatch against whatever this script applies client-side. The
+          // cookie lets the *next* request's SSR render the right theme from
+          // the start — see useTheme.ts.
+          innerHTML: `(function(){try{`
+            + `var m=document.cookie.match(/(?:^|; )velora-theme=([^;]+)/);`
+            + `var t=m?decodeURIComponent(m[1]):localStorage.getItem('velora-theme');`
             + `if(!t)t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';`
-            + `document.documentElement.dataset.theme=t;}catch(e){}})();`,
+            + `document.documentElement.dataset.theme=t;`
+            + `document.cookie='velora-theme='+t+';path=/;max-age=31536000;samesite=lax';`
+            + `}catch(e){}})();`,
           tagPosition: 'head',
         }
       ],

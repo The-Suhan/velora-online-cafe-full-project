@@ -11,6 +11,28 @@ export interface Order {
     address?: string
     phone?: string
     items: OrderItem[]
+    /** sadece detay yanıtında (GET /api/orders/{id}) */
+    status_history?: OrderStatusHistoryEntry[]
+    updated_at_iso?: string
+}
+
+export type OrderStatus = Order['status']
+
+export interface OrderStatusHistoryEntry {
+    to_status: OrderStatus
+    at: string
+}
+
+/** GET /api/orders/updates yanıtı */
+export interface OrderUpdatesResponse {
+    server_time: string
+    active_count: number
+    orders: {
+        id: number
+        order_no: string
+        status: OrderStatus
+        updated_at: string
+    }[]
 }
 
 export interface OrderItem {
@@ -86,6 +108,15 @@ export const useProfile = () => {
             headers: headers(),
         })
 
+    // GET /api/orders/updates — canlı takip için hafif polling uç noktası.
+    // `signal` sekme gizlendiğinde / bileşen unmount olduğunda isteği iptal eder.
+    const fetchOrderUpdates = (since?: string | null, signal?: AbortSignal): Promise<OrderUpdatesResponse> =>
+        $fetch<OrderUpdatesResponse>(`${apiBase}/orders/updates`, {
+            headers: headers(),
+            query: since ? { since } : {},
+            signal,
+        })
+
     const fetchMyFavorites = (): Promise<any[]> =>
         $fetch<any[]>(`${apiBase}/me/favorites`, { headers: headers() })
 
@@ -97,5 +128,5 @@ export const useProfile = () => {
         $fetch(`${apiBase}/me/feedback`, { method: 'POST', headers: headers(), body: payload })
 
 
-    return { fetchMe, updateMe, fetchMyOrders, fetchOrder, cancelOrder, fetchMyFavorites, fetchMyFeedback, submitFeedback }
+    return { fetchMe, updateMe, fetchMyOrders, fetchOrder, cancelOrder, fetchOrderUpdates, fetchMyFavorites, fetchMyFeedback, submitFeedback }
 }

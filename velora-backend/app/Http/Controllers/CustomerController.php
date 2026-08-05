@@ -430,7 +430,7 @@ class CustomerController extends Controller
             return response()->json(['message' => 'Order not found.'], 404);
         }
 
-        $order->load('items.product:id,name,image_url,price', 'items.product.translations');
+        $order->load('items.product:id,name,image_url,price', 'items.product.translations', 'statusHistory');
 
         return response()->json($this->formatOrder($order, detail: true));
     }
@@ -529,6 +529,15 @@ class CustomerController extends Controller
 
         $data['address'] = $o->address;
         $data['phone'] = $o->phone;
+
+        if ($detail) {
+            // Tracker'ın her adımın altında zaman damgası gösterebilmesi için.
+            $data['status_history'] = $o->statusHistory->map(fn ($h) => [
+                'to_status' => $h->to_status,
+                'at' => $h->created_at?->format('M d, H:i'),
+            ])->values();
+            $data['updated_at_iso'] = $o->updated_at->format('Y-m-d H:i:s.u');
+        }
 
         return $data;
     }

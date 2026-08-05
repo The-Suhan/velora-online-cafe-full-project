@@ -88,6 +88,23 @@
     "noFeedback": "No feedback submitted yet.",
     "sendFirstFeedback": "Send your first feedback",
     "resolved": "Resolved",
+    "tracking": {
+      "title": "Order Progress",
+      "live": "Live",
+      "step": "Step {n} of {total}",
+      "cancelledNote": "This order was cancelled",
+      "notify": {
+        "title": "Velora Café",
+        "pending": "Your order {order} has been received",
+        "preparing": "Your order {order} is being prepared",
+        "ready": "Your order {order} is ready!",
+        "delivered": "Your order {order} has been delivered. Enjoy!",
+        "cancelled": "Your order {order} was cancelled",
+        "enable": "Notify me",
+        "enabled": "Notifications on",
+        "blocked": "Notifications are blocked in your browser settings"
+      }
+    },
     "comingSoon": "Coming soon.",
     "cancelConfirm": "Are you sure you want to cancel this order?",
     "tabOrders": "Orders",
@@ -449,6 +466,14 @@
       "thisWeek": "this week",
       "activeFilter": "{status} filter active",
       "clearFilter": "Clear filter",
+      "live": {
+        "title": "Velora Admin",
+        "newOrderOne": "New order received",
+        "newOrders": "{n} new orders received",
+        "statusChanged": "Order #{id} is now {status}",
+        "connected": "Live",
+        "reconnecting": "Reconnecting…"
+      },
       "statusPage": {
         "searchPlaceholder": "Search {status}…",
         "filter": "Filter",

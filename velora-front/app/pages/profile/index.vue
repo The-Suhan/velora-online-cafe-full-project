@@ -72,11 +72,33 @@
                     <div v-if="activeTab === 'orders'">
                         <div class="flex justify-between items-center px-5 py-3">
                             <span class="text-sm font-medium text-[var(--color-primary-deep)]">{{ $t('profile.recentOrders') }}</span>
-                            <span class="text-xs text-[var(--color-muted-dark)] uppercase tracking-wider">
-                                {{ $t('profile.showing', {
-                                    shown: orders?.data?.length ?? 0, total: orders?.total ?? 0
-                                }) }}
-                            </span>
+                            <div class="flex items-center gap-3">
+                                <!-- Bildirim izni yalnızca bu tıklamayla istenir (sayfa yüklenirken değil).
+                                     `mounted` şart: notifySupported sunucuda false, istemcide true —
+                                     guard olmadan hydration uyumsuzluğu olur. -->
+                                    <button v-if="mounted && notifySupported" type="button" @click="toggleNotify()"
+                                        :disabled="notifyPermission === 'denied'"
+                                        :title="notifyPermission === 'denied'
+                                            ? $t('profile.tracking.notify.blocked')
+                                            : (notifyEnabled ? $t('profile.tracking.notify.enabled') : $t('profile.tracking.notify.enable'))"
+                                        class="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md border transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                        :class="notifyEnabled
+                                            ? 'border-[var(--color-success)] text-[var(--color-success)]'
+                                            : 'border-[var(--color-border-warm)] text-[var(--color-muted-dark)] hover:text-[var(--color-primary-deep)]'">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                        </svg>
+                                        {{ notifyEnabled ? $t('profile.tracking.notify.enabled') :
+                                            $t('profile.tracking.notify.enable') }}
+                                </button>
+                                <span class="text-xs text-[var(--color-muted-dark)] uppercase tracking-wider">
+                                    {{ $t('profile.showing', {
+                                        shown: orders?.data?.length ?? 0, total: orders?.total ?? 0
+                                    }) }}
+                                </span>
+                            </div>
                         </div>
 
                         <!-- Loading skeleton -->
@@ -121,15 +143,19 @@
                                         </span>
                                     </p>
                                     <div class="flex items-center gap-2 mt-1 flex-wrap">
-                                        <span :class="statusClass(order.status)"
+                                        <span :class="statusClass(liveStatus(order))"
                                             class="text-[10px] font-medium px-2 py-0.5 rounded-full">
-                                            {{ statusLabel(order.status) }}
+                                            {{ statusLabel(liveStatus(order)) }}
                                         </span>
                                         <span class="text-[var(--color-muted-dark)] text-[10px] uppercase">
                                             {{ order.delivery_type === 'delivery' ? $t('bag.delivery') :
                                                 $t('bag.pickup') }}
                                         </span>
                                     </div>
+
+                                    <!-- Devam eden siparişlerde canlı ilerleme çizelgesi -->
+                                    <OrderTracker v-if="!['delivered', 'cancelled'].includes(liveStatus(order))"
+                                        :status="liveStatus(order)" compact class="mt-2" />
                                 </div>
 
                                 <!-- Price + actions -->
@@ -344,6 +370,26 @@ useHead({ title: 'Velora — Profile' })
 const { user: authUser, logout, fetchMe } = useAuth()
 const { fetchMyOrders, cancelOrder, fetchOrder, fetchMyFavorites, fetchMyFeedback, submitFeedback } = useProfile()
 
+// Canlı sipariş takibi — sayfa açıkken durum değişimlerini kendisi yakalar.
+const { statuses: liveStatuses, lastChange, seed: seedTracking, useTracking } = useOrderTracking()
+useTracking()
+
+const { enabled: notifyEnabled, supported: notifySupported, permission: notifyPermission, toggle: toggleNotify } = useBrowserNotify()
+
+// Zil butonu yalnızca hydration bittikten sonra çizilir — Notification API
+// sunucuda yok, guard olmadan sunucu/istemci çıktısı ayrışır.
+const mounted = ref(false)
+onMounted(() => { mounted.value = true })
+
+// Poll yanıtı bilinçli olarak minimal; gerçek bir değişim olduğunda listeyi
+// bir kez tam olarak tazeleyip toplamları/kalemleri tutarlı tut.
+watch(lastChange, (change) => {
+    if (change) loadOrders(currentPage.value)
+})
+
+/** Listede gösterilecek durum: canlı değer varsa o, yoksa sunucudan geleni. */
+const liveStatus = (order: any) => liveStatuses.value[order.id] ?? order.status
+
 // Modal state
 const modalOpen = ref(false)
 const modalOrder = ref<any>(null)
@@ -418,6 +464,8 @@ async function loadOrders(page = 1) {
     currentPage.value = page
     try {
         orders.value = await fetchMyOrders(page, 8)
+        // Tracker'ın başlangıç durumu ekranda görünenle aynı olsun.
+        seedTracking(orders.value?.data ?? [])
     } catch {
         orders.value = null
     } finally {

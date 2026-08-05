@@ -28,6 +28,40 @@ class Order extends Model
 
     const DELIVERY_TYPES = ['pickup', 'delivery'];
 
+    // ── Model events ──────────────────────────────────────────
+
+    /**
+     * Durum geçmişini modelin kendisi yazar; böylece hangi controller'dan
+     * gelirse gelsin (admin updateStatus/cancel, müşteri cancelOrder) kayıt tutulur.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (Order $order) {
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'from_status' => null,
+                'to_status' => $order->status,
+                'changed_by' => $order->user_id,
+                'created_at' => $order->created_at ?? now(),
+            ]);
+        });
+
+        static::updated(function (Order $order) {
+            // Not güncellemesi gibi durum değiştirmeyen update'ler kayıt yazmaz.
+            if (! $order->wasChanged('status')) {
+                return;
+            }
+
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'from_status' => $order->getOriginal('status'),
+                'to_status' => $order->status,
+                'changed_by' => auth()->id(),
+                'created_at' => now(),
+            ]);
+        });
+    }
+
     // ── Relations ─────────────────────────────────────────────
 
     public function user()
@@ -43,6 +77,11 @@ class Order extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function statusHistory()
+    {
+        return $this->hasMany(OrderStatusHistory::class)->orderBy('created_at');
     }
 
     // ── Scopes ────────────────────────────────────────────────

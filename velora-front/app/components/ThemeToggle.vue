@@ -1,7 +1,7 @@
 <template>
     <!-- Admin sidebar: a full-width row that reads like the nav items above it -->
     <button v-if="variant === 'sidebar'" class="theme-row" type="button" role="switch" :aria-checked="isDark"
-        :aria-label="$t('theme.toggle')" @click="toggle">
+        :aria-label="$t('theme.toggle')" v-bind="$attrs" @click="toggle">
         <span class="theme-row-icon">
             <ThemeToggleIcons :dark="isDark" />
         </span>
@@ -13,12 +13,18 @@
 
     <!-- Client header: a compact pill matching the language switcher beside it -->
     <button v-else class="theme-pill" type="button" role="switch" :aria-checked="isDark"
-        :aria-label="$t('theme.toggle')" :title="$t('theme.toggle')" @click="toggle">
+        :aria-label="$t('theme.toggle')" :title="$t('theme.toggle')" v-bind="$attrs" @click="toggle">
         <ThemeToggleIcons :dark="isDark" />
     </button>
 </template>
 
 <script setup lang="ts">
+// İki farklı kök eleman (v-if/v-else) arasında Vue'nun otomatik $attrs
+// geçişi SSR ile CSR'da tutarsız davranıyordu (sunucu "theme-pill", istemci
+// "theme-pill header-theme-toggle" render ediyordu) — hydration uyarısına
+// yol açıyordu. inheritAttrs kapatılıp her iki kökte de elle bağlanıyor.
+defineOptions({ inheritAttrs: false })
+
 withDefaults(defineProps<{ variant?: 'header' | 'sidebar' }>(), {
     variant: 'header',
 })

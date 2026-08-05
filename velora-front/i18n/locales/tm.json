@@ -88,6 +88,23 @@
     "noFeedback": "Entek ýüzlenme ýok.",
     "sendFirstFeedback": "Ilkinji ýüzlenmäňizi iberiň",
     "resolved": "Çözüldi",
+    "tracking": {
+      "title": "Sargyt ýagdaýy",
+      "live": "Janly",
+      "step": "{total} ädimden {n}-nji",
+      "cancelledNote": "Bu sargyt ýatyryldy",
+      "notify": {
+        "title": "Velora Café",
+        "pending": "{order} sargydyňyz kabul edildi",
+        "preparing": "{order} sargydyňyz taýýarlanýar",
+        "ready": "{order} sargydyňyz taýýar!",
+        "delivered": "{order} sargydyňyz gowşuryldy. Işdäňiz açyk bolsun!",
+        "cancelled": "{order} sargydyňyz ýatyryldy",
+        "enable": "Habar ber",
+        "enabled": "Habarnamalar açyk",
+        "blocked": "Habarnamalar brauzer sazlamalarynda böwetlendi"
+      }
+    },
     "comingSoon": "Ýakynda.",
     "cancelConfirm": "Bu sargydy ýatyrmak isleýärsiňizmi?",
     "tabOrders": "Sargytlar",
@@ -449,6 +466,14 @@
       "thisWeek": "şu hepde",
       "activeFilter": "Süzgüç: {status}",
       "clearFilter": "Süzgüçi arassala",
+      "live": {
+        "title": "Velora Admin",
+        "newOrderOne": "Täze sargyt geldi",
+        "newOrders": "{n} täze sargyt geldi",
+        "statusChanged": "#{id} sargyt indi {status}",
+        "connected": "Janly",
+        "reconnecting": "Gaýtadan birigilýär…"
+      },
       "statusPage": {
         "searchPlaceholder": "{status} gözläň…",
         "filter": "Süzgüç",

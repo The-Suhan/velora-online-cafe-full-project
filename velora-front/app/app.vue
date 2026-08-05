@@ -4,6 +4,7 @@
 <template>
   <NuxtRouteAnnouncer />
   <AppLoading />
+  <AppToast />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

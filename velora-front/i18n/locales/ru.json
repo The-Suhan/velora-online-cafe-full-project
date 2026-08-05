@@ -88,6 +88,23 @@
     "noFeedback": "Обращений пока нет.",
     "sendFirstFeedback": "Отправить первое обращение",
     "resolved": "Решено",
+    "tracking": {
+      "title": "Статус заказа",
+      "live": "Онлайн",
+      "step": "Шаг {n} из {total}",
+      "cancelledNote": "Этот заказ отменён",
+      "notify": {
+        "title": "Velora Café",
+        "pending": "Ваш заказ {order} принят",
+        "preparing": "Ваш заказ {order} готовится",
+        "ready": "Ваш заказ {order} готов!",
+        "delivered": "Ваш заказ {order} доставлен. Приятного аппетита!",
+        "cancelled": "Ваш заказ {order} отменён",
+        "enable": "Уведомлять",
+        "enabled": "Уведомления вкл.",
+        "blocked": "Уведомления заблокированы в настройках браузера"
+      }
+    },
     "comingSoon": "Скоро.",
     "cancelConfirm": "Вы уверены, что хотите отменить этот заказ?",
     "tabOrders": "Заказы",
@@ -449,6 +466,14 @@
       "thisWeek": "за эту неделю",
       "activeFilter": "Фильтр: {status}",
       "clearFilter": "Сбросить фильтр",
+      "live": {
+        "title": "Velora Admin",
+        "newOrderOne": "Новый заказ",
+        "newOrders": "Новых заказов: {n}",
+        "statusChanged": "Заказ #{id} теперь {status}",
+        "connected": "Онлайн",
+        "reconnecting": "Переподключение…"
+      },
       "statusPage": {
         "searchPlaceholder": "Поиск {status}…",
         "filter": "Фильтр",
