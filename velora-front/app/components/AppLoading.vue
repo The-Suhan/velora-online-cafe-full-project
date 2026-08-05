@@ -58,7 +58,7 @@ watch(visible, (val) => {
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: var(--color-primary-deep);
+    background: var(--color-brand-surface);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -132,7 +132,7 @@ watch(visible, (val) => {
     font-family: 'Playfair Display', serif;
     font-size: 26px;
     font-weight: 600;
-    color: var(--color-surface);
+    color: var(--color-on-brand);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     margin: 24px 0 0;
@@ -168,7 +168,7 @@ watch(visible, (val) => {
 .status {
     font-family: 'Cormorant Garamond', serif;
     font-size: 11px;
-    color: rgb(var(--rgb-surface) / 0.35);
+    color: rgb(var(--rgb-on-brand) / 0.35);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     margin-top: 12px;

@@ -2,7 +2,7 @@
     <div class="min-h-screen bg-[var(--color-surface)]">
 
         <!-- Top Header -->
-        <div class="bg-[var(--color-primary-deep)] px-6 pt-8 pb-14">
+        <div class="bg-[var(--color-brand-surface)] px-6 pt-8 pb-14">
             <h1 class="text-[var(--color-brown-69)] text-3xl font-light leading-tight">
                 {{ $t('profile.welcome') }}<br />
                 <em class="text-[var(--color-accent-warm)] not-italic font-normal text-4xl">
@@ -19,9 +19,9 @@
                 <div class="flex flex-col gap-3">
 
                     <!-- Profile card -->
-                    <div class="bg-white rounded-2xl border border-[var(--color-border-warm)] p-5">
+                    <div class="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border-warm)] p-5">
                         <div
-                            class="w-16 h-16 rounded-full bg-[var(--color-primary-deep)] flex items-center justify-center text-[var(--color-accent-warm)] text-xl font-medium mx-auto mb-3">
+                            class="w-16 h-16 rounded-full bg-[var(--color-brand-surface)] flex items-center justify-center text-[var(--color-accent-warm)] text-xl font-medium mx-auto mb-3">
                             {{ initials }}
                         </div>
                         <p class="text-center text-[var(--color-primary-deep)] font-medium text-sm">{{ authUser?.name }}</p>
@@ -57,7 +57,7 @@
                 </div>
 
                 <!-- Right: Orders panel -->
-                <div class="bg-white rounded-2xl border border-[var(--color-border-warm)] overflow-hidden">
+                <div class="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border-warm)] overflow-hidden">
                     <!-- Tabs -->
                     <div class="flex border-b border-[var(--color-border-warm)] px-5">
                         <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key" :class="[
@@ -157,7 +157,7 @@
                             <button v-for="p in orders.last_page" :key="p" @click="loadOrders(p)" :class="[
                                 'w-8 h-8 rounded-lg text-xs border transition-colors',
                                 currentPage === p
-                                    ? 'bg-[var(--color-primary-deep)] text-white border-[var(--color-primary-deep)]'
+                                    ? 'bg-[var(--color-brand-surface)] text-white border-[var(--color-primary-deep)]'
                                     : 'border-[var(--color-border-warm)] text-[var(--color-muted-dark)] hover:border-[var(--color-primary-deep)] hover:text-[var(--color-primary-deep)]'
                             ]">{{ p }}</button>
                         </div>
@@ -241,7 +241,7 @@
                         <div class="flex justify-between items-center px-5 py-3">
                             <span class="text-sm font-medium text-[var(--color-primary-deep)]">{{ $t('profile.myFeedback') }}</span>
                             <button @click="showFeedbackForm = !showFeedbackForm"
-                                class="text-xs px-3 py-1.5 bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] rounded-lg hover:bg-[var(--color-coffee-16)] transition-colors">
+                                class="text-xs px-3 py-1.5 bg-[var(--color-brand-surface)] text-[var(--color-accent-warm)] rounded-lg hover:bg-[var(--color-coffee-16)] transition-colors">
                                 + {{ $t('profile.new') }}
                             </button>
                         </div>
@@ -252,7 +252,7 @@
                             <div class="flex gap-2">
                                 <button v-for="type in feedbackTypes" :key="type.key"
                                     @click="feedbackForm.type = type.key" :class="feedbackForm.type === type.key
-                                        ? 'bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)]'
+                                        ? 'bg-[var(--color-brand-surface)] text-[var(--color-accent-warm)]'
                                         : 'border border-[var(--color-border-warm)] text-[var(--color-muted-dark)] hover:border-[var(--color-primary-deep)]'"
                                     class="px-3 py-1 rounded-lg text-xs capitalize transition-colors">
                                     {{ type.label }}
@@ -260,17 +260,17 @@
                             </div>
                             <input v-model="feedbackForm.subject"
                                 :placeholder="$t('header.feedback.subjectPlaceholder')"
-                                class="w-full px-3 py-2 text-sm border border-[var(--color-border-warm)] rounded-lg outline-none focus:border-[var(--color-primary-deep)] bg-white" />
+                                class="w-full px-3 py-2 text-sm border border-[var(--color-border-warm)] rounded-lg outline-none focus:border-[var(--color-primary-deep)] bg-[var(--color-card)]" />
                             <textarea v-model="feedbackForm.message"
                                 :placeholder="$t('header.feedback.messagePlaceholder')" rows="3"
-                                class="w-full px-3 py-2 text-sm border border-[var(--color-border-warm)] rounded-lg outline-none focus:border-[var(--color-primary-deep)] bg-white resize-none" />
+                                class="w-full px-3 py-2 text-sm border border-[var(--color-border-warm)] rounded-lg outline-none focus:border-[var(--color-primary-deep)] bg-[var(--color-card)] resize-none" />
                             <div class="flex gap-2 justify-end">
                                 <button @click="showFeedbackForm = false"
                                     class="text-xs px-3 py-1.5 border border-[var(--color-border-warm)] text-[var(--color-muted-dark)] rounded-lg hover:bg-[var(--color-surface)] transition-colors">
                                     {{ $t('header.feedback.cancel') }}
                                 </button>
                                 <button @click="handleSubmitFeedback" :disabled="submittingFeedback"
-                                    class="text-xs px-3 py-1.5 bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] rounded-lg hover:bg-[var(--color-coffee-16)] transition-colors disabled:opacity-50">
+                                    class="text-xs px-3 py-1.5 bg-[var(--color-brand-surface)] text-[var(--color-accent-warm)] rounded-lg hover:bg-[var(--color-coffee-16)] transition-colors disabled:opacity-50">
                                     {{ submittingFeedback ? $t('header.feedback.sending') : $t('header.feedback.submit')
                                     }}
                                 </button>

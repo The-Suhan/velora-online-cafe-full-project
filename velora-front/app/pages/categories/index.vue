@@ -93,7 +93,7 @@ onMounted(load)
 
 /* ── Header ── */
 .page-header {
-  background: var(--color-primary-deep);
+  background: var(--color-brand-surface);
   padding: 1.75rem 1.5rem 2rem;
   position: relative;
   overflow: hidden;
@@ -118,7 +118,7 @@ onMounted(load)
   font-family: 'Georgia', serif;
   font-size: 1.85rem;
   font-weight: 700;
-  color: var(--color-surface);
+  color: var(--color-on-brand);
   margin: 0;
   letter-spacing: -0.5px;
 }
@@ -148,7 +148,7 @@ onMounted(load)
 
 /* ── Card ── */
 .category-card {
-  background: var(--color-white);
+  background: var(--color-card);
   border-radius: 16px;
   overflow: hidden;
   text-decoration: none;
@@ -327,8 +327,8 @@ onMounted(load)
 }
 
 .retry-btn {
-  background: var(--color-primary-deep);
-  color: var(--color-surface);
+  background: var(--color-brand-surface);
+  color: var(--color-on-brand);
   border: none;
   padding: 0.6rem 1.5rem;
   border-radius: 8px;
@@ -341,6 +341,6 @@ onMounted(load)
 
 .retry-btn:hover {
   background: var(--color-accent-warm);
-  color: var(--color-primary-deep);
+  color: var(--color-on-accent);
 }
 </style>

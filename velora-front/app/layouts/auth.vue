@@ -18,7 +18,7 @@
 .auth-root {
     min-height: 100vh;
     display: flex;
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     position: relative;
     overflow: hidden;
 }

@@ -346,7 +346,7 @@ const handleLogin = async () => {
 .btn-submit {
     width: 100%;
     background: var(--color-accent);
-    color: var(--color-primary);
+    color: var(--color-on-accent);
     border: none;
     border-radius: 12px;
     padding: 14px;
@@ -439,7 +439,7 @@ const handleLogin = async () => {
 
 .btn-register-outline:hover {
     background: var(--color-accent);
-    color: var(--color-primary);
+    color: var(--color-on-accent);
 }
 
 @media (max-width:480px) {

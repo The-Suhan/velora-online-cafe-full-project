@@ -532,7 +532,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .stat-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 16px;
     padding: 18px 22px;
     display: inline-flex;
@@ -583,7 +583,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 
 /* ── Table card ───────────────────────────────────────────── */
 .table-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
@@ -777,7 +777,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .role-admin {
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     color: var(--color-accent);
 }
 
@@ -828,7 +828,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
     position: absolute;
     right: 0;
     top: calc(100% + 4px);
-    background: var(--color-white);
+    background: var(--color-card);
     border: 1.5px solid var(--color-brown-88);
     border-radius: 12px;
     box-shadow: 0 8px 24px rgb(var(--rgb-primary) / 0.12);
@@ -990,7 +990,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .page-btn.active {
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     color: var(--color-accent);
     border-color: var(--color-primary);
     font-weight: 600;
@@ -1044,7 +1044,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgb(var(--rgb-primary) / 0.4);
+    background: rgb(var(--rgb-scrim) / 0.4);
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -1064,7 +1064,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .modal {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 20px;
     width: 100%;
     max-width: 400px;
@@ -1243,7 +1243,7 @@ const initials = (name: string) => name.split(' ').map(w => w[0]).join('').slice
 }
 
 .btn-primary {
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     border: none;
     border-radius: 10px;
     padding: 9px 18px;

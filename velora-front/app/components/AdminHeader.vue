@@ -7,6 +7,11 @@
             </p> -->
         </div>
         <div class="header-right">
+            <!-- Mobile only: the sidebar that normally carries the theme
+                 switch is hidden at this width. -->
+            <span class="header-theme">
+                <ThemeToggle />
+            </span>
             <LanguageSwitcher />
             <div class="header-avatar">
                 {{ initials }}
@@ -51,11 +56,21 @@ const initials = computed(() =>
     align-items: center;
     justify-content: space-between;
     padding: 16px 24px;
-    background: var(--color-white);
+    background: var(--color-card);
     border-bottom: 1px solid var(--color-brown-88);
     position: sticky;
     top: 0;
     z-index: 10;
+}
+
+.header-theme {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .header-theme {
+        display: inline-flex;
+    }
 }
 
 .greeting {
@@ -92,7 +107,7 @@ const initials = computed(() =>
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     color: var(--color-accent);
     font-size: 0.78rem;
     font-weight: 600;

@@ -271,7 +271,7 @@ const handleSend = async () => {
 .btn-submit {
     width: 100%;
     background: var(--color-accent);
-    color: var(--color-primary);
+    color: var(--color-on-accent);
     border: none;
     border-radius: 12px;
     padding: 14px;

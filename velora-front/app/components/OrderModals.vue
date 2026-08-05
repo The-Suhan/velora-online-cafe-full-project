@@ -477,7 +477,7 @@ function closeModal() {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgb(var(--rgb-primary) / .5);
+    background: rgb(var(--rgb-scrim) / .5);
     backdrop-filter: blur(3px);
     z-index: 200;
 }
@@ -491,7 +491,7 @@ function closeModal() {
     width: 92%;
     max-width: 520px;
     max-height: 92vh;
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 20px;
     box-shadow: 0 24px 60px rgb(var(--rgb-primary) / .2);
     z-index: 300;
@@ -638,7 +638,7 @@ function closeModal() {
 }
 
 .timeline-step.current .timeline-dot {
-    background: var(--color-white);
+    background: var(--color-card);
     border-color: var(--color-success);
     border-width: 3px;
     box-shadow: 0 0 0 3px rgb(var(--rgb-success) / .2);
@@ -878,7 +878,7 @@ function closeModal() {
     justify-content: space-between;
     align-items: center;
     padding: 11px 12px;
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     border-radius: 10px;
     margin-top: 8px;
     color: var(--color-accent);
@@ -1021,7 +1021,7 @@ function closeModal() {
     padding: 8px 14px;
     border: 1.5px solid var(--color-border);
     border-radius: 10px;
-    background: var(--color-white);
+    background: var(--color-card);
     font-size: 0.83rem;
     font-weight: 600;
     cursor: pointer;
@@ -1061,7 +1061,7 @@ function closeModal() {
     border-radius: 10px;
     font-size: 0.875rem;
     color: var(--color-ink);
-    background: var(--color-white);
+    background: var(--color-card);
     outline: none;
     transition: border-color .2s;
     box-sizing: border-box;
@@ -1135,7 +1135,7 @@ function closeModal() {
 }
 
 .receipt-paper {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 4px;
     padding: 26px 22px;
     max-width: 300px;
@@ -1341,7 +1341,7 @@ function closeModal() {
     padding: 9px 18px;
     border: 1.5px solid var(--color-border);
     border-radius: 10px;
-    background: var(--color-white);
+    background: var(--color-card);
     font-size: 0.86rem;
     font-weight: 600;
     color: var(--color-gray-27);
@@ -1358,7 +1358,7 @@ function closeModal() {
     padding: 9px 18px;
     border: none;
     border-radius: 10px;
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     color: var(--color-accent);
     font-size: 0.86rem;
     font-weight: 600;
@@ -1383,7 +1383,7 @@ function closeModal() {
     padding: 9px 14px;
     border: 1.5px solid var(--color-border);
     border-radius: 10px;
-    background: var(--color-white);
+    background: var(--color-card);
     font-size: 0.86rem;
     font-weight: 600;
     color: var(--color-gray-27);

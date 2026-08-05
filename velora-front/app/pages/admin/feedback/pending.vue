@@ -512,7 +512,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     padding: 8px 14px;
     border: 1.5px solid var(--color-brown-89);
     border-radius: 10px;
-    background: var(--color-white);
+    background: var(--color-card);
     color: var(--color-primary);
     font-size: 0.82rem;
     font-weight: 600;
@@ -542,7 +542,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 
 /* Table Card */
 .table-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 16px;
     box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
     overflow: hidden;
@@ -627,7 +627,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 }
 
 .type-tab.active {
-    background: var(--color-white);
+    background: var(--color-card);
     color: var(--color-primary);
     box-shadow: 0 1px 3px rgb(var(--rgb-black) / .08);
 }
@@ -770,7 +770,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     height: 30px;
     border-radius: 8px;
     border: 1.5px solid var(--color-brown-89);
-    background: var(--color-white);
+    background: var(--color-card);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -913,7 +913,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     height: 32px;
     border: 1.5px solid var(--color-brown-89);
     border-radius: 8px;
-    background: var(--color-white);
+    background: var(--color-card);
     color: var(--color-primary);
     font-size: 0.8rem;
     font-weight: 500;
@@ -931,7 +931,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 }
 
 .pg-btn.active {
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     border-color: var(--color-primary);
     color: var(--color-white);
 }
@@ -951,7 +951,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgb(var(--rgb-primary) / .45);
+    background: rgb(var(--rgb-scrim) / .45);
     backdrop-filter: blur(2px);
     z-index: 200;
 }
@@ -964,7 +964,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     width: 90%;
     max-width: 500px;
     max-height: 90vh;
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 20px;
     box-shadow: 0 24px 60px rgb(var(--rgb-primary) / .18);
     z-index: 300;
@@ -1099,7 +1099,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     padding: 9px 18px;
     border: 1.5px solid var(--color-brown-89);
     border-radius: 10px;
-    background: var(--color-white);
+    background: var(--color-card);
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-primary);
@@ -1194,7 +1194,7 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
 }
 
 .toast.success {
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     color: var(--color-white);
 }
 

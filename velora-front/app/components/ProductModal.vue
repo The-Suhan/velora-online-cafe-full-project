@@ -274,7 +274,7 @@ watch(() => props.modelValue, async (isOpen) => {
 .pm-overlay {
     position: fixed;
     inset: 0;
-    background: rgb(var(--rgb-primary-espresso) / 0.6);
+    background: rgb(var(--rgb-scrim) / 0.6);
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -332,7 +332,7 @@ watch(() => props.modelValue, async (isOpen) => {
 }
 
 .pm-close:hover {
-    background: var(--color-white);
+    background: var(--color-card);
     color: var(--color-primary-espresso);
 }
 
@@ -590,7 +590,7 @@ watch(() => props.modelValue, async (isOpen) => {
 /* ── Related card ── */
 .pm-rel-card {
     flex: 0 0 160px;
-    background: var(--color-white);
+    background: var(--color-card);
     display: flex;
     flex-direction: column;
     overflow: hidden;

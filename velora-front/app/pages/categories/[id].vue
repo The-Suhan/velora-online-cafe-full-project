@@ -161,7 +161,7 @@ onMounted(load)
 
 /* ── Header ── */
 .page-header {
-    background: var(--color-primary-deep);
+    background: var(--color-brand-surface);
     padding: 1.75rem 1.5rem 2rem;
     position: relative;
     overflow: hidden;
@@ -182,7 +182,7 @@ onMounted(load)
 .header-bg-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgb(var(--rgb-primary-deep) / 0.85) 0%, rgb(var(--rgb-primary-deep) / 0.5) 100%);
+    background: linear-gradient(135deg, rgb(var(--rgb-scrim) / 0.85) 0%, rgb(var(--rgb-scrim) / 0.5) 100%);
     pointer-events: none;
 }
 
@@ -209,7 +209,7 @@ onMounted(load)
 }
 
 .breadcrumb-link:hover {
-    color: var(--color-surface);
+    color: var(--color-on-brand);
 }
 
 .back-icon {
@@ -221,13 +221,13 @@ onMounted(load)
     font-family: 'Georgia', serif;
     font-size: 1.85rem;
     font-weight: 700;
-    color: var(--color-surface);
+    color: var(--color-on-brand);
     margin: 0 0 0.35rem;
     letter-spacing: -0.5px;
 }
 
 .page-desc {
-    color: rgb(var(--rgb-surface) / 0.7);
+    color: rgb(var(--rgb-on-brand) / 0.7);
     font-size: 0.88rem;
     margin: 0;
     font-style: italic;
@@ -278,7 +278,7 @@ onMounted(load)
 
 /* ── Sub Card ── */
 .sub-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 14px;
     overflow: hidden;
     text-decoration: none;
@@ -395,8 +395,8 @@ onMounted(load)
 }
 
 .view-products-btn {
-    background: var(--color-primary-deep);
-    color: var(--color-surface);
+    background: var(--color-brand-surface);
+    color: var(--color-on-brand);
     text-decoration: none;
     padding: 0.65rem 1.5rem;
     border-radius: 10px;
@@ -411,7 +411,7 @@ onMounted(load)
 
 .view-products-btn:hover {
     background: var(--color-accent-warm);
-    color: var(--color-primary-deep);
+    color: var(--color-on-accent);
 }
 
 /* ── Skeleton ── */

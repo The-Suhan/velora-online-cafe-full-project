@@ -154,7 +154,7 @@ const currentYear = computed(() => new Date().getFullYear())
 <style scoped>
 /* ── Footer shell ── */
 .velora-footer {
-    background: var(--color-primary-espresso);
+    background: var(--color-brand-surface);
     color: var(--color-brown-75);
     font-family: 'Lato', sans-serif;
     margin-top: auto;
@@ -219,7 +219,7 @@ const currentYear = computed(() => new Date().getFullYear())
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.4rem;
     font-weight: 400;
-    color: var(--color-surface-warm);
+    color: var(--color-on-brand);
     letter-spacing: 0.02em;
 }
 
@@ -282,7 +282,7 @@ const currentYear = computed(() => new Date().getFullYear())
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.95rem;
     font-weight: 400;
-    color: var(--color-surface-warm);
+    color: var(--color-on-brand);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin: 0 0 0.25rem;
@@ -350,7 +350,7 @@ const currentYear = computed(() => new Date().getFullYear())
     border: 1px solid rgb(var(--rgb-accent-soft) / 0.25);
     border-radius: 8px;
     text-decoration: none;
-    color: var(--color-surface-warm);
+    color: var(--color-on-brand);
     background: rgb(var(--rgb-white) / 0.04);
     transition: border-color 0.2s, background 0.2s;
 }
@@ -391,7 +391,7 @@ const currentYear = computed(() => new Date().getFullYear())
 .app-btn-name {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.95rem;
-    color: var(--color-surface-warm);
+    color: var(--color-on-brand);
     letter-spacing: 0.02em;
 }
 

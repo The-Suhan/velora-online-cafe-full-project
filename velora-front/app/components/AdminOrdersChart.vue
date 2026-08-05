@@ -48,13 +48,20 @@ const toISODate = (d: Date) => d.toISOString().split('T')[0]
 
 // ── Chart render ──────────────────────────────────────────────────
 // Chart.js paints on a canvas, which cannot resolve var(), so the tokens are
-// read out of color.css at render time instead.
+// read out of color.css at render time instead. That also means the canvas is
+// the one thing in the app a theme switch does not reach on its own — hence
+// the watch on isDark below, which repaints it with the new token values.
 const { color, alpha } = useColors()
+const { isDark } = useTheme()
+
+/** Kept so a theme switch can repaint without refetching. */
+let lastData: { labels: string[]; data: number[] } | null = null
 
 const renderChart = (data: { labels: string[]; data: number[] }) => {
     if (!chartCanvas.value) return
     if (chartInstance) chartInstance.destroy()
 
+    lastData = data
     const labels = data.labels?.length ? data.labels : []
     const values = data.data?.length ? data.data : []
 
@@ -68,7 +75,9 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                 backgroundColor: alpha('success', 0.08),
                 borderWidth: 2.5,
                 pointBackgroundColor: color('success'),
-                pointBorderColor: color('white'),
+                // Matches the card behind it, so points read as punched out of
+                // the surface rather than as white dots on a dark card.
+                pointBorderColor: color('card'),
                 pointBorderWidth: 2,
                 pointRadius: 4,
                 pointHoverRadius: 7,
@@ -84,9 +93,10 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: color('primary'),
+                    // Stays dark in both themes so the gold title holds.
+                    backgroundColor: color('brand-surface'),
                     titleColor: color('accent'),
-                    bodyColor: color('surface-alt'),
+                    bodyColor: color('on-brand'),
                     padding: 10,
                     cornerRadius: 8,
                 },
@@ -96,7 +106,9 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                     beginAtZero: true,
                     min: 0,
                     suggestedMax: 1,          
-                    grid: { color: alpha('black', 0.04) },
+                    // 'primary' inverts with the theme, so the gridlines stay
+                    // faint against the card instead of vanishing into it.
+                    grid: { color: alpha('primary', 0.09) },
                     ticks: {
                         font: { family: 'Jost', size: 11 },
                         color: color('muted'),
@@ -175,6 +187,14 @@ const onClickOutside = (e: MouseEvent) => {
     }
 }
 
+// The canvas holds baked-in pixels, so it has to be repainted by hand when the
+// tokens underneath it change.
+watch(isDark, async () => {
+    if (!lastData) return
+    await nextTick()
+    renderChart(lastData)
+})
+
 onMounted(async () => {
     await loadPeriod('weekly')
     document.addEventListener('click', onClickOutside)
@@ -244,7 +264,7 @@ onUnmounted(() => {
 
 <style scoped>
 .oc-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 16px;
     padding: 20px 24px;
     box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
@@ -295,7 +315,7 @@ onUnmounted(() => {
 }
 
 .oc-tab.active {
-    background: var(--color-white);
+    background: var(--color-card);
     color: var(--color-primary);
     font-weight: 500;
     box-shadow: 0 1px 3px rgb(var(--rgb-black) / 0.08);
@@ -346,7 +366,7 @@ onUnmounted(() => {
     z-index: 200;
     right: 0;
     top: calc(100% + 8px);
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 14px;
     box-shadow: 0 8px 32px rgb(var(--rgb-primary) / 0.14);
     overflow: hidden;
@@ -479,5 +499,35 @@ onUnmounted(() => {
 
 :deep(.vc-highlight-content-solid) {
     color: var(--color-white) !important;
+}
+
+/* v-calendar ships its own light palette, which does not know about the theme.
+   Point its surface and text at our tokens so the popup follows along. */
+:deep(.vc-container),
+:deep(.vc-pane-container),
+:deep(.vc-header) {
+    background-color: var(--color-card) !important;
+    color: var(--color-primary) !important;
+}
+
+:deep(.vc-day-content) {
+    color: var(--color-primary) !important;
+}
+
+:deep(.vc-day-content:hover) {
+    background-color: var(--color-surface-alt) !important;
+}
+
+:deep(.vc-day.is-not-in-month .vc-day-content) {
+    color: var(--color-muted-light) !important;
+}
+
+:deep(.vc-arrow) {
+    color: var(--color-primary) !important;
+    background-color: transparent !important;
+}
+
+:deep(.vc-arrow:hover) {
+    background-color: var(--color-surface-alt) !important;
 }
 </style>

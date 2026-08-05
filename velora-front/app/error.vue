@@ -49,7 +49,7 @@ const handleError = () => clearError({ redirect: '/' })
 
 .error-root {
     min-height: 100dvh;
-    background: var(--color-primary-deep);
+    background: var(--color-brand-surface);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -131,7 +131,7 @@ const handleError = () => clearError({ redirect: '/' })
     font-family: 'Playfair Display', serif;
     font-size: clamp(22px, 5vw, 30px);
     font-weight: 600;
-    color: var(--color-surface);
+    color: var(--color-on-brand);
     text-align: center;
     line-height: 1.3;
     letter-spacing: 0.02em;
@@ -143,7 +143,7 @@ const handleError = () => clearError({ redirect: '/' })
 .subtitle {
     font-size: 16px;
     font-weight: 300;
-    color: rgb(var(--rgb-surface) / 0.45);
+    color: rgb(var(--rgb-on-brand) / 0.45);
     letter-spacing: 0.06em;
     text-align: center;
     margin: 0 0 36px;

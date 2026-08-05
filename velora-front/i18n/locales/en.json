@@ -687,5 +687,10 @@
       "delivered": "Delivered",
       "cancelled": "Cancelled"
     }
+  },
+  "theme": {
+    "toggle": "Switch theme",
+    "light": "Light mode",
+    "dark": "Dark mode"
   }
 }

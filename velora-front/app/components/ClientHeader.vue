@@ -33,6 +33,9 @@
                     </svg>
                 </button>
 
+                <!-- Theme -->
+                <ThemeToggle class="header-theme-toggle" />
+
                 <!-- Language Switcher -->
                 <LanguageSwitcher class="header-lang-switcher" />
 
@@ -86,12 +89,12 @@
         <!-- Feedback Modal -->
         <Teleport to="body">
             <Transition name="fade">
-                <div v-if="feedbackOpen" class="fixed inset-0 bg-[rgb(var(--rgb-primary) / 0.45)] backdrop-blur-sm z-[200]"
+                <div v-if="feedbackOpen" class="fixed inset-0 bg-[rgb(var(--rgb-scrim)_/_0.45)] backdrop-blur-sm z-[200]"
                     @click.self="feedbackOpen = false" />
             </Transition>
 
             <Transition name="modal-pop">
-                <div v-if="feedbackOpen" class="fixed z-[201] bg-white rounded-2xl shadow-2xl w-[92%] max-w-[440px]"
+                <div v-if="feedbackOpen" class="fixed z-[201] bg-[var(--color-card)] rounded-2xl shadow-2xl w-[92%] max-w-[440px]"
                     style="top: 80px; left: 50%; transform: translateX(-50%);">
 
                     <!-- Header -->
@@ -140,8 +143,8 @@
                                 { key: 'question', label: $t('header.feedback.typeQuestion') }
                             ]" :key="t.key" @click="feedbackForm.type = t.key"
                                 :class="feedbackForm.type === t.key
-                                    ? 'bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] border-[var(--color-primary-deep)]'
-                                    : 'bg-white text-[var(--color-muted-dark)] border-[var(--color-border-warm)] hover:border-[var(--color-primary-deep)] hover:text-[var(--color-primary-deep)]'"
+                                    ? 'bg-[var(--color-brand-surface)] text-[var(--color-accent-warm)] border-[var(--color-primary-deep)]'
+                                    : 'bg-[var(--color-card)] text-[var(--color-muted-dark)] border-[var(--color-border-warm)] hover:border-[var(--color-primary-deep)] hover:text-[var(--color-primary-deep)]'"
                                 class="flex-1 py-1.5 text-xs font-medium border rounded-lg transition-colors">
                                 {{ t.label }}
                             </button>
@@ -164,7 +167,7 @@
                             </button>
                             <button @click="handleFeedbackSubmit"
                                 :disabled="submitting || !feedbackForm.subject.trim() || !feedbackForm.message.trim()"
-                                class="flex-1 py-2.5 bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] text-sm rounded-xl hover:bg-[var(--color-coffee-16)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                class="flex-1 py-2.5 bg-[var(--color-brand-surface)] text-[var(--color-accent-warm)] text-sm rounded-xl hover:bg-[var(--color-coffee-16)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                                 {{ submitting ? $t('header.feedback.sending') : $t('header.feedback.submit') }}
                             </button>
                         </div>
@@ -399,8 +402,8 @@ watch(feedbackOpen, (val) => {
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    color: var(--color-surface-warm);
-    background: var(--color-primary-black);
+    color: var(--color-on-brand);
+    background: var(--color-brand-surface);
     border-radius: 8px;
     transition: background 0.2s;
 
@@ -420,7 +423,7 @@ watch(feedbackOpen, (val) => {
     width: 18px;
     height: 18px;
     background: var(--color-brown-64);
-    color: var(--color-primary-black);
+    color: var(--color-on-accent);
     font-size: 0.65rem;
     font-weight: 700;
     border-radius: 50%;

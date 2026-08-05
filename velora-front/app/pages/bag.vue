@@ -516,8 +516,8 @@ function dismissSuccess() {
 
 .browse-btn {
     margin-top: 1rem;
-    background: var(--color-primary-deep);
-    color: var(--color-surface);
+    background: var(--color-brand-surface);
+    color: var(--color-on-brand);
     text-decoration: none;
     font-family: 'Georgia', serif;
     font-size: 0.78rem;
@@ -542,7 +542,7 @@ function dismissSuccess() {
 
 /* ── Items list ── */
 .bag-items {
-    background: var(--color-white);
+    background: var(--color-card);
     border: 1px solid rgb(var(--rgb-primary-deep) / 0.08);
     border-radius: 4px;
     overflow: hidden;
@@ -694,7 +694,7 @@ function dismissSuccess() {
 
 /* ── Summary card ── */
 .summary-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border: 1px solid rgb(var(--rgb-primary-deep) / 0.08);
     border-radius: 4px;
     padding: 1.75rem 1.5rem;
@@ -738,8 +738,8 @@ function dismissSuccess() {
 }
 
 .toggle-btn--active {
-    background: var(--color-primary-deep);
-    color: var(--color-surface);
+    background: var(--color-brand-surface);
+    color: var(--color-on-brand);
 }
 
 /* Fields */
@@ -903,7 +903,7 @@ function dismissSuccess() {
     width: 100%;
     padding: 0.85rem;
     background: var(--color-accent-warm);
-    color: var(--color-primary-deep);
+    color: var(--color-on-accent);
     border: none;
     border-radius: 4px;
     font-family: 'Georgia', serif;
@@ -943,7 +943,7 @@ function dismissSuccess() {
 .success-overlay {
     position: fixed;
     inset: 0;
-    background: rgb(var(--rgb-primary-deep) / 0.55);
+    background: rgb(var(--rgb-scrim) / 0.55);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -953,7 +953,7 @@ function dismissSuccess() {
 }
 
 .success-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 6px;
     padding: 2.5rem 2rem;
     max-width: 420px;
@@ -1018,8 +1018,8 @@ function dismissSuccess() {
 }
 
 .success-btn--primary {
-    background: var(--color-primary-deep);
-    color: var(--color-surface);
+    background: var(--color-brand-surface);
+    color: var(--color-on-brand);
 }
 
 .success-btn--primary:hover {

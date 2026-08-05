@@ -305,8 +305,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
                                     </span>
                                 </div>
 
-                                <div class="card-footer"
-                                    :class="{ 'card-footer--stacked': $t('home.addToCart').length > 12 }">
+                                <div class="card-footer">
                                     <span class="card-price">${{ Number(product.price).toFixed(2) }}</span>
 
                                     <div class="card-actions">
@@ -354,29 +353,6 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 </template>
 
 <style scoped>
-.card-footer--stacked {
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.card-footer--stacked .card-actions {
-    align-items: stretch;
-    width: 100%;
-}
-
-.card-footer--stacked .add-btn {
-    flex: 1;
-    width: 100%;
-}
-
-.card-footer--stacked .qty-ctrl {
-    width: 100%;
-}
-
-.card-footer--stacked .card-price {
-    align-self: flex-start;
-}
-
 /* ── Page ── */
 .velora-page {
     min-height: 100vh;
@@ -482,7 +458,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 }
 
 .carousel-arrow:hover {
-    background: var(--color-white);
+    background: var(--color-card);
     box-shadow: 0 4px 20px rgb(var(--rgb-primary-espresso) / 0.18);
 }
 
@@ -527,7 +503,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 .product-card {
     flex: 0 0 260px;
     width: 260px;
-    background: var(--color-white);
+    background: var(--color-card);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -709,15 +685,18 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 }
 
 /* Footer */
+/* Price on its own line, actions underneath. Explicitly a column rather than
+   a wrapping row: with wrapping, whether the buttons sat beside the price or
+   below it depended on how long the translated label happened to be, so the
+   card changed shape between languages. */
 .card-footer {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
     padding-top: 0.55rem;
     border-top: 1px solid var(--color-gold-89-2);
     margin-top: auto;
     gap: 0.4rem;
-    flex-wrap: wrap;
 }
 
 .card-price {
@@ -730,11 +709,12 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     background: var(--color-accent-soft);
     color: var(--color-white);
     border: none;
-    padding: 0.4rem 1rem;
+    padding: 0.4rem 0.7rem;
     font-family: 'Lato', sans-serif;
     font-size: 0.68rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    white-space: nowrap;
     cursor: pointer;
     transition: background 0.18s;
 }
@@ -825,7 +805,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     display: flex;
     align-items: center;
     gap: 4px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
 }
 
@@ -833,11 +813,12 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     background: transparent;
     color: var(--color-accent-soft);
     border: 1px solid var(--color-accent-soft);
-    padding: 0.4rem 0.75rem;
+    padding: 0.4rem 0.7rem;
     font-family: 'Lato', sans-serif;
     font-size: 0.68rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    white-space: nowrap;
     cursor: pointer;
     transition: background 0.18s, color 0.18s;
 }

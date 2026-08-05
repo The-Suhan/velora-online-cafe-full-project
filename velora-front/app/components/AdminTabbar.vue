@@ -76,7 +76,7 @@ const items = computed(() => [
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -90,7 +90,7 @@ const items = computed(() => [
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    color: rgb(var(--rgb-surface-warm) / 0.5);
+    color: rgb(var(--rgb-on-brand) / 0.5);
     text-decoration: none;
     flex: 1;
     transition: color 0.15s;

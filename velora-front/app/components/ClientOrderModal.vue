@@ -1,13 +1,13 @@
 <template>
     <Teleport to="body">
         <Transition name="fade">
-            <div v-if="modelValue" class="fixed inset-0 bg-[rgb(var(--rgb-primary) / 0.5)] backdrop-blur-sm z-50"
+            <div v-if="modelValue" class="fixed inset-0 bg-[rgb(var(--rgb-scrim)_/_0.5)] backdrop-blur-sm z-50"
                 @click.self="$emit('update:modelValue', false)" />
         </Transition>
 
         <Transition name="modal-slide">
             <div v-if="modelValue"
-                class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-[520px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col"
+                class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-[520px] bg-[var(--color-card)] rounded-2xl shadow-2xl z-50 flex flex-col"
                 style="max-height: min(85vh, calc(100vh - 120px)); top: calc(50% + 30px);">
 
                 <!-- Header -->
@@ -81,7 +81,7 @@
                         </div>
 
                         <!-- Total -->
-                        <div class="flex items-center justify-between bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] px-4 py-3 rounded-xl">
+                        <div class="flex items-center justify-between bg-[var(--color-brand-surface)] text-[var(--color-accent-warm)] px-4 py-3 rounded-xl">
                             <span class="text-sm font-bold">{{ $t('profile.orderDetail.total') }}</span>
                             <span class="text-lg font-semibold">${{ order.total_price.toFixed(2) }}</span>
                         </div>
@@ -111,7 +111,7 @@
                     </button>
                     <div v-else />
                     <button @click="$emit('update:modelValue', false)"
-                        class="text-sm px-5 py-2 bg-[var(--color-primary-deep)] text-[var(--color-accent-warm)] rounded-xl hover:bg-[var(--color-coffee-16)] transition-colors">
+                        class="text-sm px-5 py-2 bg-[var(--color-brand-surface)] text-[var(--color-accent-warm)] rounded-xl hover:bg-[var(--color-coffee-16)] transition-colors">
                         {{ $t('profile.orderDetail.close') }}
                     </button>
                 </div>

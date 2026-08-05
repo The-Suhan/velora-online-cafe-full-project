@@ -494,7 +494,7 @@ const formatCurrency = (n: number) =>
 }
 
 .stat-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 16px;
     padding: 18px;
     display: flex;
@@ -555,7 +555,7 @@ const formatCurrency = (n: number) =>
 
 .recent-card,
 .bottom-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
@@ -836,7 +836,7 @@ const formatCurrency = (n: number) =>
 
 /* ── Chart card ──────────────────────────────────────────── */
 .oc-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 16px;
     padding: 20px 24px;
     box-shadow: 0 1px 4px rgb(var(--rgb-primary) / 0.06);
@@ -887,7 +887,7 @@ const formatCurrency = (n: number) =>
 }
 
 .oc-tab.active {
-    background: var(--color-white);
+    background: var(--color-card);
     color: var(--color-primary);
     font-weight: 500;
     box-shadow: 0 1px 3px rgb(var(--rgb-black) / 0.08);
@@ -938,7 +938,7 @@ const formatCurrency = (n: number) =>
     z-index: 200;
     right: 0;
     top: calc(100% + 8px);
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 14px;
     box-shadow: 0 8px 32px rgb(var(--rgb-primary) / 0.14);
     overflow: hidden;

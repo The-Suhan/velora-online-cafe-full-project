@@ -16,6 +16,9 @@
             </NuxtLink>
         </nav>
 
+        <!-- Theme -->
+        <ThemeToggle variant="sidebar" />
+
         <!-- Logout -->
         <button class="sidebar-logout" @click="handleLogout">
             <span class="nav-icon">
@@ -140,7 +143,7 @@ const handleLogout = async () => {
     align-items: center;
     gap: 12px;
     padding: 11px 20px;
-    color: rgb(var(--rgb-surface-warm) / 0.65);
+    color: rgb(var(--rgb-on-brand) / 0.65);
     text-decoration: none;
     font-size: 0.88rem;
     font-weight: 400;
@@ -152,12 +155,12 @@ const handleLogout = async () => {
 
 .nav-item:hover {
     background: rgb(var(--rgb-accent) / 0.1);
-    color: var(--color-surface-warm);
+    color: var(--color-on-brand);
 }
 
 .nav-active {
     background: var(--color-success) !important;
-    color: var(--color-surface-warm) !important;
+    color: var(--color-on-brand) !important;
 }
 
 .nav-icon {
@@ -198,7 +201,7 @@ const handleLogout = async () => {
     background: none;
     border: none;
     border-top: 1px solid rgb(var(--rgb-accent) / 0.15);
-    color: rgb(var(--rgb-surface-warm) / 0.5);
+    color: rgb(var(--rgb-on-brand) / 0.5);
     font-family: 'Jost', sans-serif;
     font-size: 0.88rem;
     cursor: pointer;

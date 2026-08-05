@@ -11,8 +11,35 @@
  * Usage:
  *   color: var(--color-primary);
  *   background: rgb(var(--rgb-primary) / 0.08);   <- the same color at 8%
+ *
+ * Dark mode
+ * ---------------------------------------------------------------------------
+ * The dark theme is the same token set with different values, under
+ * [data-theme="dark"] at the bottom of this file. Because every component
+ * already reads these tokens, nothing else has to know a theme exists.
+ *
+ * Three tokens exist specifically to keep that swap honest, since a single
+ * token cannot be both "the light thing" and "the dark thing":
+ *   --color-card           page-level card surface (white in light, near-black
+ *                          in dark). Use instead of --color-white for fills.
+ *   --color-brand-surface  the dark espresso surface used by primary buttons,
+ *                          the tabbar and the auth screen. Stays dark in both
+ *                          themes, so --color-white/-accent text on it holds.
+ *   --rgb-scrim            modal backdrops. Always dark in both themes.
+ * --color-white / --color-black stay literal in both themes — they are for
+ * text and shadows on top of colored surfaces, not for page fills.
  */
 :root {
+  color-scheme: light;
+
+  /* Theme-aware surfaces — see the note above */
+  --rgb-card: 255 255 255;
+  --color-card: rgb(var(--rgb-card));
+  --rgb-brand-surface: 44 24 16;
+  --color-brand-surface: rgb(var(--rgb-brand-surface));
+  --rgb-scrim: 26 10 0;
+  --color-scrim: rgb(var(--rgb-scrim));
+
   /* Brand & semantic */
   --rgb-primary: 44 24 16;
   --color-primary: rgb(var(--rgb-primary));
@@ -279,4 +306,227 @@
 
   /* Translucent variants */
   --color-accent-soft-a33: rgb(var(--rgb-accent-soft) / 33%);
+
+  /* Text sitting on a gold/accent fill. Dark in both themes, because the fill
+     it sits on is light in both themes. */
+  --rgb-on-accent: 33 24 18;
+  --color-on-accent: rgb(var(--rgb-on-accent));
+
+  /* The mirror of the above: text and icons sitting on --color-brand-surface
+     or on an image scrim — the footer, the sidebar, the tabbar, primary
+     buttons, hero overlays. Those surfaces are dark in *both* themes, so this
+     stays light in both. Do not use --color-surface* here: those are page
+     surfaces and invert, which would turn this text black in dark mode. */
+  --rgb-on-brand: 245 240 232;
+  --color-on-brand: rgb(var(--rgb-on-brand));
+}
+
+/* ===========================================================================
+   Dark theme
+   ---------------------------------------------------------------------------
+   The same tokens, re-valued. The numeric suffixes are read as a lightness
+   scale and inverted: a token that was an L94 background becomes an L6
+   background, a token that was L26 text becomes L74 text. Any component that
+   paired "light surface + dark text" therefore ends up with "dark surface +
+   light text" without being touched.
+
+   Two groups deliberately do not invert:
+     · saturated semantics (success/danger/accent/…) stay saturated, brightened
+       just enough to hold contrast against a dark page;
+     · tokens that are already dark surfaces in light mode (coffee-7…24) or
+       already light foregrounds (brown-64…75, gold-77, red-80/89, green-72…85,
+       blue-87) keep their role — they are the "on dark" half of a pair.
+   =========================================================================== */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Theme-aware surfaces */
+  --rgb-card: 30 25 22;
+  --rgb-brand-surface: 58 43 33;
+  --rgb-scrim: 0 0 0;
+
+  /* Brand & semantic */
+  --rgb-primary: 240 234 227;
+  --rgb-primary-deep: 236 229 221;
+  --rgb-primary-espresso: 238 231 224;
+  --rgb-primary-black: 246 242 237;
+  --rgb-ink: 236 231 226;
+  --rgb-accent: 214 184 122;
+  --rgb-accent-warm: 214 184 122;
+  --rgb-accent-soft: 212 182 124;
+  --rgb-muted: 170 157 146;
+  --rgb-muted-dark: 190 177 166;
+  --rgb-muted-light: 140 128 118;
+  --rgb-surface: 34 28 25;
+  --rgb-surface-alt: 20 17 15;
+  --rgb-surface-warm: 29 24 21;
+  --rgb-surface-soft: 38 32 28;
+  --rgb-border: 58 49 44;
+  --rgb-border-warm: 68 57 50;
+  --rgb-success: 128 178 110;
+  --rgb-success-dark: 150 198 128;
+  --rgb-ready: 74 200 120;
+  --rgb-warning: 240 168 62;
+  --rgb-info: 110 165 250;
+  --rgb-danger: 238 110 110;
+  /* --rgb-white / --rgb-black stay literal: they are for text and shadows
+     sitting on colored surfaces, which do not change between themes. */
+
+  /* Coffee — 7…24 remain surfaces (lifted so they separate from the page),
+     26…33 are foregrounds and lighten */
+  --rgb-coffee-7: 17 14 12;
+  --rgb-coffee-9: 78 58 45;
+  --rgb-coffee-16: 80 60 46;
+  --rgb-coffee-17: 80 61 48;
+  --rgb-coffee-18: 82 63 52;
+  --rgb-coffee-21: 90 68 54;
+  --rgb-coffee-24: 108 78 44;
+  --rgb-coffee-24-2: 108 72 46;
+  --rgb-coffee-26: 206 182 158;
+  --rgb-coffee-29: 202 184 164;
+  --rgb-coffee-31: 232 150 84;
+  --rgb-coffee-33: 216 182 122;
+
+  /* Browns — 37…58 are foregrounds and lighten, 84…96 are surfaces and darken,
+     64…75 already sit on dark and keep their lightness */
+  --rgb-brown-37: 236 154 62;
+  --rgb-brown-38: 194 176 160;
+  --rgb-brown-40: 196 180 164;
+  --rgb-brown-41: 198 184 168;
+  --rgb-brown-43: 200 178 158;
+  --rgb-brown-43-2: 208 178 116;
+  --rgb-brown-49: 202 178 152;
+  --rgb-brown-50: 250 180 70;
+  --rgb-brown-51: 202 178 160;
+  --rgb-brown-52: 206 172 104;
+  --rgb-brown-54: 204 190 172;
+  --rgb-brown-54-2: 208 186 148;
+  --rgb-brown-58: 200 180 158;
+  --rgb-brown-58-2: 224 186 110;
+  --rgb-brown-64: 206 176 130;
+  --rgb-brown-67: 214 188 142;
+  --rgb-brown-69: 196 182 156;
+  --rgb-brown-71: 132 122 114;
+  --rgb-brown-74: 196 186 170;
+  --rgb-brown-75: 200 188 166;
+  --rgb-brown-75-2: 198 186 168;
+  --rgb-brown-84: 46 39 34;
+  --rgb-brown-86-2: 44 37 33;
+  --rgb-brown-86: 44 37 33;
+  --rgb-brown-87: 44 37 33;
+  --rgb-brown-88: 44 37 33;
+  --rgb-brown-89: 42 35 31;
+  --rgb-brown-89-2: 42 35 31;
+  --rgb-brown-89-3: 42 35 31;
+  --rgb-brown-90: 40 34 30;
+  --rgb-brown-91: 40 34 30;
+  --rgb-brown-94-2: 38 32 29;
+  --rgb-brown-94: 38 32 29;
+  --rgb-brown-96: 36 31 28;
+
+  /* Golds & ambers */
+  --rgb-gold-30: 214 176 100;
+  --rgb-gold-31: 220 182 96;
+  --rgb-gold-77: 250 224 140;
+  --rgb-gold-78: 236 208 148;
+  --rgb-gold-80: 60 54 46;
+  --rgb-gold-89: 58 44 20;
+  --rgb-gold-89-2: 56 46 32;
+  --rgb-gold-95: 50 40 22;
+  --rgb-gold-96: 52 42 24;
+
+  /* Reds — 32…60 are text/fills, 80/89 already sit on dark, 94…98 are tints */
+  --rgb-red-32: 236 118 118;
+  --rgb-red-35: 238 124 124;
+  --rgb-red-42: 224 96 96;
+  --rgb-red-46: 238 130 116;
+  --rgb-red-54: 240 140 128;
+  --rgb-red-60: 226 96 96;
+  --rgb-red-80: 240 168 168;
+  --rgb-red-89: 244 176 176;
+  --rgb-red-94: 58 28 28;
+  --rgb-red-95: 56 27 27;
+  --rgb-red-95-2: 58 30 29;
+  --rgb-red-97: 52 25 25;
+  --rgb-red-98: 50 24 24;
+
+  /* Greens */
+  --rgb-green-20: 34 56 32;
+  --rgb-green-24: 126 200 140;
+  --rgb-green-26: 38 60 36;
+  --rgb-green-26-2: 132 202 132;
+  --rgb-green-40: 62 96 56;
+  --rgb-green-44: 150 200 120;
+  --rgb-green-72: 168 210 168;
+  --rgb-green-80: 178 214 172;
+  --rgb-green-85: 170 224 186;
+  --rgb-green-92: 28 48 34;
+  --rgb-green-93: 28 50 35;
+  --rgb-green-93-2: 28 48 34;
+  --rgb-green-94-2: 26 46 32;
+  --rgb-green-94: 26 46 32;
+  --rgb-green-95: 26 46 32;
+  --rgb-green-97: 24 44 30;
+
+  /* Blues */
+  --rgb-blue-48: 122 172 250;
+  --rgb-blue-53: 110 160 248;
+  --rgb-blue-87: 180 210 250;
+  --rgb-blue-93: 26 40 62;
+  --rgb-blue-97: 24 37 58;
+
+  /* Neutrals */
+  --rgb-gray-27: 214 210 205;
+  --rgb-gray-46: 168 162 156;
+  --rgb-gray-65: 132 128 124;
+  --rgb-gray-84: 84 80 76;
+  --rgb-gray-94: 42 38 35;
+  --rgb-gray-96: 40 36 33;
+  --rgb-gray-97: 38 34 31;
+  --rgb-gray-97-2: 38 34 31;
+  --rgb-gray-98: 36 32 30;
+  --rgb-gray-98-2: 36 32 30;
+}
+
+/* ---------------------------------------------------------------------------
+   Literal Tailwind color utilities.
+   A handful of spots reach for Tailwind's own palette instead of a token.
+   Rather than rewrite them, re-point them in dark mode. The attribute selector
+   outweighs the plain utility class, so these win without !important.
+   --------------------------------------------------------------------------- */
+[data-theme="dark"] .bg-red-50 { background-color: rgb(58 28 28); }
+[data-theme="dark"] .bg-green-50 { background-color: rgb(28 48 34); }
+[data-theme="dark"] .bg-amber-50 { background-color: rgb(56 44 22); }
+[data-theme="dark"] .bg-blue-50 { background-color: rgb(26 40 62); }
+[data-theme="dark"] .bg-gray-100 { background-color: rgb(42 38 35); }
+[data-theme="dark"] .text-red-500 { color: rgb(240 128 128); }
+[data-theme="dark"] .text-red-600 { color: rgb(238 118 118); }
+[data-theme="dark"] .text-green-700 { color: rgb(132 202 140); }
+[data-theme="dark"] .text-amber-700 { color: rgb(236 176 84); }
+[data-theme="dark"] .text-blue-600 { color: rgb(122 172 250); }
+[data-theme="dark"] .text-blue-700 { color: rgb(122 172 250); }
+[data-theme="dark"] .text-gray-600 { color: rgb(168 162 156); }
+[data-theme="dark"] .border-red-100 { border-color: rgb(70 36 36); }
+[data-theme="dark"] .border-red-200 { border-color: rgb(84 42 42); }
+[data-theme="dark"] .border-green-200 { border-color: rgb(44 72 48); }
+
+/* ---------------------------------------------------------------------------
+   Theme switch animation. Applied to <html> for the length of the swap only —
+   leaving it on permanently would put a transition on every hover in the app.
+   --------------------------------------------------------------------------- */
+.theme-switching,
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: background-color 0.28s ease, border-color 0.28s ease,
+    color 0.28s ease, fill 0.28s ease, stroke 0.28s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-switching,
+  .theme-switching *,
+  .theme-switching *::before,
+  .theme-switching *::after {
+    transition: none !important;
+  }
 }

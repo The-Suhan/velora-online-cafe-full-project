@@ -55,6 +55,17 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      script: [
+        {
+          // Runs before first paint, so the page never renders in light mode
+          // and then snaps to dark. Kept inline and dependency-free for the
+          // same reason — anything async would be too late.
+          innerHTML: `(function(){try{var t=localStorage.getItem('velora-theme');`
+            + `if(!t)t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';`
+            + `document.documentElement.dataset.theme=t;}catch(e){}})();`,
+          tagPosition: 'head',
+        }
+      ],
       link: [
         // Preconnect so the font CSS and the font files themselves don't each
         // pay for a fresh DNS + TLS handshake.

@@ -99,8 +99,8 @@ const { totalCount } = useCart()
     letter-spacing: 0.06em;
     text-transform: uppercase;
     padding: 0.65rem 0.9rem;
-    background: var(--color-primary-black);
-    color: var(--color-surface-warm);
+    background: var(--color-brand-surface);
+    color: var(--color-on-brand);
     border-radius: 8px;
     margin-top: 0.25rem;
     transition: background 0.15s;
@@ -115,7 +115,7 @@ const { totalCount } = useCart()
     width: 20px;
     height: 20px;
     background: var(--color-brown-64);
-    color: var(--color-primary-black);
+    color: var(--color-on-accent);
     font-size: 0.7rem;
     font-weight: 700;
     border-radius: 50%;

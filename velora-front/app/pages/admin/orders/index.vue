@@ -462,7 +462,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
     border-radius: 10px;
     font-size: 0.84rem;
     width: 220px;
-    background: var(--color-white);
+    background: var(--color-card);
     outline: none;
     color: var(--color-ink);
     font-family: 'Jost', sans-serif;
@@ -484,7 +484,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
     padding: 9px 14px;
     border: 1.5px solid var(--color-border);
     border-radius: 10px;
-    background: var(--color-white);
+    background: var(--color-card);
     font-size: 0.84rem;
     color: var(--color-gray-27);
     cursor: pointer;
@@ -501,7 +501,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
     right: 0;
     top: calc(100% + 6px);
     z-index: 80;
-    background: var(--color-white);
+    background: var(--color-card);
     border: 1.5px solid var(--color-border);
     border-radius: 12px;
     padding: 16px;
@@ -585,7 +585,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
 }
 
 .stat-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border: 1.5px solid var(--color-gray-94);
     border-radius: 14px;
     padding: 14px 12px;
@@ -716,7 +716,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
 
 /* ── Table Card ─────────────────────────────────────────────── */
 .table-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border: 1.5px solid var(--color-gray-94);
     border-radius: 14px;
     box-shadow: 0 1px 4px rgb(var(--rgb-primary) / .04);
@@ -736,7 +736,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     color: var(--color-white);
     font-size: 0.76rem;
     font-weight: 600;
@@ -942,7 +942,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
     padding: 5px 11px;
     border: 1.5px solid var(--color-border);
     border-radius: 8px;
-    background: var(--color-white);
+    background: var(--color-card);
     font-size: 0.76rem;
     font-weight: 600;
     color: var(--color-primary);
@@ -962,7 +962,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
     padding: 5px 10px;
     border: 1.5px solid var(--color-border);
     border-radius: 8px;
-    background: var(--color-white);
+    background: var(--color-card);
     font-size: 0.76rem;
     font-weight: 600;
     color: var(--color-primary);
@@ -981,7 +981,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
     height: 30px;
     border: 1.5px solid var(--color-border);
     border-radius: 8px;
-    background: var(--color-white);
+    background: var(--color-card);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1001,7 +1001,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
 
 .dropdown-menu {
     position: fixed;
-    background: var(--color-white);
+    background: var(--color-card);
     border: 1.5px solid var(--color-border);
     border-radius: 10px;
     box-shadow: 0 8px 24px rgb(var(--rgb-black) / .12);
@@ -1244,7 +1244,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
     height: 32px;
     border: 1.5px solid var(--color-border);
     border-radius: 8px;
-    background: var(--color-white);
+    background: var(--color-card);
     color: var(--color-gray-27);
     font-size: 0.82rem;
     font-weight: 500;
@@ -1262,7 +1262,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
 }
 
 .pg-btn.active {
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     border-color: var(--color-primary);
     color: var(--color-white);
 }
@@ -1296,7 +1296,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
 }
 
 .toast.success {
-    background: var(--color-primary);
+    background: var(--color-brand-surface);
     color: var(--color-accent);
 }
 

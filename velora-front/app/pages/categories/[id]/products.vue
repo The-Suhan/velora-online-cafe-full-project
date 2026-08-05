@@ -243,7 +243,7 @@ watch(categoryId, loadData)
                         </span>
                     </div>
 
-                    <div class="card-footer" :class="{ 'card-footer--stacked': $t('home.addToCart').length > 12 }">
+                    <div class="card-footer">
                         <span class="card-price">${{ Number(product.price).toFixed(2) }}</span>
 
                         <div class="card-actions">
@@ -279,29 +279,6 @@ watch(categoryId, loadData)
 </template>
 
 <style scoped>
-.card-footer--stacked {
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.card-footer--stacked .card-actions {
-    width: 100%;
-    align-items: stretch;
-}
-
-.card-footer--stacked .add-btn {
-    flex: 1;
-    width: 100%;
-}
-
-.card-footer--stacked .qty-ctrl {
-    width: 100%;
-}
-
-.card-footer--stacked .card-price {
-    align-self: flex-start;
-}
-
 /* ── Page ── */
 .velora-cat-page {
     min-height: 100vh;
@@ -312,7 +289,7 @@ watch(categoryId, loadData)
 
 /* ── Header ── */
 .page-header {
-    background: var(--color-primary-espresso);
+    background: var(--color-brand-surface);
     padding: 1.75rem 3.5rem 2rem;
     position: relative;
     overflow: hidden;
@@ -333,7 +310,7 @@ watch(categoryId, loadData)
 .header-bg-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgb(var(--rgb-primary-espresso) / 0.85) 0%, rgb(var(--rgb-primary-espresso) / 0.5) 100%);
+    background: linear-gradient(135deg, rgb(var(--rgb-scrim) / 0.85) 0%, rgb(var(--rgb-scrim) / 0.5) 100%);
     pointer-events: none;
 }
 
@@ -361,7 +338,7 @@ watch(categoryId, loadData)
 }
 
 .breadcrumb-link:hover {
-    color: var(--color-surface-warm);
+    color: var(--color-on-brand);
 }
 
 .back-icon {
@@ -373,7 +350,7 @@ watch(categoryId, loadData)
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 2.4rem;
     font-weight: 400;
-    color: var(--color-surface-warm);
+    color: var(--color-on-brand);
     margin: 0 0 0.25rem;
     letter-spacing: 0.01em;
     min-height: 2.9rem;
@@ -381,7 +358,7 @@ watch(categoryId, loadData)
 
 .page-subtitle {
     font-size: 0.7rem;
-    color: rgb(var(--rgb-surface-warm) / 0.65);
+    color: rgb(var(--rgb-on-brand) / 0.65);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     margin: 0;
@@ -454,7 +431,7 @@ watch(categoryId, loadData)
 
 /* ── Card ── */
 .product-card {
-    background: var(--color-white);
+    background: var(--color-card);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -603,10 +580,11 @@ watch(categoryId, loadData)
 }
 
 /* Footer */
+/* Price on its own line, actions underneath — see the note in index.vue. */
 .card-footer {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
     padding-top: 0.55rem;
     border-top: 1px solid var(--color-gold-89-2);
     margin-top: auto;
@@ -623,7 +601,7 @@ watch(categoryId, loadData)
     display: flex;
     align-items: center;
     gap: 4px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
 }
 
@@ -631,11 +609,12 @@ watch(categoryId, loadData)
     background: transparent;
     color: var(--color-accent-soft);
     border: 1px solid var(--color-accent-soft);
-    padding: 0.4rem 0.75rem;
+    padding: 0.4rem 0.7rem;
     font-family: 'Lato', sans-serif;
     font-size: 0.68rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    white-space: nowrap;
     cursor: pointer;
     transition: background 0.18s, color 0.18s;
 }
@@ -649,11 +628,12 @@ watch(categoryId, loadData)
     background: var(--color-accent-soft);
     color: var(--color-white);
     border: none;
-    padding: 0.4rem 1rem;
+    padding: 0.4rem 0.7rem;
     font-family: 'Lato', sans-serif;
     font-size: 0.68rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    white-space: nowrap;
     cursor: pointer;
     transition: background 0.18s;
 }

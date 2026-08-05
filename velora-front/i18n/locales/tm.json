@@ -687,5 +687,10 @@
       "delivered": "Eltildi",
       "cancelled": "Ýatyryldy"
     }
+  },
+  "theme": {
+    "toggle": "Temany çalyşmak",
+    "light": "Ýagty tema",
+    "dark": "Garaňky tema"
   }
 }

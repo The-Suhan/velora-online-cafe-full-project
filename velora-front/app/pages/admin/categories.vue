@@ -1217,7 +1217,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     border-radius: 10px;
     font-size: 0.85rem;
     width: 220px;
-    background: var(--color-white);
+    background: var(--color-card);
     transition: border-color .2s;
     outline: none;
     color: var(--color-ink);
@@ -1255,7 +1255,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     display: inline-flex;
     align-items: center;
     gap: 16px;
-    background: var(--color-white);
+    background: var(--color-card);
     border: 1.5px solid var(--color-gray-94);
     border-radius: 14px;
     padding: 18px 24px;
@@ -1302,7 +1302,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 }
 
 .table-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border: 1.5px solid var(--color-gray-94);
     border-radius: 14px;
     box-shadow: 0 1px 4px rgb(var(--rgb-black) / .04);
@@ -1438,7 +1438,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     height: 32px;
     border: 1.5px solid var(--color-border);
     border-radius: 8px;
-    background: var(--color-white);
+    background: var(--color-card);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1462,7 +1462,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     height: 32px;
     border: 1.5px solid var(--color-border);
     border-radius: 8px;
-    background: var(--color-white);
+    background: var(--color-card);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1478,7 +1478,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 
 .dropdown-menu {
     position: fixed;
-    background: var(--color-white);
+    background: var(--color-card);
     border: 1.5px solid var(--color-border);
     border-radius: 10px;
     box-shadow: 0 8px 24px rgb(var(--rgb-black) / .12);
@@ -1563,7 +1563,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     padding: 14px 10px;
     border: 2px solid var(--color-border);
     border-radius: 12px;
-    background: var(--color-white);
+    background: var(--color-card);
     cursor: pointer;
     transition: all .2s;
     text-align: center;
@@ -1610,7 +1610,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     border-radius: 10px;
     font-size: 0.875rem;
     color: var(--color-ink);
-    background: var(--color-white);
+    background: var(--color-card);
     outline: none;
     appearance: none;
     -webkit-appearance: none;
@@ -1800,7 +1800,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     height: 34px;
     border: 1.5px solid var(--color-border);
     border-radius: 8px;
-    background: var(--color-white);
+    background: var(--color-card);
     color: var(--color-gray-27);
     font-size: 0.83rem;
     font-weight: 500;
@@ -1935,7 +1935,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     width: 90%;
     max-width: 480px;
     max-height: 90vh;
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: 18px;
     box-shadow: 0 24px 60px rgb(var(--rgb-black) / .18);
     z-index: 300;
@@ -2027,7 +2027,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     border-radius: 10px;
     font-size: 0.875rem;
     color: var(--color-ink);
-    background: var(--color-white);
+    background: var(--color-card);
     outline: none;
     transition: border-color .2s;
     box-sizing: border-box;
@@ -2143,7 +2143,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: var(--color-white);
+    background: var(--color-card);
     box-shadow: 0 1px 3px rgb(var(--rgb-black) / .2);
     transition: transform .25s;
 }
@@ -2156,7 +2156,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
     padding: 9px 18px;
     border: 1.5px solid var(--color-border);
     border-radius: 10px;
-    background: var(--color-white);
+    background: var(--color-card);
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-gray-27);
@@ -2447,7 +2447,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 }
 
 .toast.success {
-    background: var(--color-ink);
+    background: var(--color-brand-surface);
     color: var(--color-white);
 }
 
