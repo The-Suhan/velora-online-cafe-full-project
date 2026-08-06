@@ -288,6 +288,9 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
                                 <span v-if="product.category?.name" class="card-badge">
                                     {{ product.category.name }}
                                 </span>
+                                <span v-if="product.has_discount" class="discount-badge">
+                                    -{{ product.discount_percent }}%
+                                </span>
                             </div>
 
                             <!-- Body -->
@@ -306,7 +309,12 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
                                 </div>
 
                                 <div class="card-footer">
-                                    <span class="card-price">${{ Number(product.price).toFixed(2) }}</span>
+                                    <span v-if="product.has_discount" class="card-price card-price--discount">
+                                        <span class="card-price-old">${{ Number(product.price).toFixed(2) }}</span>
+                                        <span class="card-price-new">${{ Number(product.final_price).toFixed(2)
+                                            }}</span>
+                                    </span>
+                                    <span v-else class="card-price">${{ Number(product.price).toFixed(2) }}</span>
 
                                     <div class="card-actions">
                                         <button class="detail-btn" @click.stop="openModal(product)">
@@ -602,6 +610,39 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     text-transform: uppercase;
     padding: 3px 10px;
     font-family: 'Lato', sans-serif;
+}
+
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    background: var(--color-danger, #c0392b);
+    color: var(--color-white);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 4px 9px;
+    border-radius: 3px;
+    font-family: 'Lato', sans-serif;
+    z-index: 2;
+}
+
+.card-price--discount {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.card-price-old {
+    font-size: 0.85rem;
+    color: var(--color-brown-51);
+    text-decoration: line-through;
+    font-family: 'Lato', sans-serif;
+}
+
+.card-price-new {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    color: var(--color-danger, #c0392b);
 }
 
 /* Body */

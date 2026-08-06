@@ -27,6 +27,16 @@ class ProductController extends Controller
             $query->where('is_active', filter_var($request->query('is_active'), FILTER_VALIDATE_BOOLEAN));
         }
 
+        if ($request->has('on_discount') && $request->query('on_discount') !== '') {
+            if (filter_var($request->query('on_discount'), FILTER_VALIDATE_BOOLEAN)) {
+                $query->whereNotNull('discount_percent')->where('discount_percent', '>', 0);
+            } else {
+                $query->where(function ($q) {
+                    $q->whereNull('discount_percent')->orWhere('discount_percent', 0);
+                });
+            }
+        }
+
         $perPage = (int) $request->query('per_page', 8);
 
         if ($request->query('sort_by') === 'avg_rating') {
@@ -83,6 +93,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:200|unique:products,name',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
+            'discount_percent' => 'nullable|integer|min:0|max:99',
             'is_active' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'translations' => 'nullable|array',
@@ -107,6 +118,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'discount_percent' => $request->filled('discount_percent') ? $request->discount_percent : null,
             'is_active' => $request->boolean('is_active', true),
             'image_url' => $imageUrl,
         ]);
@@ -133,6 +145,7 @@ class ProductController extends Controller
             'name' => 'sometimes|string|max:200|unique:products,name,'.$product->id,
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
+            'discount_percent' => 'nullable|integer|min:0|max:99',
             'is_active' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'translations' => 'nullable|array',
@@ -154,6 +167,13 @@ class ProductController extends Controller
 
         if ($request->has('is_active')) {
             $data['is_active'] = $request->boolean('is_active');
+        }
+
+        // discount_percent is intentionally allowed to be set to null here
+        // (clearing the field on the form removes the discount), so it can't
+        // go through the array_filter() above like the other fields.
+        if ($request->has('discount_percent')) {
+            $data['discount_percent'] = $request->filled('discount_percent') ? (int) $request->discount_percent : null;
         }
 
         if ($request->hasFile('image')) {
@@ -209,6 +229,26 @@ class ProductController extends Controller
         ]);
     }
 
+    public function setDiscount(Request $request, Product $product): JsonResponse
+    {
+        $request->validate([
+            'discount_percent' => 'nullable|integer|min:0|max:99',
+        ]);
+
+        $product->update([
+            'discount_percent' => $request->filled('discount_percent') ? (int) $request->discount_percent : null,
+        ]);
+
+        return response()->json($this->formatProduct($product));
+    }
+
+    public function removeDiscount(Product $product): JsonResponse
+    {
+        $product->update(['discount_percent' => null]);
+
+        return response()->json($this->formatProduct($product));
+    }
+
     public function translations(Product $product): JsonResponse
     {
         return response()->json($product->translations->keyBy('locale'));
@@ -235,6 +275,9 @@ class ProductController extends Controller
             'name' => $p->name,
             'description' => $p->description,
             'price' => (float) $p->price,
+            'discount_percent' => $p->discount_percent,
+            'has_discount' => $p->hasDiscount(),
+            'final_price' => $p->final_price,
             'image_url' => $p->image_url,
             'is_active' => $p->is_active,
             'avg_rating' => (float) $p->avg_rating,

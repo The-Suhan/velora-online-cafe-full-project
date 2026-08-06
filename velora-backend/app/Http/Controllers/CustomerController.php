@@ -344,7 +344,7 @@ class CustomerController extends Controller
         $productIds = collect($request->items)->pluck('product_id')->unique();
         $products = Product::whereIn('id', $productIds)
             ->where('is_active', true)
-            ->get(['id', 'price'])
+            ->get(['id', 'price', 'discount_percent'])
             ->keyBy('id');
 
         // Pasif/silinmiş ürün kontrolü
@@ -363,13 +363,17 @@ class CustomerController extends Controller
 
             foreach ($request->items as $item) {
                 $product = $products[$item['product_id']];
-                $subtotal = $product->price * $item['quantity'];
+                // Charge whatever the product's current discounted price is —
+                // the price actually shown to the customer in the menu/cart —
+                // so orders always reflect the price paid at checkout time.
+                $unitPrice = $product->final_price;
+                $subtotal = round($unitPrice * $item['quantity'], 2);
                 $totalPrice += $subtotal;
 
                 $orderItems[] = [
                     'product_id' => $product->id,
                     'quantity' => $item['quantity'],
-                    'price' => $product->price,
+                    'price' => $unitPrice,
                     'subtotal' => $subtotal,
                 ];
             }
@@ -490,6 +494,9 @@ class CustomerController extends Controller
             'name' => $p->name,
             'description' => $p->description,
             'price' => (float) $p->price,
+            'discount_percent' => $p->discount_percent,
+            'has_discount' => $p->hasDiscount(),
+            'final_price' => $p->final_price,
             'image_url' => $p->image_url,
             'avg_rating' => (float) $p->avg_rating,
             'category' => $p->category ? [

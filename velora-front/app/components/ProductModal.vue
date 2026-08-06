@@ -153,6 +153,9 @@ watch(() => props.modelValue, async (isOpen) => {
                             @click="lightboxOpen = true">
                             <img v-if="activeProduct.image_url" :src="resolveUrl(activeProduct.image_url)"
                                 :alt="displayName(activeProduct)" class="pm-img" draggable="false" />
+                            <span v-if="activeProduct.has_discount" class="pm-discount-badge">
+                                -{{ activeProduct.discount_percent }}%
+                            </span>
                             <div class="pm-zoom-hint">{{ $t('productModal.clickToZoom') }}</div>
                         </div>
 
@@ -193,7 +196,12 @@ watch(() => props.modelValue, async (isOpen) => {
 
                             <!-- Price + cart -->
                             <div class="pm-footer">
-                                <span class="pm-price">${{ Number(activeProduct.price).toFixed(2) }}</span>
+                                <span v-if="activeProduct.has_discount" class="pm-price pm-price--discount">
+                                    <span class="pm-price-old">${{ Number(activeProduct.price).toFixed(2) }}</span>
+                                    <span class="pm-price-new">${{ Number(activeProduct.final_price).toFixed(2)
+                                        }}</span>
+                                </span>
+                                <span v-else class="pm-price">${{ Number(activeProduct.price).toFixed(2) }}</span>
 
                                 <button v-if="!cartItem(activeProduct.id)" @click="addItem(activeProduct)"
                                     class="pm-add-btn">
@@ -232,10 +240,17 @@ watch(() => props.modelValue, async (isOpen) => {
                                 <div class="pm-rel-img" :style="{ background: cardGradient(rp.id) }">
                                     <img v-if="rp.image_url" :src="resolveUrl(rp.image_url)" :alt="displayName(rp)"
                                         class="pm-rel-img-el" draggable="false" loading="lazy" />
+                                    <span v-if="rp.has_discount" class="pm-rel-discount-badge">
+                                        -{{ rp.discount_percent }}%
+                                    </span>
                                 </div>
                                 <div class="pm-rel-body">
                                     <p class="pm-rel-name">{{ displayName(rp) }}</p>
-                                    <p class="pm-rel-price">${{ Number(rp.price).toFixed(2) }}</p>
+                                    <p v-if="rp.has_discount" class="pm-rel-price pm-rel-price--discount">
+                                        <span class="pm-rel-price-old">${{ Number(rp.price).toFixed(2) }}</span>
+                                        <span class="pm-rel-price-new">${{ Number(rp.final_price).toFixed(2) }}</span>
+                                    </p>
+                                    <p v-else class="pm-rel-price">${{ Number(rp.price).toFixed(2) }}</p>
                                     <button v-if="!cartItem(rp.id)" @click.stop="addItem(rp)" class="pm-rel-add"
                                         :aria-label="$t('productModal.relatedAdd') + ' ' + displayName(rp)">
                                         {{ $t('productModal.relatedAdd') }}
@@ -360,6 +375,21 @@ watch(() => props.modelValue, async (isOpen) => {
 
 .pm-img-col:hover .pm-img {
     transform: scale(1.04);
+}
+
+.pm-discount-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: var(--color-danger, #c0392b);
+    color: var(--color-white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 5px 11px;
+    border-radius: 3px;
+    font-family: 'Lato', sans-serif;
+    z-index: 2;
 }
 
 .pm-zoom-hint {
@@ -504,6 +534,22 @@ watch(() => props.modelValue, async (isOpen) => {
     color: var(--color-primary-espresso);
 }
 
+.pm-price--discount {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.pm-price-old {
+    font-size: 1.1rem;
+    color: var(--color-brown-51);
+    text-decoration: line-through;
+}
+
+.pm-price-new {
+    color: var(--color-danger, #c0392b);
+}
+
 .pm-add-btn {
     background: var(--color-accent-soft);
     color: var(--color-white);
@@ -605,9 +651,24 @@ watch(() => props.modelValue, async (isOpen) => {
 }
 
 .pm-rel-img {
+    position: relative;
     height: 100px;
     overflow: hidden;
     flex-shrink: 0;
+}
+
+.pm-rel-discount-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: var(--color-danger, #c0392b);
+    color: var(--color-white);
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Lato', sans-serif;
+    z-index: 2;
 }
 
 .pm-rel-img-el {
@@ -645,6 +706,22 @@ watch(() => props.modelValue, async (isOpen) => {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.85rem;
     color: var(--color-accent-soft);
+}
+
+.pm-rel-price--discount {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.pm-rel-price-old {
+    font-size: 0.7rem;
+    color: var(--color-brown-51);
+    text-decoration: line-through;
+}
+
+.pm-rel-price-new {
+    color: var(--color-danger, #c0392b);
 }
 
 .pm-rel-add {

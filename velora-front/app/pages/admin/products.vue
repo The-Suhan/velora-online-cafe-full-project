@@ -40,6 +40,17 @@
                                 <label><input v-model="filterActive" type="radio" value="false" @change="applyFilter" />
                                     {{ $t('admin.products.statusInactive') }}</label>
                             </div>
+                            <p class="filter-label mt">{{ $t('admin.products.filterDiscount') }}</p>
+                            <div class="filter-radio">
+                                <label><input v-model="filterDiscount" type="radio" value="" @change="applyFilter" />
+                                    {{ $t('admin.products.allDiscount') }}</label>
+                                <label><input v-model="filterDiscount" type="radio" value="true"
+                                        @change="applyFilter" />
+                                    {{ $t('admin.products.onDiscount') }}</label>
+                                <label><input v-model="filterDiscount" type="radio" value="false"
+                                        @change="applyFilter" />
+                                    {{ $t('admin.products.noDiscount') }}</label>
+                            </div>
                             <p class="filter-label mt">{{ $t('admin.products.sortByRating') }}</p>
                             <div class="filter-radio">
                                 <label><input v-model="sortBy" type="radio" value="" @change="applyFilter" />
@@ -139,7 +150,14 @@
                                 <span v-if="p.category" class="cat-badge">{{ p.category.name }}</span>
                                 <span v-else class="text-muted">—</span>
                             </td>
-                            <td class="price-td">${{ p.price.toFixed(2) }}</td>
+                            <td class="price-td">
+                                <template v-if="p.has_discount">
+                                    <span class="price-old">${{ p.price.toFixed(2) }}</span>
+                                    <span class="price-discounted">${{ p.final_price.toFixed(2) }}</span>
+                                    <span class="discount-badge">-{{ p.discount_percent }}%</span>
+                                </template>
+                                <template v-else>${{ p.price.toFixed(2) }}</template>
+                            </td>
                             <td>
                                 <div class="stars-row">
                                     <span v-for="s in 5" :key="s" class="star"
@@ -180,6 +198,14 @@
                                                 </svg>
                                                 {{ $t('admin.common.preview') }}
                                             </button>
+                                            <button v-if="p.has_discount" class="dropdown-item"
+                                                @click="handleRemoveDiscount(p)">
+                                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
+                                                    stroke-width="1.8" width="14" height="14">
+                                                    <path d="M5 5l10 10M15 5L5 15" stroke-linecap="round" />
+                                                </svg>
+                                                {{ $t('admin.products.removeDiscount') }}
+                                            </button>
                                             <button class="dropdown-item danger" @click="openDeleteModal(p)">
                                                 <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
                                                     stroke-width="1.8" width="14" height="14">
@@ -212,7 +238,15 @@
                             </div>
                             <div>
                                 <p class="prod-name">{{ displayName(p) }}</p>
-                                <p class="prod-desc">{{ p.category?.name ?? '—' }} · ${{ p.price.toFixed(2) }}</p>
+                                <p class="prod-desc">
+                                    {{ p.category?.name ?? '—' }} ·
+                                    <template v-if="p.has_discount">
+                                        <span class="price-old">${{ p.price.toFixed(2) }}</span>
+                                        <span class="price-discounted">${{ p.final_price.toFixed(2) }}</span>
+                                        <span class="discount-badge">-{{ p.discount_percent }}%</span>
+                                    </template>
+                                    <template v-else>${{ p.price.toFixed(2) }}</template>
+                                </p>
                                 <span class="status-badge mt-1" :class="p.is_active ? 'active' : 'inactive'">
                                     {{ p.is_active ? $t('admin.common.active') : $t('admin.common.inactive') }}
                                 </span>
@@ -243,6 +277,14 @@
                                             <circle cx="10" cy="10" r="2.5" />
                                         </svg>
                                         {{ $t('admin.common.preview') }}
+                                    </button>
+                                    <button v-if="p.has_discount" class="dropdown-item"
+                                        @click="handleRemoveDiscount(p)">
+                                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"
+                                            width="14" height="14">
+                                            <path d="M5 5l10 10M15 5L5 15" stroke-linecap="round" />
+                                        </svg>
+                                        {{ $t('admin.products.removeDiscount') }}
                                     </button>
                                     <button class="dropdown-item danger" @click="openDeleteModal(p)">
                                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -362,6 +404,20 @@
                             </select>
                             <p v-if="formErrors.category_id" class="form-error">{{ formErrors.category_id }}</p>
                         </div>
+                    </div>
+
+                    <!-- Discount -->
+                    <div class="form-group">
+                        <label class="form-label">{{ $t('admin.products.discountLabel') }}</label>
+                        <div class="discount-input-row">
+                            <input v-model="form.discount_percent" type="number" step="1" min="0" max="99"
+                                class="form-input" :placeholder="$t('admin.products.discountPlaceholder')" />
+                            <span v-if="formFinalPrice !== null" class="discount-new-price">
+                                {{ $t('admin.products.newPriceLabel') }}: <strong>${{ formFinalPrice.toFixed(2)
+                                    }}</strong>
+                            </span>
+                        </div>
+                        <p v-if="formErrors.discount_percent" class="form-error">{{ formErrors.discount_percent }}</p>
                     </div>
 
                     <!-- Translations -->
@@ -510,6 +566,24 @@
                         </div>
                     </div>
 
+                    <!-- Discount -->
+                    <div class="form-group">
+                        <label class="form-label">{{ $t('admin.products.discountLabel') }}</label>
+                        <div class="discount-input-row">
+                            <input v-model="form.discount_percent" type="number" step="1" min="0" max="99"
+                                class="form-input" :placeholder="$t('admin.products.discountPlaceholder')" />
+                            <button v-if="form.discount_percent !== ''" type="button" class="discount-remove-btn"
+                                @click="form.discount_percent = ''">
+                                {{ $t('admin.products.removeDiscount') }}
+                            </button>
+                        </div>
+                        <p v-if="formFinalPrice !== null" class="discount-new-price">
+                            {{ $t('admin.products.newPriceLabel') }}: <strong>${{ formFinalPrice.toFixed(2)
+                                }}</strong>
+                        </p>
+                        <p v-if="formErrors.discount_percent" class="form-error">{{ formErrors.discount_percent }}</p>
+                    </div>
+
                     <!-- Translations -->
                     <div class="translations-section">
                         <div class="translations-header">
@@ -642,7 +716,14 @@
                         </div>
                         <div class="preview-row">
                             <span class="preview-key">{{ $t('admin.products.price') }}</span>
-                            <span class="preview-val price-green">${{ selectedProd.price?.toFixed(2) }}</span>
+                            <span class="preview-val" :class="{ 'price-green': !selectedProd.has_discount }">
+                                <template v-if="selectedProd.has_discount">
+                                    <span class="price-old">${{ selectedProd.price?.toFixed(2) }}</span>
+                                    <span class="price-discounted">${{ selectedProd.final_price?.toFixed(2) }}</span>
+                                    <span class="discount-badge">-{{ selectedProd.discount_percent }}%</span>
+                                </template>
+                                <template v-else>${{ selectedProd.price?.toFixed(2) }}</template>
+                            </span>
                         </div>
                         <div class="preview-row">
                             <span class="preview-key">{{ $t('admin.products.rating') }}</span>
@@ -810,7 +891,7 @@ function localeLabel(loc: string): string {
 }
 
 import { useProducts } from '~/composables/useProducts'
-const { fetchProducts, fetchProductStats, fetchProduct, createProduct, updateProduct, deleteProduct } = useProducts()
+const { fetchProducts, fetchProductStats, fetchProduct, createProduct, updateProduct, deleteProduct, removeProductDiscount } = useProducts()
 const { fetchCategories } = useAdmin()
 
 // ── State ──────────────────────────────────────────────────
@@ -821,6 +902,7 @@ const loading = ref(true)
 const search = ref('')
 const filterCat = ref<string | number>('')
 const filterActive = ref('')
+const filterDiscount = ref('')
 const showFilter = ref(false)
 const currentPage = ref(1)
 const pagination = ref({ current_page: 1, last_page: 1, total: 0, from: 0, to: 0 })
@@ -841,6 +923,7 @@ const defaultTranslation = () => ({ name: '', description: '' })
 
 const form = reactive({
     price: '' as string | number,
+    discount_percent: '' as string | number,
     category_id: '' as string | number,
     is_active: true,
     translations: {
@@ -849,7 +932,15 @@ const form = reactive({
         tm: defaultTranslation(),
     },
 })
-const formErrors = reactive({ price: '', category_id: '', name_en: '', name_ru: '', name_tm: '' })
+const formErrors = reactive({ price: '', category_id: '', discount_percent: '', name_en: '', name_ru: '', name_tm: '' })
+
+// Live "new price" preview shown next to the discount % input.
+const formFinalPrice = computed(() => {
+    const price = Number(form.price)
+    const pct = Number(form.discount_percent)
+    if (!price || !pct || pct <= 0) return null
+    return price * (100 - pct) / 100
+})
 const toast = reactive({ visible: false, message: '', type: 'success' })
 
 // ── Computed ──────────────────────────────────────────────
@@ -878,6 +969,7 @@ async function loadProducts(page = 1) {
         const params: any = { page, per_page: 8, search: search.value }
         if (filterCat.value) params.category_id = filterCat.value
         if (filterActive.value !== '') params.is_active = filterActive.value
+        if (filterDiscount.value !== '') params.on_discount = filterDiscount.value
         if (sortBy.value) {
             params.sort_by = 'avg_rating'
             params.sort_dir = sortBy.value
@@ -909,6 +1001,7 @@ function applyFilter() { showFilter.value = false; currentPage.value = 1; loadPr
 function resetFilter() {
     filterCat.value = ''
     filterActive.value = ''
+    filterDiscount.value = ''
     sortBy.value = ''
     showFilter.value = false
     loadProducts(1)
@@ -939,8 +1032,8 @@ function handleFile(file: File) {
 function removeImage() { imagePreview.value = null; imageFile.value = null; if (fileInputRef.value) fileInputRef.value.value = '' }
 
 function resetForm() {
-    form.price = ''; form.category_id = ''; form.is_active = true
-    formErrors.price = ''; formErrors.category_id = ''
+    form.price = ''; form.discount_percent = ''; form.category_id = ''; form.is_active = true
+    formErrors.price = ''; formErrors.category_id = ''; formErrors.discount_percent = ''
     formErrors.name_en = ''; formErrors.name_ru = ''; formErrors.name_tm = ''
     form.translations.en = defaultTranslation()
     form.translations.ru = defaultTranslation()
@@ -954,6 +1047,8 @@ function buildFD() {
     const canonicalName = form.translations.en.name || form.translations.ru.name || form.translations.tm.name
     fd.append('name', canonicalName)
     fd.append('price', String(form.price))
+    // Empty string clears an existing discount server-side; non-empty sets it.
+    fd.append('discount_percent', form.discount_percent === '' ? '' : String(form.discount_percent))
     fd.append('category_id', String(form.category_id))
     fd.append('is_active', form.is_active ? '1' : '0')
     if (imageFile.value) fd.append('image', imageFile.value)
@@ -987,6 +1082,7 @@ function openEditModal(p: any) {
     resetForm()
     selectedProd.value = p
     form.price = p.price
+    form.discount_percent = p.discount_percent ?? ''
     form.category_id = p.category?.id ?? ''
     form.is_active = p.is_active
     imagePreview.value = resolveUrl(p.image_url)
@@ -1060,6 +1156,17 @@ async function submitDelete() {
     } catch (err: any) {
         showToast(err?.data?.message || t('admin.products.deleteFailed'), 'error')
     } finally { submitting.value = false }
+}
+
+async function handleRemoveDiscount(p: any) {
+    openDrop.value = null
+    try {
+        await removeProductDiscount(p.id)
+        showToast(t('admin.products.discountRemoved'), 'success')
+        await loadProducts(currentPage.value)
+    } catch (err: any) {
+        showToast(err?.data?.message || t('admin.products.discountRemoveFailed'), 'error')
+    }
 }
 
 function showToast(message: string, type: 'success' | 'error' = 'success') {
@@ -1404,6 +1511,66 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 .price-green {
     color: var(--color-ready);
     font-weight: 600;
+}
+
+.price-old {
+    color: var(--color-gray-65);
+    text-decoration: line-through;
+    font-weight: 400;
+    margin-right: 6px;
+}
+
+.price-discounted {
+    color: var(--color-danger);
+    font-weight: 700;
+    margin-right: 6px;
+}
+
+.discount-badge {
+    display: inline-block;
+    background: var(--color-red-94);
+    color: var(--color-danger);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 99px;
+    white-space: nowrap;
+}
+
+.discount-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.discount-input-row .form-input {
+    max-width: 140px;
+}
+
+.discount-new-price {
+    font-size: 0.82rem;
+    color: var(--color-danger);
+    margin-top: 4px;
+}
+
+.discount-new-price strong {
+    font-weight: 700;
+}
+
+.discount-remove-btn {
+    background: var(--color-gray-96);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    color: var(--color-gray-46);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.discount-remove-btn:hover {
+    background: var(--color-border);
 }
 
 .text-muted {

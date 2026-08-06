@@ -44,7 +44,9 @@ export function useCart() {
                 product_name: product.name,           
                 product_translations: product.translations ?? null, 
                 image_url: product.image_url ?? null,
-                price: Number(product.price),
+                // Charge whatever price is currently shown to the customer —
+                // the discounted price when the product has an active discount.
+                price: Number(product.final_price ?? product.price),
                 quantity: 1,
             })
         }

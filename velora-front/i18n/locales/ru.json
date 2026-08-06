@@ -435,7 +435,17 @@
       "sortByRating": "Сортировка по рейтингу",
       "sortDefault": "По умолчанию",
       "sortRatingAsc": "Сначала низкий рейтинг (↑)",
-      "sortRatingDesc": "Сначала высокий рейтинг (↓)"
+      "sortRatingDesc": "Сначала высокий рейтинг (↓)",
+      "discountLabel": "Скидка",
+      "discountPlaceholder": "напр. 20 (%)",
+      "newPriceLabel": "Новая цена",
+      "removeDiscount": "Убрать скидку",
+      "discountRemoved": "Скидка успешно удалена",
+      "discountRemoveFailed": "Не удалось удалить скидку",
+      "filterDiscount": "Скидка",
+      "allDiscount": "Все",
+      "onDiscount": "Со скидкой",
+      "noDiscount": "Без скидки"
     },
     "orders": {
       "title": "Заказы",

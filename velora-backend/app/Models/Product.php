@@ -14,6 +14,7 @@ class Product extends Model
         'name',
         'description',
         'price',
+        'discount_percent',
         'image_url',
         'is_active',
         'avg_rating',
@@ -23,6 +24,7 @@ class Product extends Model
         'price' => 'decimal:2',
         'avg_rating' => 'decimal:2',
         'is_active' => 'boolean',
+        'discount_percent' => 'integer',
     ];
 
     // ── Relations ─────────────────────────────────────────────
@@ -65,6 +67,27 @@ class Product extends Model
         return $this->translation($locale)?->description
             ?? $this->translation('en')?->description
             ?? $this->description;
+    }
+
+    // ── Discount ──────────────────────────────────────────────
+
+    public function hasDiscount(): bool
+    {
+        return $this->discount_percent !== null && $this->discount_percent > 0;
+    }
+
+    /**
+     * Price the customer actually pays right now — discounted if a
+     * discount_percent is set, otherwise the plain price. This is what
+     * gets stored on the order item at checkout time.
+     */
+    public function getFinalPriceAttribute(): float
+    {
+        if (! $this->hasDiscount()) {
+            return (float) $this->price;
+        }
+
+        return round((float) $this->price * (100 - $this->discount_percent) / 100, 2);
     }
 
     // ── Helpers ───────────────────────────────────────────────

@@ -62,6 +62,21 @@ export const useProducts = () => {
         })
     }
 
+    const setProductDiscount = async (id: number, discountPercent: number | null) => {
+        return await $fetch(`${apiBase}/admin/products/${id}/discount`, {
+            method: 'PATCH',
+            headers: authHeaders.value,
+            body: { discount_percent: discountPercent },
+        })
+    }
+
+    const removeProductDiscount = async (id: number) => {
+        return await $fetch(`${apiBase}/admin/products/${id}/discount`, {
+            method: 'DELETE',
+            headers: authHeaders.value,
+        })
+    }
+
     return {
         fetchProducts,
         fetchProductStats,
@@ -70,5 +85,7 @@ export const useProducts = () => {
         updateProduct,
         deleteProduct,
         toggleProduct,
+        setProductDiscount,
+        removeProductDiscount,
     }
 }

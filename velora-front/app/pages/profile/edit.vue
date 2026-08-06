@@ -9,7 +9,7 @@
                     <path d="M19 12H5M12 5l-7 7 7 7" />
                 </svg>
             </NuxtLink>
-            <h1 class="text-[var(--color-surface)] text-lg font-medium">{{ $t('profile.edit.title') }}</h1>
+            <h1 class="text-[var(--color-on-brand)] text-lg font-medium">{{ $t('profile.edit.title') }}</h1>
         </div>
 
         <div class="max-w-lg mx-auto px-4 py-6 flex flex-col gap-4">
@@ -91,7 +91,7 @@
 
             <!-- Save button -->
             <button @click="handleSave" :disabled="saving"
-                class="w-full py-3.5 bg-[var(--color-brand-surface)] text-[var(--color-surface)] rounded-xl text-sm font-medium hover:bg-[var(--color-coffee-18)] active:scale-[0.98] transition-all disabled:opacity-50">
+                class="w-full py-3.5 bg-[var(--color-brand-surface)] text-[var(--color-on-brand)] rounded-xl text-sm font-medium hover:bg-[var(--color-coffee-18)] active:scale-[0.98] transition-all disabled:opacity-50">
                 {{ saving ? $t('profile.edit.saving') : $t('profile.edit.save') }}
             </button>
 

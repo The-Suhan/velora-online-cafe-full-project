@@ -79,13 +79,13 @@
   --color-success: rgb(var(--rgb-success));
   --rgb-success-dark: 61 90 46;
   --color-success-dark: rgb(var(--rgb-success-dark));
-  --rgb-ready: 22 163 74;
+  --rgb-ready: 36 148 78;
   --color-ready: rgb(var(--rgb-ready));
-  --rgb-warning: 217 119 6;
+  --rgb-warning: 180 122 48;
   --color-warning: rgb(var(--rgb-warning));
-  --rgb-info: 59 130 246;
+  --rgb-info: 76 124 210;
   --color-info: rgb(var(--rgb-info));
-  --rgb-danger: 220 38 38;
+  --rgb-danger: 198 62 58;
   --color-danger: rgb(var(--rgb-danger));
   --rgb-white: 255 255 255;
   --color-white: rgb(var(--rgb-white));
@@ -113,13 +113,13 @@
   --color-coffee-26: rgb(var(--rgb-coffee-26));
   --rgb-coffee-29: 90 74 58;
   --color-coffee-29: rgb(var(--rgb-coffee-29));
-  --rgb-coffee-31: 146 64 14;
+  --rgb-coffee-31: 134 84 46;
   --color-coffee-31: rgb(var(--rgb-coffee-31));
   --rgb-coffee-33: 122 92 48;
   --color-coffee-33: rgb(var(--rgb-coffee-33));
 
   /* Browns & beiges */
-  --rgb-brown-37: 180 83 9;
+  --rgb-brown-37: 172 108 54;
   --color-brown-37: rgb(var(--rgb-brown-37));
   --rgb-brown-38: 122 92 74;
   --color-brown-38: rgb(var(--rgb-brown-38));
@@ -133,7 +133,7 @@
   --color-brown-43: rgb(var(--rgb-brown-43));
   --rgb-brown-49: 154 122 96;
   --color-brown-49: rgb(var(--rgb-brown-49));
-  --rgb-brown-50: 245 158 11;
+  --rgb-brown-50: 196 148 82;
   --color-brown-50: rgb(var(--rgb-brown-50));
   --rgb-brown-51: 154 122 104;
   --color-brown-51: rgb(var(--rgb-brown-51));
@@ -143,7 +143,7 @@
   --color-brown-54: rgb(var(--rgb-brown-54));
   --rgb-brown-54-2: 168 145 107;
   --color-brown-54-2: rgb(var(--rgb-brown-54-2));
-  --rgb-brown-58-2: 212 168 83;
+  --rgb-brown-58-2: 196 164 108;
   --color-brown-58-2: rgb(var(--rgb-brown-58-2));
   --rgb-brown-58: 176 149 122;
   --color-brown-58: rgb(var(--rgb-brown-58));
@@ -193,7 +193,7 @@
   --color-gold-30: rgb(var(--rgb-gold-30));
   --rgb-gold-31: 139 105 20;
   --color-gold-31: rgb(var(--rgb-gold-31));
-  --rgb-gold-77: 253 230 138;
+  --rgb-gold-77: 232 214 164;
   --color-gold-77: rgb(var(--rgb-gold-77));
   --rgb-gold-78: 240 217 160;
   --color-gold-78: rgb(var(--rgb-gold-78));
@@ -219,7 +219,7 @@
   --color-red-46: rgb(var(--rgb-red-46));
   --rgb-red-54: 200 87 74;
   --color-red-54: rgb(var(--rgb-red-54));
-  --rgb-red-60: 224 82 82;
+  --rgb-red-60: 198 100 92;
   --color-red-60: rgb(var(--rgb-red-60));
   --rgb-red-80: 245 165 165;
   --color-red-80: rgb(var(--rgb-red-80));
@@ -365,10 +365,10 @@
   --rgb-border-warm: 68 57 50;
   --rgb-success: 128 178 110;
   --rgb-success-dark: 150 198 128;
-  --rgb-ready: 74 200 120;
-  --rgb-warning: 240 168 62;
-  --rgb-info: 110 165 250;
-  --rgb-danger: 238 110 110;
+  --rgb-ready: 94 178 120;
+  --rgb-warning: 210 160 96;
+  --rgb-info: 128 166 220;
+  --rgb-danger: 208 122 116;
   /* --rgb-white / --rgb-black stay literal: they are for text and shadows
      sitting on colored surfaces, which do not change between themes. */
 
@@ -384,25 +384,25 @@
   --rgb-coffee-24-2: 108 72 46;
   --rgb-coffee-26: 206 182 158;
   --rgb-coffee-29: 202 184 164;
-  --rgb-coffee-31: 232 150 84;
+  --rgb-coffee-31: 204 148 104;
   --rgb-coffee-33: 216 182 122;
 
   /* Browns — 37…58 are foregrounds and lighten, 84…96 are surfaces and darken,
      64…75 already sit on dark and keep their lightness */
-  --rgb-brown-37: 236 154 62;
+  --rgb-brown-37: 206 156 100;
   --rgb-brown-38: 194 176 160;
   --rgb-brown-40: 196 180 164;
   --rgb-brown-41: 198 184 168;
   --rgb-brown-43: 200 178 158;
   --rgb-brown-43-2: 208 178 116;
   --rgb-brown-49: 202 178 152;
-  --rgb-brown-50: 250 180 70;
+  --rgb-brown-50: 214 168 96;
   --rgb-brown-51: 202 178 160;
   --rgb-brown-52: 206 172 104;
   --rgb-brown-54: 204 190 172;
   --rgb-brown-54-2: 208 186 148;
   --rgb-brown-58: 200 180 158;
-  --rgb-brown-58-2: 224 186 110;
+  --rgb-brown-58-2: 200 172 118;
   --rgb-brown-64: 206 176 130;
   --rgb-brown-67: 214 188 142;
   --rgb-brown-69: 196 182 156;
@@ -426,9 +426,9 @@
 
   /* Golds & ambers */
   --rgb-gold-30: 214 176 100;
-  --rgb-gold-31: 220 182 96;
-  --rgb-gold-77: 250 224 140;
-  --rgb-gold-78: 236 208 148;
+  --rgb-gold-31: 200 172 112;
+  --rgb-gold-77: 220 200 152;
+  --rgb-gold-78: 218 196 152;
   --rgb-gold-80: 60 54 46;
   --rgb-gold-89: 58 44 20;
   --rgb-gold-89-2: 56 46 32;
@@ -436,12 +436,12 @@
   --rgb-gold-96: 52 42 24;
 
   /* Reds — 32…60 are text/fills, 80/89 already sit on dark, 94…98 are tints */
-  --rgb-red-32: 236 118 118;
-  --rgb-red-35: 238 124 124;
-  --rgb-red-42: 224 96 96;
-  --rgb-red-46: 238 130 116;
-  --rgb-red-54: 240 140 128;
-  --rgb-red-60: 226 96 96;
+  --rgb-red-32: 208 124 120;
+  --rgb-red-35: 210 128 122;
+  --rgb-red-42: 200 108 104;
+  --rgb-red-46: 208 130 116;
+  --rgb-red-54: 210 140 126;
+  --rgb-red-60: 202 108 102;
   --rgb-red-80: 240 168 168;
   --rgb-red-89: 244 176 176;
   --rgb-red-94: 58 28 28;
@@ -452,11 +452,11 @@
 
   /* Greens */
   --rgb-green-20: 34 56 32;
-  --rgb-green-24: 126 200 140;
+  --rgb-green-24: 128 180 138;
   --rgb-green-26: 38 60 36;
-  --rgb-green-26-2: 132 202 132;
+  --rgb-green-26-2: 130 184 132;
   --rgb-green-40: 62 96 56;
-  --rgb-green-44: 150 200 120;
+  --rgb-green-44: 148 184 126;
   --rgb-green-72: 168 210 168;
   --rgb-green-80: 178 214 172;
   --rgb-green-85: 170 224 186;
@@ -469,8 +469,8 @@
   --rgb-green-97: 24 44 30;
 
   /* Blues */
-  --rgb-blue-48: 122 172 250;
-  --rgb-blue-53: 110 160 248;
+  --rgb-blue-48: 132 166 222;
+  --rgb-blue-53: 122 160 220;
   --rgb-blue-87: 180 210 250;
   --rgb-blue-93: 26 40 62;
   --rgb-blue-97: 24 37 58;
@@ -499,12 +499,12 @@
 [data-theme="dark"] .bg-amber-50 { background-color: rgb(56 44 22); }
 [data-theme="dark"] .bg-blue-50 { background-color: rgb(26 40 62); }
 [data-theme="dark"] .bg-gray-100 { background-color: rgb(42 38 35); }
-[data-theme="dark"] .text-red-500 { color: rgb(240 128 128); }
-[data-theme="dark"] .text-red-600 { color: rgb(238 118 118); }
-[data-theme="dark"] .text-green-700 { color: rgb(132 202 140); }
-[data-theme="dark"] .text-amber-700 { color: rgb(236 176 84); }
-[data-theme="dark"] .text-blue-600 { color: rgb(122 172 250); }
-[data-theme="dark"] .text-blue-700 { color: rgb(122 172 250); }
+[data-theme="dark"] .text-red-500 { color: rgb(210 130 126); }
+[data-theme="dark"] .text-red-600 { color: rgb(208 122 118); }
+[data-theme="dark"] .text-green-700 { color: rgb(130 182 138); }
+[data-theme="dark"] .text-amber-700 { color: rgb(208 168 100); }
+[data-theme="dark"] .text-blue-600 { color: rgb(132 166 222); }
+[data-theme="dark"] .text-blue-700 { color: rgb(132 166 222); }
 [data-theme="dark"] .text-gray-600 { color: rgb(168 162 156); }
 [data-theme="dark"] .border-red-100 { border-color: rgb(70 36 36); }
 [data-theme="dark"] .border-red-200 { border-color: rgb(84 42 42); }

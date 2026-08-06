@@ -435,7 +435,17 @@
       "sortByRating": "Sort by rating",
       "sortDefault": "Default",
       "sortRatingAsc": "Lowest rating (↑)",
-      "sortRatingDesc": "Highest rating (↓)"
+      "sortRatingDesc": "Highest rating (↓)",
+      "discountLabel": "Discount",
+      "discountPlaceholder": "e.g. 20 (%)",
+      "newPriceLabel": "New price",
+      "removeDiscount": "Remove discount",
+      "discountRemoved": "Discount removed successfully",
+      "discountRemoveFailed": "Failed to remove discount",
+      "filterDiscount": "Discount",
+      "allDiscount": "All",
+      "onDiscount": "On discount",
+      "noDiscount": "No discount"
     },
     "orders": {
       "title": "Orders",

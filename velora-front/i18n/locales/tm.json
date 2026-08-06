@@ -435,7 +435,17 @@
       "sortByRating": "Baha boýunça tertiple",
       "sortDefault": "Adaty",
       "sortRatingAsc": "Iň pes baha (↑)",
-      "sortRatingDesc": "Iň ýokary baha (↓)"
+      "sortRatingDesc": "Iň ýokary baha (↓)",
+      "discountLabel": "Arzanladyş",
+      "discountPlaceholder": "mysal üçin 20 (%)",
+      "newPriceLabel": "Täze baha",
+      "removeDiscount": "Arzanladyşy aýyr",
+      "discountRemoved": "Arzanladyş üstünlikli aýryldy",
+      "discountRemoveFailed": "Arzanladyşy aýyrmak başartmady",
+      "filterDiscount": "Arzanladyş",
+      "allDiscount": "Ählisi",
+      "onDiscount": "Arzanladyşly",
+      "noDiscount": "Arzanladyşsyz"
     },
     "orders": {
       "title": "Sargytlar",

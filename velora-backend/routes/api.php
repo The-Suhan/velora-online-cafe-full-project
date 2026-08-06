@@ -50,7 +50,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/categories', [CategoryController::class, 'index']);
         Route::get('/categories/{category}', [CategoryController::class, 'show']);
         Route::post('/categories', [CategoryController::class, 'store']);
+        // POST + PUT both point here: the frontend sends multipart/form-data
+        // (for the image upload) with a spoofed `_method=PUT` field, since
+        // PHP can't parse a multipart body on a real PUT request. Laravel
+        // rewrites the effective method to PUT once it sees that field, so
+        // the PUT route below is what actually gets matched.
         Route::post('/categories/{category}', [CategoryController::class, 'update']);
+        Route::put('/categories/{category}', [CategoryController::class, 'update']);
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
         Route::patch('/categories/{category}/toggle', [CategoryController::class, 'toggle']);
         Route::get('/categories/{category}/translations', [CategoryController::class, 'translations']);
@@ -60,9 +66,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/products', [ProductController::class, 'index']);
         Route::get('/products/{product}', [ProductController::class, 'show']);
         Route::post('/products', [ProductController::class, 'store']);
+        // POST + PUT both point here — see the identical note above the
+        // categories update route for why (multipart image upload + spoofed
+        // `_method=PUT`).
         Route::post('/products/{product}', [ProductController::class, 'update']);
+        Route::put('/products/{product}', [ProductController::class, 'update']);
         Route::delete('/products/{product}', [ProductController::class, 'destroy']);
         Route::patch('/products/{product}/toggle', [ProductController::class, 'toggle']);
+        Route::patch('/products/{product}/discount', [ProductController::class, 'setDiscount']);
+        Route::delete('/products/{product}/discount', [ProductController::class, 'removeDiscount']);
         Route::get('/products/{product}/translations', [ProductController::class, 'translations']);
 
         // Orders — statik segmentler {order} bağlamasından ÖNCE gelmeli
