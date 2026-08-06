@@ -133,7 +133,29 @@ class CustomerController extends Controller
             ->where('is_active', true);
 
         if ($search = $request->query('search')) {
-            $query->where('name', 'ilike', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'ilike', "%{$search}%")
+                    ->orWhere('description', 'ilike', "%{$search}%")
+                    ->orWhereHas('translations', function ($tq) use ($search) {
+                        $tq->where('name', 'ilike', "%{$search}%")
+                            ->orWhere('description', 'ilike', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', (float) $request->query('min_price'));
+        }
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', (float) $request->query('max_price'));
+        }
+
+        if ($request->filled('on_discount')) {
+            if (filter_var($request->query('on_discount'), FILTER_VALIDATE_BOOLEAN)) {
+                $query->whereNotNull('discount_percent')->where('discount_percent', '>', 0);
+            } else {
+                $query->where(fn ($q) => $q->whereNull('discount_percent')->orWhere('discount_percent', 0));
+            }
         }
 
         $sort = $request->query('sort', 'newest');
@@ -159,7 +181,7 @@ class CustomerController extends Controller
 
     /**
      * GET /api/products
-     * Tüm aktif ürünler (search + sort destekli).
+     * Tüm aktif ürünler (search + sort + filtre destekli).
      */
     public function products(Request $request): JsonResponse
     {
@@ -167,11 +189,33 @@ class CustomerController extends Controller
             ->where('is_active', true);
 
         if ($search = $request->query('search')) {
-            $query->where('name', 'ilike', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'ilike', "%{$search}%")
+                    ->orWhere('description', 'ilike', "%{$search}%")
+                    ->orWhereHas('translations', function ($tq) use ($search) {
+                        $tq->where('name', 'ilike', "%{$search}%")
+                            ->orWhere('description', 'ilike', "%{$search}%");
+                    });
+            });
         }
 
         if ($categoryId = $request->query('category_id')) {
             $query->where('category_id', $categoryId);
+        }
+
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', (float) $request->query('min_price'));
+        }
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', (float) $request->query('max_price'));
+        }
+
+        if ($request->filled('on_discount')) {
+            if (filter_var($request->query('on_discount'), FILTER_VALIDATE_BOOLEAN)) {
+                $query->whereNotNull('discount_percent')->where('discount_percent', '>', 0);
+            } else {
+                $query->where(fn ($q) => $q->whereNull('discount_percent')->orWhere('discount_percent', 0));
+            }
         }
 
         $sort = $request->query('sort', 'newest');

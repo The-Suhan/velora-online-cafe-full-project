@@ -56,6 +56,25 @@
     "back": "Назад",
     "productsTitle": "Товары"
   },
+  "search": {
+    "title": "Результаты поиска",
+    "resultsFor": "Результаты по запросу «{q}»",
+    "noResults": "По запросу «{q}» ничего не найдено",
+    "filters": "Фильтры",
+    "priceRange": "Диапазон цен",
+    "minPrice": "От",
+    "maxPrice": "До",
+    "category": "Категория",
+    "allCategories": "Все категории",
+    "onDiscount": "Только со скидкой",
+    "sortBy": "Сортировка",
+    "sortNewest": "Сначала новые",
+    "sortPriceAsc": "Цена: по возрастанию",
+    "sortPriceDesc": "Цена: по убыванию",
+    "sortRating": "По рейтингу",
+    "apply": "Применить",
+    "reset": "Сбросить"
+  },
   "home": {
     "itemsCount": "{n} позиций",
     "seeAll": "Смотреть все",

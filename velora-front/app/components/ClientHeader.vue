@@ -23,7 +23,7 @@
             <!-- Right Actions -->
             <div class="header-actions">
 
-                <!-- Search (always visible) -->
+                <!-- Search (home page only — filters live there) -->
                 <button class="icon-btn" aria-label="Search" @click="searchOpen = !searchOpen"
                     v-if="route.path === '/'">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -201,9 +201,10 @@ watch(searchOpen, async (val) => {
     }
 })
 
+// The home page watches searchQuery directly (shared ref from useSearch) and
+// filters live as the user types — Enter just tucks the dropdown away.
 function handleSearch() {
-    if (!searchQuery.value.trim()) return
-    console.log('search:', searchQuery.value)
+    searchOpen.value = false
 }
 
 const { isLoggedIn } = useAuth()

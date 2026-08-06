@@ -1,8 +1,9 @@
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useCart } from '~/composables/useCart'
-import { onBeforeRouteLeave } from 'vue-router'
+import { useProductSearch } from '~/composables/useProductSearch'
 import { useSearch } from '~/composables/useSearch'
+import { onBeforeRouteLeave } from 'vue-router'
 
 // ─── Ratings flush — route değişince API'ye gönder ────────────
 onBeforeRouteLeave(async () => {
@@ -37,9 +38,6 @@ async function openModal(product) {
 // ─── Cart ─────────────────────────────────────────────────────
 const { addItem, increaseQty, decreaseQty, getItem } = useCart()
 
-// ─── Search ───────────────────────────────────────────────────
-const { searchQuery } = useSearch()
-
 // ─── State ────────────────────────────────────────────────────
 const api = useApi()
 const { show: showLoading, hide: hideLoading } = useAppLoading()
@@ -49,21 +47,109 @@ const categoryRows = useState('home-category-rows-filtered', () => [])
 
 const loading = ref(allCategoryRows.value.length === 0)
 
-watch(searchQuery, (q) => {
-    const term = q.trim().toLowerCase()
-    if (!term) {
-        categoryRows.value = allCategoryRows.value
-        return
+// ─── Search & filters (backend-powered) ────────────────────────
+// The header's search icon lives on this page only; typing there updates
+// this same shared ref, and the filter bar below adds price/category/
+// discount/sort on top of it. When nothing is active we show the normal
+// carousel rows from /home; otherwise we switch to a flat, paginated
+// results grid from /products.
+const { searchQuery } = useSearch()
+const { fetchProducts } = useProductSearch()
+
+const minPrice = ref('')
+const maxPrice = ref('')
+const filterCategoryId = ref('')
+const onDiscount = ref(false)
+const sort = ref('newest')
+const showFilters = ref(false)
+
+const isFiltering = computed(() =>
+    searchQuery.value.trim() !== '' ||
+    minPrice.value !== '' ||
+    maxPrice.value !== '' ||
+    filterCategoryId.value !== '' ||
+    onDiscount.value ||
+    sort.value !== 'newest'
+)
+
+const filteredProducts = ref([])
+const filteredLoading = ref(false)
+const filteredPagination = ref({ current_page: 1, last_page: 1, total: 0, from: 0, to: 0 })
+let filterTimeout
+
+const allCategories = useState('categories-list', () => [])
+const flatCategories = computed(() => {
+    const flat = []
+    for (const c of allCategories.value) {
+        flat.push(c)
+        for (const child of c.children ?? []) flat.push(child)
     }
-    categoryRows.value = allCategoryRows.value
-        .map(cat => ({
-            ...cat,
-            products: cat.products.filter(p =>
-                displayName(p).toLowerCase().includes(term) ||
-                displayDesc(p).toLowerCase().includes(term)
-            )
-        }))
-        .filter(cat => cat.products.length > 0)
+    return flat
+})
+
+async function loadCategoriesIfNeeded() {
+    if (allCategories.value.length > 0) return
+    try {
+        allCategories.value = await api('/categories') ?? []
+    } catch (e) {
+        console.error('[home] categories load error:', e)
+    }
+}
+
+const visibleFilterPages = computed(() => {
+    const cur = filteredPagination.value.current_page
+    const last = filteredPagination.value.last_page
+    if (last <= 7) return Array.from({ length: last }, (_, i) => i + 1)
+    const pages = [1]
+    if (cur > 3) pages.push('...')
+    for (let i = Math.max(2, cur - 1); i <= Math.min(last - 1, cur + 1); i++) pages.push(i)
+    if (cur < last - 2) pages.push('...')
+    pages.push(last)
+    return pages
+})
+
+async function loadFiltered(page = 1) {
+    filteredLoading.value = true
+    try {
+        const params = { search: searchQuery.value.trim(), sort: sort.value, per_page: 12, page }
+        if (filterCategoryId.value) params.category_id = filterCategoryId.value
+        if (minPrice.value !== '') params.min_price = minPrice.value
+        if (maxPrice.value !== '') params.max_price = maxPrice.value
+        if (onDiscount.value) params.on_discount = 1
+
+        const data = await fetchProducts(params)
+        filteredProducts.value = data.data ?? []
+        filteredPagination.value = {
+            current_page: data.current_page,
+            last_page: data.last_page,
+            total: data.total,
+            from: data.from ?? 0,
+            to: data.to ?? 0,
+        }
+    } catch (e) {
+        console.error('[home] filtered load error:', e)
+        filteredProducts.value = []
+    } finally {
+        filteredLoading.value = false
+    }
+}
+
+function goToFilteredPage(page) { loadFiltered(page) }
+
+function resetFilters() {
+    minPrice.value = ''
+    maxPrice.value = ''
+    filterCategoryId.value = ''
+    onDiscount.value = false
+    sort.value = 'newest'
+    showFilters.value = false
+}
+
+watch([searchQuery, minPrice, maxPrice, filterCategoryId, onDiscount, sort], () => {
+    clearTimeout(filterTimeout)
+    filterTimeout = setTimeout(() => {
+        if (isFiltering.value) loadFiltered(1)
+    }, 400)
 })
 
 // ─── Carousel refs ────────────────────────────────────────────
@@ -163,6 +249,8 @@ async function flushPendingRatings() {
                         const p = row.products.find(p => p.id === Number(productId))
                         if (p) p.avg_rating = res.avg_rating
                     }
+                    const fp = filteredProducts.value.find(p => p.id === Number(productId))
+                    if (fp) fp.avg_rating = res.avg_rating
                 }
             } catch (e) {
                 console.error(e)
@@ -196,6 +284,7 @@ onMounted(() => {
     } else {
         hideLoading()
     }
+    loadCategoriesIfNeeded()
 
     window.addEventListener('beforeunload', beaconPendingRatings)
 })
@@ -211,6 +300,8 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
             const p = row.products.find(p => p.id === productId)
             if (p) p.avg_rating = avgRating
         }
+        const fp = filteredProducts.value.find(p => p.id === productId)
+        if (fp) fp.avg_rating = avgRating
     }
     userRatings.value[productId] = userScore ?? null
 }
@@ -219,8 +310,147 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 <template>
     <main class="velora-page">
 
+        <!-- ── Filters bar ── -->
+        <div class="filters-bar">
+            <div class="filters-inner">
+                <button class="filter-toggle-btn" @click.stop="showFilters = !showFilters">
+                    {{ $t('search.filters') }}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" :class="{ 'is-open': showFilters }">
+                        <path d="M6 9l6 6 6-6" />
+                    </svg>
+                </button>
+
+                <select v-model="sort" class="sort-select">
+                    <option value="newest">{{ $t('search.sortNewest') }}</option>
+                    <option value="price_asc">{{ $t('search.sortPriceAsc') }}</option>
+                    <option value="price_desc">{{ $t('search.sortPriceDesc') }}</option>
+                    <option value="rating">{{ $t('search.sortRating') }}</option>
+                </select>
+
+                <span v-if="isFiltering" class="active-filters-note">
+                    {{ $t('search.resultsFor', { q: searchQuery.trim() || $t('search.filters') }) }}
+                </span>
+            </div>
+
+            <Transition name="filters-drop">
+                <div v-if="showFilters" class="filters-panel" @click.stop>
+                    <div class="filter-field">
+                        <label>{{ $t('search.priceRange') }}</label>
+                        <div class="price-range-inputs">
+                            <input v-model="minPrice" type="number" min="0" step="0.01" :placeholder="$t('search.minPrice')" />
+                            <span>—</span>
+                            <input v-model="maxPrice" type="number" min="0" step="0.01" :placeholder="$t('search.maxPrice')" />
+                        </div>
+                    </div>
+
+                    <div class="filter-field">
+                        <label>{{ $t('search.category') }}</label>
+                        <select v-model="filterCategoryId">
+                            <option value="">{{ $t('search.allCategories') }}</option>
+                            <option v-for="c in flatCategories" :key="c.id" :value="c.id">{{ displayName(c) }}</option>
+                        </select>
+                    </div>
+
+                    <label class="filter-checkbox">
+                        <input v-model="onDiscount" type="checkbox" />
+                        {{ $t('search.onDiscount') }}
+                    </label>
+
+                    <div class="filter-actions">
+                        <button class="filter-reset-btn" @click="resetFilters">{{ $t('search.reset') }}</button>
+                        <button class="filter-apply-btn" @click="showFilters = false">{{ $t('search.apply') }}</button>
+                    </div>
+                </div>
+            </Transition>
+        </div>
+
+        <!-- ── Filtered results (search / price / category / discount active) ── -->
+        <template v-if="isFiltering">
+            <div v-if="filteredLoading" class="results-grid">
+                <div v-for="n in 12" :key="n" class="product-card product-card--skeleton">
+                    <div class="card-image skeleton-block" />
+                    <div class="card-body">
+                        <div class="skeleton-line sk-name" />
+                        <div class="skeleton-line sk-desc" />
+                        <div class="skeleton-line sk-short" />
+                    </div>
+                </div>
+            </div>
+
+            <div v-else-if="filteredProducts.length > 0" class="results-grid">
+                <div v-for="(product, idx) in filteredProducts" :key="product.id" class="product-card"
+                    :style="{ '--card-delay': `${idx * 25}ms` }">
+                    <div class="card-image" :style="{ background: cardGradient(product.id) }">
+                        <img v-if="product.image_url" :src="resolveUrl(product.image_url)" :alt="displayName(product)"
+                            class="card-img card-img--loaded" draggable="false" loading="lazy" />
+                        <span v-if="product.category?.name" class="card-badge">{{ product.category.name }}</span>
+                        <span v-if="product.has_discount" class="discount-badge">-{{ product.discount_percent }}%</span>
+                    </div>
+
+                    <div class="card-body">
+                        <h3 class="card-title">{{ displayName(product) }}</h3>
+                        <p class="card-desc">{{ displayDesc(product) }}</p>
+
+                        <div class="card-rating">
+                            <StarRating
+                                :score="(userRatings[product.id] !== undefined ? userRatings[product.id] : product.avg_rating) ?? 0"
+                                :interactive="true" @rate="(s) => rateProduct(product, s)" />
+                            <span class="rating-value">
+                                {{ ((userRatings[product.id] !== undefined ? userRatings[product.id] : product.avg_rating) ?? 0).toFixed(1) }}
+                            </span>
+                        </div>
+
+                        <div class="card-footer">
+                            <span v-if="product.has_discount" class="card-price card-price--discount">
+                                <span class="card-price-old">${{ Number(product.price).toFixed(2) }}</span>
+                                <span class="card-price-new">${{ Number(product.final_price).toFixed(2) }}</span>
+                            </span>
+                            <span v-else class="card-price">${{ Number(product.price).toFixed(2) }}</span>
+
+                            <div class="card-actions">
+                                <button class="detail-btn" @click.stop="openModal(product)">{{ $t('home.detail') }}</button>
+                                <button v-if="!getItem(product.id)" @click.stop="addItem(product)" class="add-btn">
+                                    {{ $t('home.addToCart') }}
+                                </button>
+                                <div v-else class="qty-ctrl">
+                                    <button class="qty-btn" @click.stop="decreaseQty(product.id)">−</button>
+                                    <span class="qty-num">{{ getItem(product.id).quantity }}</span>
+                                    <button class="qty-btn" @click.stop="increaseQty(product.id)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-else class="empty-state">
+                <p>{{ $t('search.noResults', { q: searchQuery.trim() }) }}</p>
+            </div>
+
+            <div v-if="!filteredLoading && filteredPagination.last_page > 1" class="pagination">
+                <button class="pg-btn" :disabled="filteredPagination.current_page === 1"
+                    @click="goToFilteredPage(filteredPagination.current_page - 1)">
+                    <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+                        <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" />
+                    </svg>
+                </button>
+                <template v-for="page in visibleFilterPages" :key="page">
+                    <span v-if="page === '...'" class="pg-ellipsis">…</span>
+                    <button v-else class="pg-btn" :class="{ active: page === filteredPagination.current_page }"
+                        @click="goToFilteredPage(page)">{{ page }}</button>
+                </template>
+                <button class="pg-btn" :disabled="filteredPagination.current_page === filteredPagination.last_page"
+                    @click="goToFilteredPage(filteredPagination.current_page + 1)">
+                    <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+                        <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+                    </svg>
+                </button>
+            </div>
+        </template>
+
         <!-- ── Loading skeleton ── -->
-        <template v-if="loading">
+        <template v-else-if="loading">
             <div v-for="n in 3" :key="n" class="category-section">
                 <div class="section-head">
                     <div class="skeleton-line sk-title" />
@@ -369,17 +599,247 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     padding-bottom: 4rem;
 }
 
+/* ── Filters bar ── */
+.filters-bar {
+    position: relative;
+    background: var(--color-surface-warm);
+    border-bottom: 1px solid rgb(var(--rgb-primary-black) / 0.08);
+}
+
+.filters-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 3.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+}
+
+.filter-toggle-btn,
+.sort-select {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--color-primary-black);
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+}
+
+.filter-toggle-btn svg {
+    transition: transform 0.18s;
+}
+
+.filter-toggle-btn svg.is-open {
+    transform: rotate(180deg);
+}
+
+.sort-select {
+    cursor: pointer;
+}
+
+.active-filters-note {
+    font-size: 0.75rem;
+    color: var(--color-brown-43);
+}
+
+.filters-panel {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 3.5rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1.25rem;
+}
+
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.filter-field label {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brown-43);
+}
+
+.filter-field select {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.82rem;
+    color: var(--color-primary-black);
+    min-width: 180px;
+}
+
+.price-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-brown-43);
+}
+
+.price-range-inputs input {
+    width: 90px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.82rem;
+    color: var(--color-primary-black);
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--color-primary-black);
+    cursor: pointer;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-left: auto;
+}
+
+.filter-reset-btn,
+.filter-apply-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+}
+
+.filter-reset-btn {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-brown-43);
+}
+
+.filter-apply-btn {
+    background: var(--color-accent-soft);
+    border: none;
+    color: var(--color-white);
+}
+
+.filters-drop-enter-active,
+.filters-drop-leave-active {
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.filters-drop-enter-from,
+.filters-drop-leave-to {
+    opacity: 0;
+    transform: translateY(-6px);
+}
+
+/* ── Filtered results grid ── */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem 3.5rem 0;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.results-grid .product-card {
+    width: auto;
+    flex: none;
+}
+
+.results-grid .card-image {
+    height: 210px;
+}
+
+/* ── Pagination ── */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 2.5rem 2rem 0;
+}
+
+.pg-btn {
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-card);
+    color: var(--color-primary-black);
+    font-size: 0.83rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+}
+
+.pg-btn:hover:not(:disabled) {
+    border-color: var(--color-accent-soft);
+    color: var(--color-accent-soft);
+}
+
+.pg-btn.active {
+    background: var(--color-accent-soft);
+    border-color: var(--color-accent-soft);
+    color: var(--color-white);
+}
+
+.pg-btn:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.pg-ellipsis {
+    padding: 0 4px;
+    color: var(--color-brown-51);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 1024px) {
+    .filters-inner, .filters-panel { padding-left: 2.5rem; padding-right: 2.5rem; }
+    .results-grid { padding: 2rem 2.5rem 0; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+}
+
+@media (max-width: 768px) {
+    .filters-inner, .filters-panel { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .results-grid { padding: 1.5rem 1.5rem 0; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+    .filter-actions { margin-left: 0; width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .results-grid { grid-template-columns: repeat(2, 1fr); padding: 1.25rem 1rem 0; gap: 0.75rem; }
+}
+
 /* ── Category section ── */
 .category-section {
     padding: 2.5rem 0 0;
-    animation: fadeUp 0.45s ease both;
+    animation: fadeUp 0.6s var(--ease-smooth) both;
     animation-delay: var(--row-delay, 0ms);
 }
 
 @keyframes fadeUp {
     from {
         opacity: 0;
-        transform: translateY(18px);
+        transform: translateY(24px);
     }
 
     to {
@@ -517,8 +977,8 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     overflow: hidden;
     scroll-snap-align: start;
     box-shadow: 0 1px 4px rgb(var(--rgb-primary-espresso) / 0.07);
-    transition: box-shadow 0.25s, transform 0.25s;
-    animation: cardIn 0.4s ease both;
+    transition: box-shadow 0.35s var(--ease-smooth), transform 0.35s var(--ease-smooth);
+    animation: cardIn 0.55s var(--ease-smooth) both;
     animation-delay: var(--card-delay, 0ms);
     align-self: stretch;
 }
@@ -526,18 +986,18 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 @keyframes cardIn {
     from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(22px) scale(0.96);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
 .product-card:hover {
     box-shadow: 0 6px 24px rgb(var(--rgb-primary-espresso) / 0.13);
-    transform: translateY(-2px);
+    transform: translateY(-4px);
 }
 
 /* Image */

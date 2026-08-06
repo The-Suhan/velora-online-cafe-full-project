@@ -287,8 +287,8 @@ onMounted(load)
     flex-direction: column;
     box-shadow: 0 2px 8px rgb(var(--rgb-primary-deep) / 0.07);
     border: 1.5px solid rgb(var(--rgb-primary-deep) / 0.06);
-    transition: transform 0.22s ease, box-shadow 0.22s ease;
-    animation: fadeUp 0.38s ease both;
+    transition: transform 0.32s var(--ease-smooth), box-shadow 0.32s var(--ease-smooth);
+    animation: fadeUp 0.55s var(--ease-smooth) both;
     animation-delay: var(--delay, 0ms);
 }
 
@@ -304,12 +304,12 @@ onMounted(load)
 @keyframes fadeUp {
     from {
         opacity: 0;
-        transform: translateY(14px);
+        transform: translateY(22px) scale(0.97);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 

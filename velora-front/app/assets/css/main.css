@@ -2,3 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    /* Shared smooth "expo-out" easing used for card/page entrance animations
+       across the app — gives motion a fluid, decelerating feel instead of
+       the flatter linear `ease`. */
+    --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Global page transition ──
+   Paired with app.pageTransition in nuxt.config.ts. Runs on every route
+   change (out-in): current page fades/slides out, next page fades/slides in. */
+.page-enter-active,
+.page-leave-active {
+    transition: opacity 0.28s var(--ease-smooth), transform 0.28s var(--ease-smooth);
+}
+
+.page-enter-from {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.page-leave-to {
+    opacity: 0;
+    transform: translateY(-6px);
+}

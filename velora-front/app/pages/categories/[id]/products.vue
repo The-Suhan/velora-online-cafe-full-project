@@ -443,26 +443,26 @@ watch(categoryId, loadData)
     flex-direction: column;
     overflow: hidden;
     box-shadow: 0 1px 4px rgb(var(--rgb-primary-espresso) / 0.07);
-    transition: box-shadow 0.25s, transform 0.25s;
-    animation: cardIn 0.4s ease both;
+    transition: box-shadow 0.35s var(--ease-smooth), transform 0.35s var(--ease-smooth);
+    animation: cardIn 0.55s var(--ease-smooth) both;
     animation-delay: var(--card-delay, 0ms);
 }
 
 @keyframes cardIn {
     from {
         opacity: 0;
-        transform: translateY(14px);
+        transform: translateY(22px) scale(0.96);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
 .product-card:hover {
     box-shadow: 0 6px 24px rgb(var(--rgb-primary-espresso) / 0.13);
-    transform: translateY(-3px);
+    transform: translateY(-4px);
 }
 
 /* Image */

@@ -56,6 +56,25 @@
     "back": "Back",
     "productsTitle": "Products"
   },
+  "search": {
+    "title": "Search results",
+    "resultsFor": "Results for \"{q}\"",
+    "noResults": "No products found for \"{q}\"",
+    "filters": "Filters",
+    "priceRange": "Price range",
+    "minPrice": "Min",
+    "maxPrice": "Max",
+    "category": "Category",
+    "allCategories": "All categories",
+    "onDiscount": "On discount only",
+    "sortBy": "Sort by",
+    "sortNewest": "Newest",
+    "sortPriceAsc": "Price: Low to High",
+    "sortPriceDesc": "Price: High to Low",
+    "sortRating": "Top Rated",
+    "apply": "Apply",
+    "reset": "Reset"
+  },
   "home": {
     "itemsCount": "{n} items",
     "seeAll": "See All",

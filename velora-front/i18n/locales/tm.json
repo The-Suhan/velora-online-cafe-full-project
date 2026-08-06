@@ -56,6 +56,25 @@
     "back": "Yza",
     "productsTitle": "Önümler"
   },
+  "search": {
+    "title": "Gözleg netijeleri",
+    "resultsFor": "\"{q}\" üçin netijeler",
+    "noResults": "\"{q}\" üçin önüm tapylmady",
+    "filters": "Filtrler",
+    "priceRange": "Baha aralygy",
+    "minPrice": "Iň az",
+    "maxPrice": "Iň köp",
+    "category": "Kategoriýa",
+    "allCategories": "Ähli kategoriýalar",
+    "onDiscount": "Diňe arzanladyşly",
+    "sortBy": "Tertiple",
+    "sortNewest": "Iň täze",
+    "sortPriceAsc": "Baha: arzandan gymmada",
+    "sortPriceDesc": "Baha: gymmatdan arzana",
+    "sortRating": "Iň ýokary baha",
+    "apply": "Ulan",
+    "reset": "Arassala"
+  },
   "home": {
     "itemsCount": "{n} önüm",
     "seeAll": "Hemmesini gör",
