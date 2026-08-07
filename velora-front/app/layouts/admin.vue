@@ -19,6 +19,10 @@
 <script setup lang="ts">
 const { user } = useAuth()
 
+// Admin panel is behind auth already; also tell crawlers explicitly not to
+// index it (covers every page using this layout in one place).
+useSeoMeta({ robots: 'noindex, nofollow' })
+
 // Yeni sipariş nabzı: rozetleri besler, yeni sipariş gelince ses + toast.
 // Layout'ta başlatılır, böylece tüm admin sayfalarını kapsar.
 useAdminOrderPulse().useTracking()

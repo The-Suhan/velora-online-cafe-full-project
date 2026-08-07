@@ -366,6 +366,7 @@
 <script setup lang="ts">
 definePageMeta({ middleware: 'auth', layout: 'client' })
 useHead({ title: 'Velora — Profile' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { user: authUser, logout, fetchMe } = useAuth()
 const { fetchMyOrders, cancelOrder, fetchOrder, fetchMyFavorites, fetchMyFeedback, submitFeedback } = useProfile()

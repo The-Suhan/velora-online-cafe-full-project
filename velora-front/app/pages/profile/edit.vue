@@ -112,6 +112,7 @@
 definePageMeta({ middleware: 'auth' })
 const { t } = useI18n()
 useHead({ title: 'Velora — Profile Edit' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { user: authUser, logout, deleteAccount } = useAuth()
 const { fetchMe, updateMe } = useProfile()

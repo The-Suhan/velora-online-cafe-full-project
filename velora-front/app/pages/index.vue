@@ -20,11 +20,23 @@ const { resolveUrl } = useMediaUrl()
 const { displayName, displayDesc } = useLocalized()
 const { t } = useI18n()
 
-definePageMeta({ layout: 'client', middleware: 'auth' })
+// Public menu page — deliberately not behind the `auth` middleware, so
+// search engine crawlers (and anyone without an account) can browse the
+// menu. Only cart/checkout/profile actions require sign-in.
+definePageMeta({ layout: 'client' })
 
 // Font families are declared once in nuxt.config so the browser fetches a
 // single stylesheet instead of a second render-blocking one per page.
-useHead({ title: 'Velora — Menu' })
+useSeoMeta({
+    title: 'Velora — Menu',
+    description: 'Browse the full Velora café menu — coffee, pastries and more. Add items to your bag and order online for pickup.',
+    ogTitle: 'Velora — Menu',
+    ogDescription: 'Browse the full Velora café menu — coffee, pastries and more. Add items to your bag and order online for pickup.',
+    ogImage: '/icon-512.png',
+})
+useHead({
+    link: [{ rel: 'canonical', href: useRequestURL().origin + '/' }],
+})
 
 const selectedProduct = ref(null)
 const modalOpen = ref(false)
@@ -309,6 +321,10 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 
 <template>
     <main class="velora-page">
+        <!-- Visually hidden — gives the page a real h1 for SEO/screen readers
+             without duplicating the category titles that act as the visual
+             heading below. -->
+        <h1 class="sr-only">{{ $t('home.pageHeading') }}</h1>
 
         <!-- ── Filters bar ── -->
         <div class="filters-bar">
@@ -382,8 +398,9 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
                 <div v-for="(product, idx) in filteredProducts" :key="product.id" class="product-card"
                     :style="{ '--card-delay': `${idx * 25}ms` }">
                     <div class="card-image" :style="{ background: cardGradient(product.id) }">
-                        <img v-if="product.image_url" :src="resolveUrl(product.image_url)" :alt="displayName(product)"
-                            class="card-img card-img--loaded" draggable="false" loading="lazy" />
+                        <NuxtImg v-if="product.image_url" :src="resolveUrl(product.image_url)" :alt="displayName(product)"
+                            class="card-img card-img--loaded" draggable="false" loading="lazy"
+                            sizes="240px sm:170px" />
                         <span v-if="product.category?.name" class="card-badge">{{ product.category.name }}</span>
                         <span v-if="product.has_discount" class="discount-badge">-{{ product.discount_percent }}%</span>
                     </div>
@@ -597,6 +614,18 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
     background: var(--color-surface-warm);
     font-family: 'Lato', sans-serif;
     padding-bottom: 4rem;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 /* ── Filters bar ── */

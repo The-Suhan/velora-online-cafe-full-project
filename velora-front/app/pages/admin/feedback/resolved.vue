@@ -124,7 +124,7 @@
                         <div class="mobile-card-top">
                             <div class="user-cell">
                                 <div class="user-avatar">
-                                    <img v-if="fb.user?.avatar" :src="fb.user.avatar" class="avatar-img" />
+                                    <img v-if="fb.user?.avatar" :src="fb.user.avatar" :alt="fb.user?.name" class="avatar-img" />
                                     <span v-else class="avatar-initials">{{ initials(fb.user?.name) }}</span>
                                 </div>
                                 <div>
@@ -245,7 +245,7 @@
                 <div class="modal-body">
                     <div class="detail-user-row">
                         <div class="user-avatar user-avatar--lg">
-                            <img v-if="selectedFb.user?.avatar" :src="selectedFb.user.avatar" class="avatar-img" />
+                            <img v-if="selectedFb.user?.avatar" :src="selectedFb.user.avatar" :alt="selectedFb.user?.name" class="avatar-img" />
                             <span v-else class="avatar-initials">{{ initials(selectedFb.user?.name) }}</span>
                         </div>
                         <div>

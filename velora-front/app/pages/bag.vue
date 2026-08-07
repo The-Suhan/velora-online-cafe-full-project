@@ -236,6 +236,7 @@ definePageMeta({
 })
 
 useHead({ title: 'Velora — My Bag' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { locale, t } = useI18n()
 

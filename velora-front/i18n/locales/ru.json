@@ -76,6 +76,7 @@
     "reset": "Сбросить"
   },
   "home": {
+    "pageHeading": "Меню Velora — Заказ кофе и десертов онлайн",
     "itemsCount": "{n} позиций",
     "seeAll": "Смотреть все",
     "scrollLeft": "Прокрутить влево",

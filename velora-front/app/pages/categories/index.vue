@@ -57,8 +57,20 @@
 </template>
 
 <script setup>
-useHead({ title: 'Velora — Categories' })
-definePageMeta({ layout: 'client', middleware: 'auth' })
+// Public — see app/pages/index.vue for why category/menu pages aren't
+// gated behind the `auth` middleware.
+definePageMeta({ layout: 'client' })
+
+useSeoMeta({
+    title: 'Velora — Categories',
+    description: 'Browse Velora café menu categories — coffee, pastries, breakfast and more.',
+    ogTitle: 'Velora — Categories',
+    ogDescription: 'Browse Velora café menu categories — coffee, pastries, breakfast and more.',
+    ogImage: '/icon-512.png',
+})
+useHead({
+    link: [{ rel: 'canonical', href: useRequestURL().origin + '/categories' }],
+})
 
 const { resolveUrl } = useMediaUrl()
 const { displayName } = useLocalized()

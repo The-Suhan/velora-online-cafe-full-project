@@ -340,7 +340,7 @@
                 <div class="modal-body">
                     <div class="detail-user-row">
                         <div class="user-avatar user-avatar--lg">
-                            <img v-if="selectedFb.user?.avatar" :src="selectedFb.user.avatar" class="avatar-img" />
+                            <img v-if="selectedFb.user?.avatar" :src="selectedFb.user.avatar" :alt="selectedFb.user?.name" class="avatar-img" />
                             <span v-else class="avatar-initials">{{ initials(selectedFb.user?.name) }}</span>
                         </div>
                         <div>

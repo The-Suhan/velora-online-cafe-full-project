@@ -76,6 +76,7 @@
     "reset": "Reset"
   },
   "home": {
+    "pageHeading": "Velora Menu — Order Coffee & Café Favorites Online",
     "itemsCount": "{n} items",
     "seeAll": "See All",
     "scrollLeft": "Scroll left",

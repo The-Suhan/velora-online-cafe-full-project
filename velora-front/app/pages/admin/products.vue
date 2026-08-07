@@ -369,7 +369,7 @@
                         <div class="image-upload-zone" :class="{ 'has-file': imagePreview, 'drag-over': isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="onDrop"
                             @click="triggerFileInput">
-                            <img v-if="imagePreview" :src="imagePreview" class="upload-preview" />
+                            <img v-if="imagePreview" :src="imagePreview" alt="Product image preview" class="upload-preview" />
                             <div v-else class="upload-placeholder">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28"
                                     height="28">
@@ -531,7 +531,7 @@
                         <div class="image-upload-zone" :class="{ 'has-file': imagePreview, 'drag-over': isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="onDrop"
                             @click="triggerFileInput">
-                            <img v-if="imagePreview" :src="imagePreview" class="upload-preview" />
+                            <img v-if="imagePreview" :src="imagePreview" alt="Product image preview" class="upload-preview" />
                             <div v-else class="upload-placeholder">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28"
                                     height="28">

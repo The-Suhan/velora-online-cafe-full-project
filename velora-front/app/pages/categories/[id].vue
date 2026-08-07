@@ -96,7 +96,9 @@
 </template>
 
 <script setup>
-definePageMeta({ layout: 'client', middleware: 'auth' })
+// Public — see app/pages/index.vue for why category/menu pages aren't
+// gated behind the `auth` middleware.
+definePageMeta({ layout: 'client' })
 
 
 const route = useRoute()
@@ -145,8 +147,14 @@ const headerStyle = computed(() => {
     return {}
 })
 
-useHead({ 
-  title: computed(() => `Velora — ${displayName(category.value) || t('categoriesPage.defaultTitle')}`) 
+useSeoMeta({
+    title: () => `Velora — ${displayName(category.value) || t('categoriesPage.defaultTitle')}`,
+    description: () => displayDesc(category.value) || `Browse ${displayName(category.value) || 'this category'} at Velora — order online for pickup.`,
+    ogTitle: () => `Velora — ${displayName(category.value) || t('categoriesPage.defaultTitle')}`,
+    ogImage: () => category.value?.image_url ? resolveUrl(category.value.image_url) : '/icon-512.png',
+})
+useHead({
+    link: [{ rel: 'canonical', href: () => useRequestURL().origin + `/categories/${categoryId}` }],
 })
 
 onMounted(load)

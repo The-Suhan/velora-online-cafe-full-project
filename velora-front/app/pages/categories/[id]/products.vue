@@ -6,7 +6,9 @@ import { onBeforeRouteLeave } from 'vue-router'
 const config = useRuntimeConfig()
 const { resolveUrl } = useMediaUrl()
 
-definePageMeta({ layout: 'client', middleware: 'auth' })
+// Public — see app/pages/index.vue for why category/menu pages aren't
+// gated behind the `auth` middleware.
+definePageMeta({ layout: 'client' })
 
 
 // ─── Route ────────────────────────────────────────────────────
@@ -146,8 +148,50 @@ async function loadData() {
 const { displayName, displayDesc } = useLocalized()
 
 // Fonts are loaded once from nuxt.config, not per page.
+useSeoMeta({
+    title: () => `Velora — ${displayName(category.value) || 'Products'}`,
+    description: () => `Order ${displayName(category.value) || 'products'} online from Velora — browse the full selection and add to your bag.`,
+    ogTitle: () => `Velora — ${displayName(category.value) || 'Products'}`,
+    ogImage: () => category.value?.image_url ? resolveUrl(category.value.image_url) : '/icon-512.png',
+})
 useHead({
-    title: computed(() => `Velora — ${displayName(category.value) || 'Products'}`),
+    link: [{ rel: 'canonical', href: () => useRequestURL().origin + `/categories/${categoryId.value}/products` }],
+    script: [
+        {
+            type: 'application/ld+json',
+            innerHTML: () => JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Menu', item: useRequestURL().origin + '/' },
+                    { '@type': 'ListItem', position: 2, name: displayName(category.value) || 'Category', item: useRequestURL().origin + `/categories/${categoryId.value}` },
+                ],
+            }),
+        },
+        {
+            type: 'application/ld+json',
+            innerHTML: () => JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'ItemList',
+                itemListElement: products.value.map((p, i) => ({
+                    '@type': 'ListItem',
+                    position: i + 1,
+                    item: {
+                        '@type': 'Product',
+                        name: displayName(p),
+                        description: displayDesc(p),
+                        image: p.image_url ? resolveUrl(p.image_url) : undefined,
+                        offers: {
+                            '@type': 'Offer',
+                            price: Number(p.final_price ?? p.price).toFixed(2),
+                            priceCurrency: 'USD',
+                            availability: 'https://schema.org/InStock',
+                        },
+                    },
+                })),
+            }),
+        },
+    ],
 })
 
 onMounted(() => {
