@@ -294,6 +294,16 @@ const chartCanvas = ref<HTMLCanvasElement | null>(null)
 const calendarRef = ref<HTMLElement | null>(null)
 let chartInstance: Chart | null = null
 
+// Chart.js paints on a canvas, which cannot resolve var(), so the tokens are
+// read out of color.css at render time instead. That also means the canvas is
+// the one thing in the app a theme switch does not reach on its own — hence
+// the watch on isDark below, which repaints it with the new token values.
+const { color, alpha } = useColors()
+const { isDark } = useTheme()
+
+/** Kept so a theme switch can repaint without refetching. */
+let lastData: { labels: string[]; data: number[] } | null = null
+
 const period = ref<Period>('weekly')
 const isOpen = ref(false)
 const range = ref<{ start: Date; end: Date } | null>(null)
@@ -324,9 +334,19 @@ watch(chartCanvas, (canvas) => {
     }
 })
 
+// The canvas holds baked-in pixels, so it has to be repainted by hand when the
+// tokens underneath it change.
+watch(isDark, async () => {
+    if (!lastData) return
+    await nextTick()
+    renderChart(lastData)
+})
+
 const renderChart = (data: { labels: string[]; data: number[] }) => {
     if (!chartCanvas.value) { pendingData.value = data; return }
     if (chartInstance) { chartInstance.destroy(); chartInstance = null }
+
+    lastData = data
 
     chartInstance = new Chart(chartCanvas.value, {
         type: 'line',
@@ -334,11 +354,13 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
             labels: data.labels ?? [],
             datasets: [{
                 data: data.data ?? [],
-                borderColor: 'var(--color-success)',
-                backgroundColor: 'rgb(var(--rgb-success) / 0.08)',
+                borderColor: color('success'),
+                backgroundColor: alpha('success', 0.08),
                 borderWidth: 2.5,
-                pointBackgroundColor: 'var(--color-success)',
-                pointBorderColor: 'var(--color-white)',
+                pointBackgroundColor: color('success'),
+                // Matches the card behind it, so points read as punched out of
+                // the surface rather than as white dots on a dark card.
+                pointBorderColor: color('card'),
                 pointBorderWidth: 2,
                 pointRadius: 4,
                 pointHoverRadius: 7,
@@ -354,9 +376,10 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: 'var(--color-primary)',
-                    titleColor: 'var(--color-accent)',
-                    bodyColor: 'var(--color-surface-alt)',
+                    // Stays dark in both themes so the gold title holds.
+                    backgroundColor: color('brand-surface'),
+                    titleColor: color('accent'),
+                    bodyColor: color('on-brand'),
                     padding: 10,
                     cornerRadius: 8,
                 },
@@ -366,12 +389,14 @@ const renderChart = (data: { labels: string[]; data: number[] }) => {
                     beginAtZero: true,
                     min: 0,
                     suggestedMax: 1,
-                    grid: { color: 'rgb(var(--rgb-black) / 0.04)' },
-                    ticks: { font: { family: 'Jost', size: 11 }, color: 'var(--color-muted)', stepSize: 1, precision: 0 },
+                    // 'primary' inverts with the theme, so the gridlines stay
+                    // faint against the card instead of vanishing into it.
+                    grid: { color: alpha('primary', 0.09) },
+                    ticks: { font: { family: 'Jost', size: 11 }, color: color('muted'), stepSize: 1, precision: 0 },
                 },
                 x: {
                     grid: { display: false },
-                    ticks: { font: { family: 'Jost', size: 11 }, color: 'var(--color-muted)', maxRotation: 45, autoSkip: true, maxTicksLimit: 12 },
+                    ticks: { font: { family: 'Jost', size: 11 }, color: color('muted'), maxRotation: 45, autoSkip: true, maxTicksLimit: 12 },
                 },
             },
         },
