@@ -5,6 +5,7 @@
   <NuxtRouteAnnouncer />
   <AppLoading />
   <AppToast />
+  <AuthRequiredModal />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

@@ -99,16 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/feedback/{feedback}', [FeedbackController::class, 'destroy']);
     });
 
-    // Client api
-    Route::get('/home', [CustomerController::class, 'home']);
-    Route::get('/categories', [CustomerController::class, 'categories']);
-    Route::get('/categories/{category}/products', [CustomerController::class, 'categoryProducts']);
-    Route::get('/categories/{category}', [CustomerController::class, 'showCategory']);
-    Route::get('/products', [CustomerController::class, 'products']);
-    Route::get('/products/{product}', [CustomerController::class, 'showProduct']);
-    Route::get('/products/{product}/ratings', [CustomerController::class, 'productRatings']);
-
-    // Ratings
+    // Ratings — writing a rating still requires an account
     Route::post('/products/{product}/rate', [CustomerController::class, 'rateProduct']);
     Route::delete('/products/{product}/rate', [CustomerController::class, 'deleteRating']);
 
@@ -120,3 +111,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/orders/{order}/cancel', [CustomerController::class, 'cancelOrder']);
 
 });
+
+// ── Public browsing ──────────────────────────────────────────────
+// Menu/category/product listing needs to work for signed-out visitors (and
+// search engine crawlers) — only the actions that mutate state (rating,
+// ordering, favorites) require auth:sanctum above.
+Route::get('/home', [CustomerController::class, 'home']);
+Route::get('/categories', [CustomerController::class, 'categories']);
+Route::get('/categories/{category}/products', [CustomerController::class, 'categoryProducts']);
+Route::get('/categories/{category}', [CustomerController::class, 'showCategory']);
+Route::get('/products', [CustomerController::class, 'products']);
+Route::get('/products/{product}', [CustomerController::class, 'showProduct']);
+Route::get('/products/{product}/ratings', [CustomerController::class, 'productRatings']);

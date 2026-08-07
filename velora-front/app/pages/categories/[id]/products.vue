@@ -24,6 +24,11 @@ const headerStyle = computed(() => {
 // ─── Cart ─────────────────────────────────────────────────────
 const { addItem, increaseQty, decreaseQty, getItem } = useCart()
 function cartItem(productId) { return getItem(productId) }
+const { requireAuth } = useAuthGate()
+function onAddToCart(product) {
+    if (!requireAuth()) return
+    addItem(product)
+}
 
 // ─── State ────────────────────────────────────────────────────
 const api = useApi()
@@ -65,6 +70,8 @@ onBeforeRouteLeave(async () => {
 })
 
 function rateProduct(product, score) {
+    if (!requireAuth()) return
+
     const current = userRatings.value[product.id] !== undefined
         ? userRatings.value[product.id]
         : product.avg_rating ?? 0
@@ -300,7 +307,7 @@ watch(categoryId, loadData)
                         <div class="card-actions">
                             <button class="detail-btn" @click.stop="openModal(product)">{{ $t('home.detail') }}</button>
 
-                            <button v-if="!cartItem(product.id)" @click.stop="addItem(product)" class="add-btn">
+                            <button v-if="!cartItem(product.id)" @click.stop="onAddToCart(product)" class="add-btn">
                                 {{ $t('home.addToCart') }}
                             </button>
                             <div v-else class="qty-ctrl">

@@ -247,7 +247,13 @@ class CustomerController extends Controller
 
         $product->load(['category:id,name', 'translations']);
 
-        $userRating = Rating::where('user_id', auth()->id())
+        // Explicit 'sanctum' guard — this route is public (no auth:sanctum
+        // middleware) so the request never goes through Authenticate; the
+        // default 'web' guard would always resolve null even for a logged-in
+        // caller sending a Bearer token. Naming the guard makes Sanctum parse
+        // the token on demand, so signed-in visitors still get their own
+        // rating back while guests just get null.
+        $userRating = Rating::where('user_id', auth('sanctum')->id())
             ->where('product_id', $product->id)
             ->first();
 

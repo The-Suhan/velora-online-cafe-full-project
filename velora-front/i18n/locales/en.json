@@ -1,4 +1,10 @@
 {
+  "authGate": {
+    "title": "Sign in required",
+    "message": "You need to sign in to your account to do this.",
+    "back": "Back",
+    "signIn": "Sign in"
+  },
   "productModal": {
     "closeModal": "Close modal",
     "closeLightbox": "Close lightbox",

@@ -49,6 +49,11 @@ async function openModal(product) {
 
 // ─── Cart ─────────────────────────────────────────────────────
 const { addItem, increaseQty, decreaseQty, getItem } = useCart()
+const { requireAuth } = useAuthGate()
+function onAddToCart(product) {
+    if (!requireAuth()) return
+    addItem(product)
+}
 
 // ─── State ────────────────────────────────────────────────────
 const api = useApi()
@@ -232,6 +237,8 @@ async function loadAll() {
 }
 
 function rateProduct(product, score) {
+    if (!requireAuth()) return
+
     const current = userRatings.value[product.id] !== undefined
         ? userRatings.value[product.id]
         : product.avg_rating ?? 0
@@ -427,7 +434,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
 
                             <div class="card-actions">
                                 <button class="detail-btn" @click.stop="openModal(product)">{{ $t('home.detail') }}</button>
-                                <button v-if="!getItem(product.id)" @click.stop="addItem(product)" class="add-btn">
+                                <button v-if="!getItem(product.id)" @click.stop="onAddToCart(product)" class="add-btn">
                                     {{ $t('home.addToCart') }}
                                 </button>
                                 <div v-else class="qty-ctrl">
@@ -568,7 +575,7 @@ function onRatingUpdated({ productId, avgRating, userScore }) {
                                             {{ $t('home.detail') }}
                                         </button>
 
-                                        <button v-if="!getItem(product.id)" @click.stop="addItem(product)"
+                                        <button v-if="!getItem(product.id)" @click.stop="onAddToCart(product)"
                                             class="add-btn">
                                             {{ $t('home.addToCart') }}
                                         </button>

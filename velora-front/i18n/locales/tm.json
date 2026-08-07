@@ -1,4 +1,10 @@
 {
+  "authGate": {
+    "title": "Ulgama girmek gerek",
+    "message": "Bu hereketi etmek üçin hasabyňyza girmeli.",
+    "back": "Yza",
+    "signIn": "Ulgama gir"
+  },
   "productModal": {
     "closeModal": "Modaly ýap",
     "closeLightbox": "Lightbox-y ýap",

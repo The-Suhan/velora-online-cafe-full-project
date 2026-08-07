@@ -75,6 +75,11 @@ function selectRelated(rp) {
 // ─── Cart ─────────────────────────────────────────────────────
 const { addItem, increaseQty, decreaseQty, getItem } = useCart()
 function cartItem(id) { return getItem(id) }
+const { requireAuth } = useAuthGate()
+function onAddToCart(product) {
+    if (!requireAuth()) return
+    addItem(product)
+}
 
 
 watch(activeProduct, async (p, prevP) => {
@@ -109,6 +114,8 @@ const gradients = [
 function cardGradient(id) { return gradients[id % gradients.length] }
 
 function rateProduct(product, score) {
+    if (!requireAuth()) return
+
     const current = userRatings.value[product.id] !== undefined
         ? userRatings.value[product.id]
         : product.avg_rating ?? 0
@@ -203,7 +210,7 @@ watch(() => props.modelValue, async (isOpen) => {
                                 </span>
                                 <span v-else class="pm-price">${{ Number(activeProduct.price).toFixed(2) }}</span>
 
-                                <button v-if="!cartItem(activeProduct.id)" @click="addItem(activeProduct)"
+                                <button v-if="!cartItem(activeProduct.id)" @click="onAddToCart(activeProduct)"
                                     class="pm-add-btn">
                                     {{ $t('productModal.addToCart') }}
                                 </button>
@@ -251,7 +258,7 @@ watch(() => props.modelValue, async (isOpen) => {
                                         <span class="pm-rel-price-new">${{ Number(rp.final_price).toFixed(2) }}</span>
                                     </p>
                                     <p v-else class="pm-rel-price">${{ Number(rp.price).toFixed(2) }}</p>
-                                    <button v-if="!cartItem(rp.id)" @click.stop="addItem(rp)" class="pm-rel-add"
+                                    <button v-if="!cartItem(rp.id)" @click.stop="onAddToCart(rp)" class="pm-rel-add"
                                         :aria-label="$t('productModal.relatedAdd') + ' ' + displayName(rp)">
                                         {{ $t('productModal.relatedAdd') }}
                                     </button>

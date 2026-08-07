@@ -230,9 +230,11 @@
 import { ref, computed } from 'vue'
 import { useCart } from '~/composables/useCart'
 
+// Viewing the bag itself doesn't need an account (it's a cookie, not
+// server state) — only actually placing the order does, gated below via
+// useAuthGate() instead of a hard page-level redirect.
 definePageMeta({
     layout: 'client',
-    middleware: 'auth',
 })
 
 useHead({ title: 'Velora — My Bag' })
@@ -254,6 +256,7 @@ function getProductName(item) {
 
 // ─── Cart ─────────────────────────────────────────────────────
 const { items, totalPrice, increaseQty, decreaseQty, removeItem, clearCart } = useCart()
+const { requireAuth } = useAuthGate()
 
 // ─── Config / API ─────────────────────────────────────────────
 const api = useApi()
@@ -393,6 +396,7 @@ const canOrder = computed(() => {
 })
 
 async function placeOrder() {
+    if (!requireAuth()) return
     if (!validatePhone()) return
     if (!canOrder.value || ordering.value) return
     ordering.value = true
