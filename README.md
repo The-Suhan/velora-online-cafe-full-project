@@ -1,8 +1,8 @@
-    # ☕ Velora Café
+# ☕ Velora Café
 
 ![Velora](./logo.png)
 
-* **Taste the calm.**
+**Taste the calm.**
 
 ---
 
@@ -10,7 +10,6 @@
 
 > A modern online café experience combining aesthetic design with a smooth user interface.
 
-🔗 Live Demo: *(coming soon!)*
 ![Screenshots](./screenshot.png)
 
 ---
@@ -25,44 +24,82 @@ From the first sip to the last, the experience is crafted to feel natural, warm,
 ## 🚀 Features
 
 * ☕ Modern café UI/UX
-* 🔐 Authentication system (JWT / session)
-* 🛒 Online ordering system *(opsiyonel)*
-* 📱 Responsive design
-* ⚡ Fast performance (optimized frontend)
+* 🔐 Authentication system
+* 🛒 Online ordering system
+* 📊 Analytics dashboard with charts (Chart.js)
+* 🌍 Multi-language support (i18n)
+* 📅 Calendar / reservation support
+* 📱 Fully responsive design
+* ⚡ Optimized frontend performance
 
 ---
 
 ## 🛠️ Tech Stack
 
-**Frontend:**
+**Frontend** (`velora-front`)
 
-* Nuxt.js
+* Nuxt 4
+* Vue 3
 * Tailwind CSS
+* Chart.js
+* @nuxtjs/i18n
 
-**Backend:**
+**Backend** (`velora-backend`)
 
-* Laravel 
+* Laravel 12
+* PHP 8.2+
+* Laravel Sanctum (authentication)
 
-**Database:**
+**Database**
 
 * PostgreSQL
 
-**Deployment:**
+---
 
-* Vercel / Railway
+## 📁 Project Structure
+
+```
+velora-online-cafe-full-project/
+├── velora-backend/   # Laravel API
+├── velora-front/      # Nuxt 4 frontend
+├── logo.png
+└── screenshot.png
+```
 
 ---
 
+## ⚙️ Getting Started
+
+### Backend
+
+```bash
+cd velora-backend
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
+```
+
+### Frontend
+
+```bash
+cd velora-front
+npm install
+npm run dev
+```
+
+---
 
 ## 🎨 Design System
 
 **Colors**
 
-* Primary: #2C1A14
-* Secondary: #F5EFEA
-* Accent: #C8A96A
-
----
+| Name      | Hex       |
+| --------- | --------- |
+| Primary   | `#2C1A14` |
+| Secondary | `#F5EFEA` |
+| Accent    | `#C8A96A` |
 
 ---
 
